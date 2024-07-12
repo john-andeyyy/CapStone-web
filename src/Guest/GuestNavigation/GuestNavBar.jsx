@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import ThemeController from '../GuestComponents/ThemeController';
+import { useNavigate } from 'react-router-dom';
 
 export default function GuestNavBar() {
+    const navigate = useNavigate()
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const toggleMenu = () => {
@@ -12,7 +14,7 @@ export default function GuestNavBar() {
         <div className="bg-base-100 sticky top-0 z-50">
             <div className="navbar container mx-auto flex items-center justify-between flex-wrap">
                 <div className="flex-1">
-                    <a className="btn btn-ghost text-xl text-green-400">DenTeam</a>
+                    <a className="btn btn-ghost text-xl text-green-400" onClick={() => navigate('/')}>DenTeam</a>
                 </div>
                 <div className="block lg:hidden">
                     <button onClick={toggleMenu} className="btn btn-ghost text-green-500">
@@ -24,7 +26,7 @@ export default function GuestNavBar() {
                 <div className={`flex-none ${isMenuOpen ? 'block' : 'hidden'} lg:flex lg:items-center lg:w-auto w-full`}>
                     <ul className="menu menu-horizontal px-1 font-semibold space-x-3 lg:space-x-3 flex flex-col lg:flex-row">
                         <li className="mb-2 md:mb-0">
-                            <button className="btn btn-ghost text-green-500">HOME</button>
+                            <button className="btn btn-ghost text-green-500" onClick={()=> navigate('/')}>HOME</button>
                         </li>
                         <li className="mb-2 md:mb-0">
                             <button className="btn btn-ghost">SERVICES</button>
@@ -32,13 +34,16 @@ export default function GuestNavBar() {
                         <li className="mb-2 md:mb-0">
                             <button className="btn btn-ghost">CONTACT</button>
                         </li>
+                        {/* <li className="mb-2 md:mb-0">
+                            <button className="btn btn-outline btn-success" onClick={() => {
+                                navigate('/CreateAccount')
+                                toggleMenu
+                            }}>SIGN UP</button>
+                        </li> */}
                         <li className="mb-2 md:mb-0">
-                            <button className="btn btn-outline btn-success">SIGN UP</button>
+                            <button className="btn btn-success text-white hover:text-black" onClick={() => navigate('/AdminLogin')}>LOGIN</button>
                         </li>
-                        <li className="mb-2 md:mb-0">
-                            <button className="btn btn-success text-white hover:text-black">LOGIN</button>
-                        </li>
-                            <ThemeController />
+                        <ThemeController />
                     </ul>
                 </div>
             </div>

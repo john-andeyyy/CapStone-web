@@ -34,8 +34,7 @@ function InfoSection() {
                     </div>
                 </div>
                 <div className='text-center py-7'>
-                    <button className="btn btn-primary bg-green-400 border-none text-white">Request Appointment</button>
-    
+                    {/* <button className="btn btn-primary bg-green-400 border-none text-white">Request Appointment</button> */}
                 </div>
             </div>
             

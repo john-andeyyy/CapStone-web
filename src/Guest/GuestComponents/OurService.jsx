@@ -8,7 +8,7 @@ export default function OurService() {
             </div>
 
             <div id="cards" className=''>
-                <div className="card card-compact bg-base-100 w-100 shadow-xl rounded-sm lg:flex-row lg:space-x-4 lg:space-y-0 space-y-2">
+                <div className="card card-compact bg-base-100 w-50 shadow-xl rounded-sm lg:flex-row lg:space-x-4 lg:space-y-0 space-y-2">
                     <div>
 
                         <figure>
@@ -22,8 +22,8 @@ export default function OurService() {
                             <h2 className="card-title">Family</h2>
                             <h2 className="card-title">Dentistry</h2>
                         </div>
-                    </div>
 
+                    </div>
                     <div>
                         <figure>
                             <img

@@ -81,7 +81,7 @@ export default function LandingPage() {
                                 </h1>
                             </div>
                         </div>
-                        <button className="btn btn-primary bg-green-400 border-none text-white">Request Appointment</button>
+                        {/* <button className="btn btn-primary bg-green-400 border-none text-white">Request Appointment</button> */}
                     </div>
                 </div>
             </div>
