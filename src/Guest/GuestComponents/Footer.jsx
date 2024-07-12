@@ -4,7 +4,7 @@ export default function Footer() {
     return (
         <div className="max-w-7xl mx-auto p-8 rounded-lg">
 
-            <div className="p-6 rounded-lg text-white flex flex-col sm:flex-row justify-between">
+            <div className="p-6 rounded-lg  flex flex-col sm:flex-row justify-between">
                 <div className="flex flex-col items-center sm:items-start">
                     <div className="text-xl font-bold">LOGO</div>
                     <div className="text-lg font-bold">ALEJANDRIA'S DENTAL CLINIC</div>

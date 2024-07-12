@@ -39,8 +39,8 @@ function App() {
           </div>
           <Routes>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/create-account" element={<CreateAccount />} />
-            <Route path="/admin-login" element={<AdminLogin />} />
+              <Route path="/CreateAccount" element={<CreateAccount />} />
+              <Route path="/AdminLogin" element={<AdminLogin />} />
           </Routes>
           <Footer />
         </>
