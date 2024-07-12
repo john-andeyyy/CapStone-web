@@ -42,6 +42,7 @@ function App() {
               <Route path="/CreateAccount" element={<CreateAccount />} />
               <Route path="/AdminLogin" element={<AdminLogin />} />
           </Routes>
+          
           <Footer />
         </>
       )}
