@@ -12,6 +12,7 @@ import Add_Procedure from './AdminDashBoard/Pages/Add_Procedure';
 import Medical_requests from './AdminDashBoard/Pages/Medical_requests';
 import Colorpallete from './Colorpallete';
 import ProfilePage from './AdminDashBoard/Pages/ProfilePage';
+import PatientProfile from './AdminDashBoard/Pages/PatientProfile ';
 
 function AdminRoutes() {
   const location = useLocation();
@@ -25,6 +26,7 @@ function AdminRoutes() {
         <Route path="/add_procedure" element={<Add_Procedure />} />
         <Route path="/medical_requests" element={<Medical_requests />} />
         <Route path="/ProfilePage" element={<ProfilePage />} />
+        <Route path="/PatientProfile" element={<PatientProfile />} />
       </Routes>
     </div>
   );

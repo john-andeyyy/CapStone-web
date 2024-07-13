@@ -100,18 +100,19 @@ export default function Add_Procedure() {
       <div className='text-right py-3'>
         <button className='btn bg-green-400 hover:bg-green-400 text-white' onClick={openAddPatientModal}>Create Procedure</button>
       </div>
+
       <div className='mt-4 text-lg'>
         <div className='flex w-full font-semibold border-b pb-2'>
           <div className='flex-1'>Procedure Name <button onClick={handleSort} className='ml-2 text-blue-500'>{sortOrder === 'asc' ? '↑' : '↓'}</button></div>
-          <div className='flex-1'>Duration</div>
-          <div className='flex-1'>Price</div>
+          <div className='flex-1 hidden lg:block'>Duration</div>
+          <div className='flex-1 hidden lg:block'>Price</div>
           <div className='flex-1 text-center'>Actions</div>
         </div>
         {filteredProcedures.map((procedure) => (
           <div key={procedure.id} className='flex w-full items-center border-b py-2'>
             <div className='flex-1'>{procedure.name}</div>
-            <div className='flex-1'>{procedure.duration} {procedure.durationUnit}</div>
-            <div className='flex-1'>{procedure.price}</div>
+            <div className='flex-1 hidden lg:block'>{procedure.duration} {procedure.durationUnit}</div>
+            <div className='flex-1 hidden lg:block'>{procedure.price}</div>
             <div className='flex-1 flex gap-2 justify-center'>
               <button className='text-blue-500' onClick={() => openEditProcedureModal(procedure)}>
                 <span className="material-symbols-outlined">edit</span>
@@ -123,6 +124,7 @@ export default function Add_Procedure() {
           </div>
         ))}
       </div>
+
 
       <Modal isOpen={addPatientModalOpen} close={() => setAddPatientModalOpen(false)}>
         <h3 className="font-bold text-lg">Add New Procedure</h3>

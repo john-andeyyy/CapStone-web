@@ -79,7 +79,7 @@ export default function Sidebar() {
                                 onClick={() => handleNavigate('/create-admin', 'create-admin')}
                             >
                                 <FaUserPlus className="mr-3" />
-                                <span>Create New Admin <br />(put in the profile) </span>
+                                <span className='text-red-500 font-bold '>Create New Admin <br />(put in the profile) </span>
                             </li>
                             <li
                                 className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'add-procedure' ? 'bg-neutral' : 'hover:bg-neutral'}`}
@@ -89,19 +89,18 @@ export default function Sidebar() {
                                 <span>Add Procedure</span>
                             </li>
                         </ul>
-                     <div className='py-10'>
-                            <button className=" w-full py-2 bg-red-500 text-white rounded flex items-center justify-center" onClick={() => {
-                                localStorage.clear();
-                                navigate('/');
-                                window.location.reload();
-                            }}>
-                                <FaSignOutAlt className="mr-2" />
-                                Log out1
-                            </button>
-                     </div>
                     </div>
                 </div>
-
+                <div className="py-10">
+                    <button className="w-full py-2 bg-red-500 text-white rounded flex items-center justify-center" onClick={() => {
+                        localStorage.clear();
+                        navigate('/');
+                        window.location.reload();
+                    }}>
+                        <FaSignOutAlt className="mr-2" />
+                        Log out
+                    </button>
+                </div>
             </div>
         </>
     );
