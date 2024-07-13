@@ -89,6 +89,14 @@ export default function Sidebar() {
                                 <span>Add Procedure</span>
                             </li>
                         </ul>
+                        <button className="w-full py-2 bg-red-500 text-white rounded flex items-center justify-center" onClick={() => {
+                            localStorage.clear();
+                            navigate('/');
+                            window.location.reload();
+                        }}>
+                            <FaSignOutAlt className="mr-2" />
+                            Log out1
+                        </button>
                     </div>
                 </div>
                 <div className="">
@@ -98,7 +106,7 @@ export default function Sidebar() {
                         window.location.reload();
                     }}>
                         <FaSignOutAlt className="mr-2" />
-                        Log out
+                        Log out2
                     </button>
                 </div>
             </div>
