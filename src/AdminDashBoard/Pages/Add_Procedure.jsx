@@ -15,29 +15,10 @@ export default function Add_Procedure() {
     { id: '005', name: 'Tooth Extraction', duration: '30', durationUnit: 'mins', price: 'P 800.00' },
     { id: '006', name: 'Dental Implant', duration: '2', durationUnit: 'hours', price: 'P 25,000.00' },
     { id: '007', name: 'Whitening Treatment', duration: '45', durationUnit: 'mins', price: 'P 1,200.00' },
-    { id: '007', name: 'Whitening Treatment', duration: '45', durationUnit: 'mins', price: 'P 1,200.00' },
-    { id: '007', name: 'Whitening Treatment', duration: '45', durationUnit: 'mins', price: 'P 1,200.00' },
-    { id: '007', name: 'Whitening Treatment', duration: '45', durationUnit: 'mins', price: 'P 1,200.00' },
-    { id: '007', name: 'Whitening Treatment', duration: '45', durationUnit: 'mins', price: 'P 1,200.00' },
-    { id: '007', name: 'Whitening Treatment', duration: '45', durationUnit: 'mins', price: 'P 1,200.00' },
-    { id: '007', name: 'Whitening Treatment', duration: '45', durationUnit: 'mins', price: 'P 1,200.00' },
-    { id: '007', name: 'Whitening Treatment', duration: '45', durationUnit: 'mins', price: 'P 1,200.00' },
-    { id: '007', name: 'Whitening Treatment', duration: '45', durationUnit: 'mins', price: 'P 1,200.00' },
-    { id: '007', name: 'Whitening Treatment', duration: '45', durationUnit: 'mins', price: 'P 1,200.00' },
-    { id: '007', name: 'Whitening Treatment', duration: '45', durationUnit: 'mins', price: 'P 1,200.00' },
-    { id: '007', name: 'Whitening Treatment', duration: '45', durationUnit: 'mins', price: 'P 1,200.00' },
-    { id: '007', name: 'Whitening Treatment', duration: '45', durationUnit: 'mins', price: 'P 1,200.00' },
-    { id: '007', name: 'Whitening Treatment', duration: '45', durationUnit: 'mins', price: 'P 1,200.00' },
-    { id: '007', name: 'Whitening Treatment', duration: '45', durationUnit: 'mins', price: 'P 1,200.00' },
-    { id: '007', name: 'Whitening Treatment', duration: '45', durationUnit: 'mins', price: 'P 1,200.00' },
-    { id: '007', name: 'Whitening Treatment', duration: '45', durationUnit: 'mins', price: 'P 1,200.00' },
-    { id: '007', name: 'Whitening Treatment', duration: '45', durationUnit: 'mins', price: 'P 1,200.00' },
-    { id: '007', name: 'Whitening Treatment', duration: '45', durationUnit: 'mins', price: 'P 1,200.00' },
-    { id: '007', name: 'Whitening Treatment', duration: '45', durationUnit: 'mins', price: 'P 1,200.00' },
-    { id: '007', name: 'Whitening Treatment', duration: '45', durationUnit: 'mins', price: 'P 1,200.00' },
   ]);
   const [newProcedure, setNewProcedure] = useState({ id: '', name: '', duration: '', durationUnit: 'mins', price: '' });
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState('asc'); // State to manage sorting order
 
   const openAddPatientModal = () => {
     setNewProcedure({ id: '', name: '', duration: '', durationUnit: 'mins', price: '' });
@@ -82,12 +63,25 @@ export default function Add_Procedure() {
     setSearchQuery(e.target.value);
   };
 
+  const handleSort = () => {
+    setSortOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
+    setProcedureList((prevList) =>
+      [...prevList].sort((a, b) => {
+        if (sortOrder === 'asc') {
+          return a.name.localeCompare(b.name);
+        } else {
+          return b.name.localeCompare(a.name);
+        }
+      })
+    );
+  };
+
   const filteredProcedures = procedureList.filter((procedure) =>
     procedure.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
-    <div className='container mx-auto text-sm lg:text-md '>
+    <div className='container mx-auto text-sm lg:text-md'>
       <div className='flex justify-between items-center'>
         <h1 className='text-5xl font-semibold'>Procedure List</h1>
         <div className='relative'>
@@ -104,20 +98,17 @@ export default function Add_Procedure() {
         </div>
       </div>
       <div className='text-right py-3'>
-        <button className='btn bg-green-400 hover:bg-green-400 text-white ' onClick={openAddPatientModal}>Create Procedure</button>
-
+        <button className='btn bg-green-400 hover:bg-green-400 text-white' onClick={openAddPatientModal}>Create Procedure</button>
       </div>
       <div className='mt-4 text-lg'>
-        <div className='flex w-full font-semibold border-b pb-2 '>
-          {/* <div className='flex-1'>ID</div> */}
-          <div className='flex-1'>Procedure Name</div>
+        <div className='flex w-full font-semibold border-b pb-2'>
+          <div className='flex-1'>Procedure Name <button onClick={handleSort} className='ml-2 text-blue-500'>{sortOrder === 'asc' ? '↑' : '↓'}</button></div>
           <div className='flex-1'>Duration</div>
           <div className='flex-1'>Price</div>
           <div className='flex-1 text-center'>Actions</div>
         </div>
         {filteredProcedures.map((procedure) => (
           <div key={procedure.id} className='flex w-full items-center border-b py-2'>
-            {/* <div className='flex-1'>{procedure.id}</div> */}
             <div className='flex-1'>{procedure.name}</div>
             <div className='flex-1'>{procedure.duration} {procedure.durationUnit}</div>
             <div className='flex-1'>{procedure.price}</div>
@@ -133,10 +124,7 @@ export default function Add_Procedure() {
         ))}
       </div>
 
-      <Modal
-        isOpen={addPatientModalOpen}
-        close={() => setAddPatientModalOpen(false)}
-      >
+      <Modal isOpen={addPatientModalOpen} close={() => setAddPatientModalOpen(false)}>
         <h3 className="font-bold text-lg">Add New Procedure</h3>
         <form onSubmit={handleAddSubmit} className="flex flex-col">
           <div className="label">
@@ -200,10 +188,7 @@ export default function Add_Procedure() {
         </form>
       </Modal>
 
-      <Modal
-        isOpen={editProcedureModalOpen}
-        close={() => setEditProcedureModalOpen(false)}
-      >
+      <Modal isOpen={editProcedureModalOpen} close={() => setEditProcedureModalOpen(false)}>
         <h3 className="font-bold text-lg">Edit Procedure</h3>
         <form onSubmit={handleEditSubmit} className="flex flex-col">
           <div className="label">
@@ -266,15 +251,11 @@ export default function Add_Procedure() {
         </form>
       </Modal>
 
-      <Modal
-        isOpen={deleteConfirmationModalOpen}
-        close={() => setDeleteConfirmationModalOpen(false)}
-      >
+      <Modal isOpen={deleteConfirmationModalOpen} close={() => setDeleteConfirmationModalOpen(false)}>
         <h3 className="font-bold text-lg">Confirm Deletion</h3>
         <p>Are you sure you want to delete the procedure: {procedureToDelete?.name}?</p>
         <div className='text-center pt-5'>
           <button onClick={confirmDelete} className="btn bg-red-500 hover:bg-red-500 text-white">Yes, Delete</button>
-
         </div>
       </Modal>
     </div>

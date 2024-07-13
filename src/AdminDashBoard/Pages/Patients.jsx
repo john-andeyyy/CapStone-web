@@ -2,28 +2,32 @@ import React, { useState } from 'react';
 import Modal from '../Components/Modal';
 
 export default function Patients_List() {
-    const [Addpatient, setAddpatient] = useState(false);
-    const [EditPatient, setEditPatient] = useState(false);
-    const [DeleteConfirmation, setDeleteConfirmation] = useState(false);
-    const [Patients_Info, setPatients_Info] = useState([
-        { id: '04-12-2000', name: 'Book, Devin', LastVisit: '03-12-2024' },
-        { id: '04-12-2001', name: 'James Bond', LastVisit: '03-12-2024' },
-        { id: '04-12-201104', name: 'Pogi ako', LastVisit: '03-12-2024' },
-        { id: '04-12-2003124', name: 'Pogi akoakoakoakoako', LastVisit: '03-12-2024' },
-        { id: '04-12-2012304', name: 'Pogi ako', LastVisit: '03-12-2024' },
-        { id: '04-12-212313004', name: 'Pogi ako', LastVisit: '03-12-2024' },
-        { id: '04-12-2001234', name: 'Pogi ako', LastVisit: '03-12-2024' },
-        { id: '04-12-20123304', name: 'Pogi ako', LastVisit: '03-12-2024' },
-        { id: '04-12-2412004', name: 'Pogi ako', LastVisit: '03-12-2024' },
+    const [addPatient, setAddPatient] = useState(false);
+    const [editPatient, setEditPatient] = useState(false);
+    const [deleteConfirmation, setDeleteConfirmation] = useState(false);
+    const [patientsInfo, setPatientsInfo] = useState([
+        { id: '04-12-2000', name: 'Book, Devin', lastVisit: '03-12-2024' },
+        { id: '04-12-2001', name: 'James Bond', lastVisit: '03-12-2024' },
+        { id: '04-12-201104', name: 'Pogi ako', lastVisit: '03-12-2024' },
+        { id: '04-12-2500001', name: 'John Doe', lastVisit: '03-12-2024' },
+        { id: '04-12-2500002', name: 'Jane Doe', lastVisit: '03-12-2024' },
+        { id: '04-12-2500003', name: 'Michael Scott', lastVisit: '03-12-2024' },
+        { id: '04-12-2500004', name: 'Pam Beesly', lastVisit: '03-12-2024' },
+        { id: '04-12-2500005', name: 'Dwight Schrute', lastVisit: '03-12-2024' },
+        { id: '04-12-2500006', name: 'Jim Halpert', lastVisit: '03-12-2024' },
+        { id: '04-12-2500007', name: 'Stanley Hudson', lastVisit: '03-12-2024' },
+        { id: '04-12-2500008', name: 'Angela Martin', lastVisit: '03-12-2024' },
+        { id: '04-12-2500009', name: 'Kevin Malone', lastVisit: '03-12-2024' },
+        { id: '04-12-2500010', name: 'Meredith Palmer', lastVisit: '03-12-2024' },
     ]);
 
     const [selectedPatient, setSelectedPatient] = useState(null);
-    const [newPatient, setNewPatient] = useState({ id: '', name: '', LastVisit: '' });
+    const [newPatient, setNewPatient] = useState({ id: '', name: '', lastVisit: '' });
     const [searchQuery, setSearchQuery] = useState('');
 
     const openModalAddPatient = () => {
-        setNewPatient({ id: '', name: '', LastVisit: '' });
-        setAddpatient(true);
+        setNewPatient({ id: '', name: '', lastVisit: '' });
+        setAddPatient(true);
     };
 
     const openModalEditPatient = (patient) => {
@@ -38,19 +42,19 @@ export default function Patients_List() {
     };
 
     const handleAddPatient = () => {
-        setPatients_Info([...Patients_Info, newPatient]);
-        setAddpatient(false);
+        setPatientsInfo([...patientsInfo, newPatient]);
+        setAddPatient(false);
     };
 
     const handleEditPatient = () => {
-        setPatients_Info(Patients_Info.map(patient =>
+        setPatientsInfo(patientsInfo.map(patient =>
             patient.id === newPatient.id ? newPatient : patient
         ));
         setEditPatient(false);
     };
 
     const handleDeletePatient = () => {
-        setPatients_Info(Patients_Info.filter(patient => patient.id !== selectedPatient.id));
+        setPatientsInfo(patientsInfo.filter(patient => patient.id !== selectedPatient.id));
         setDeleteConfirmation(false);
     };
 
@@ -58,7 +62,7 @@ export default function Patients_List() {
         setSearchQuery(e.target.value);
     };
 
-    const filteredPatients = Patients_Info.filter((patient) =>
+    const filteredPatients = patientsInfo.filter((patient) =>
         patient.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
@@ -81,14 +85,12 @@ export default function Patients_List() {
             </div>
             <div className='mt-4'>
                 <div className='flex w-full text-xl font-semibold border-b pb-2'>
-                    {/* <div className='flex-1'>ID</div> */}
                     <div className='flex-1'>Patient Name</div>
                     <div className='flex-1'>Last Visit</div>
                     <div className='flex-1 text-center'>Actions</div>
                 </div>
                 {filteredPatients.map((patient) => (
                     <div key={patient.id} className='flex w-full items-center border-b py-2'>
-                        {/* <div className='flex-1'>{patient.id}</div> */}
                         <div className='flex-1'>{patient.name}</div>
                         <div className='flex-1'>{patient.LastVisit}</div>
                         <div className='flex-1 flex gap-2 justify-center'>
@@ -105,9 +107,9 @@ export default function Patients_List() {
                     </div>
                 ))}
             </div>
-            <button className='btn btn-success fixed bottom-4 right-4' onClick={openModalAddPatient}>Add Patients</button>
+            <button className='btn btn-success fixed bottom-4 right-4' onClick={openModalAddPatient}>Add Patient</button>
 
-            <Modal isOpen={Addpatient} close={() => setAddpatient(false)}>
+            <Modal isOpen={addPatient} close={() => setAddPatient(false)}>
                 <h3 className="font-bold text-lg">Add New Patient</h3>
                 <form onSubmit={(e) => { e.preventDefault(); handleAddPatient(); }}>
                     <label className="text-sm">ID</label>
@@ -132,8 +134,8 @@ export default function Patients_List() {
                     <input
                         type="text"
                         placeholder="Last Visit"
-                        value={newPatient.LastVisit}
-                        onChange={(e) => setNewPatient({ ...newPatient, LastVisit: e.target.value })}
+                        value={newPatient.lastVisit}
+                        onChange={(e) => setNewPatient({ ...newPatient, lastVisit: e.target.value })}
                         className="border p-2 mb-2 text-sm"
                         required
                     />
@@ -141,7 +143,7 @@ export default function Patients_List() {
                 </form>
             </Modal>
 
-            <Modal isOpen={EditPatient} close={() => setEditPatient(false)}>
+            <Modal isOpen={editPatient} close={() => setEditPatient(false)}>
                 <h3 className="font-bold text-lg">Edit Patient</h3>
                 <form onSubmit={(e) => { e.preventDefault(); handleEditPatient(); }}>
                     <label className="text-sm">ID</label>
@@ -165,8 +167,8 @@ export default function Patients_List() {
                     <input
                         type="text"
                         placeholder="Last Visit"
-                        value={newPatient.LastVisit}
-                        onChange={(e) => setNewPatient({ ...newPatient, LastVisit: e.target.value })}
+                        value={newPatient.lastVisit}
+                        onChange={(e) => setNewPatient({ ...newPatient, lastVisit: e.target.value })}
                         className="border p-2 mb-2 text-sm"
                         required
                     />
@@ -174,7 +176,7 @@ export default function Patients_List() {
                 </form>
             </Modal>
 
-            <Modal isOpen={DeleteConfirmation} close={() => setDeleteConfirmation(false)}>
+            <Modal isOpen={deleteConfirmation} close={() => setDeleteConfirmation(false)}>
                 <h3 className="font-bold text-lg">Confirm Deletion</h3>
                 <p className="text-sm">Are you sure you want to delete the patient: {selectedPatient?.name}?</p>
                 <div className="flex justify-end mt-4">

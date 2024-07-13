@@ -2,10 +2,18 @@ import React from 'react';
 import { FaCheck, FaTimes } from 'react-icons/fa';
 
 export default function Dashboard() {
+    const currentDate = new Date();
+    const formattedDate = currentDate.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+
     return (
         <div>
             <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
-            <div className="text-gray-600 mb-8">22 April 2024 - Monday</div>
+            <div className="text-gray-600 mb-8">{formattedDate}</div>
             <div className="mb-8">
                 <h2 className="text-xl font-semibold mb-4">Appointment Requests History</h2>
                 <div className="space-y-4">
