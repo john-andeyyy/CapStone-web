@@ -41,7 +41,7 @@ export default function Sidebar() {
                             <div className="w-24 rounded-full cursor-pointer">
                                 <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" alt="Profile" />
                             </div>
-                        </div>
+                        </div> 
                         <span className="font-semibold">Boss Karen</span>
                     </div>
                     <div className="flex-grow">
