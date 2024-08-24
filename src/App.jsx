@@ -13,6 +13,7 @@ import Medical_requests from './AdminDashBoard/Pages/Medical_requests';
 import Colorpallete from './Colorpallete';
 import ProfilePage from './AdminDashBoard/Pages/ProfilePage';
 import PatientProfile from './AdminDashBoard/Pages/PatientProfile ';
+import Tooth2d from './try/Tooth2d';
 
 function AdminRoutes() {
   const location = useLocation();
@@ -20,6 +21,7 @@ function AdminRoutes() {
 
   return (
     <div className={`flex-1 ${isProfilePage ? '' : 'p-8'}`}>
+      {/* <Tooth2d/> */}
       <Routes>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/patients" element={<Patients />} />

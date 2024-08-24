@@ -1,27 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from '../Components/Modal';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export default function Patients_List() {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const [addPatient, setAddPatient] = useState(false);
     const [editPatient, setEditPatient] = useState(false);
     const [deleteConfirmation, setDeleteConfirmation] = useState(false);
-    const [patientsInfo, setPatientsInfo] = useState([
-        { id: '04-12-2000', name: 'Book, Devin', lastVisit: '03-12-2024' },
-        { id: '04-12-2001', name: 'James Bond', lastVisit: '03-12-2024' },
-        { id: '04-12-201104', name: 'Pogi ako', lastVisit: '03-12-2024' },
-        { id: '04-12-2500001', name: 'John Doe', lastVisit: '03-12-2024' },
-        { id: '04-12-2500002', name: 'Jane Doe', lastVisit: '03-12-2024' },
-        { id: '04-12-2500003', name: 'Michael Scott', lastVisit: '03-12-2024' },
-        { id: '04-12-2500004', name: 'Pam Beesly', lastVisit: '03-12-2024' },
-        { id: '04-12-2500005', name: 'Dwight Schrute', lastVisit: '03-12-2024' },
-        { id: '04-12-2500006', name: 'Jim Halpert', lastVisit: '03-12-2024' },
-        { id: '04-12-2500007', name: 'Stanley Hudson', lastVisit: '03-12-2024' },
-        { id: '04-12-2500008', name: 'Angela Martin', lastVisit: '03-12-2024' },
-        { id: '04-12-2500009', name: 'Kevin Malone', lastVisit: '03-12-2024' },
-        { id: '04-12-2500010', name: 'Meredith Palmer', lastVisit: '03-12-2024' },
-    ]);
+    const [patientsInfo, setPatientsInfo] = useState([]);
+
+    useEffect(() => {
+        const fetchPatients = async () => {
+            try {
+                const response = await axios.get(
+                    `${import.meta.env.VITE_BASEURL}/Patient/auth/getAllPatients`,
+                    {
+                        withCredentials: true
+                    }
+                );
+                setPatientsInfo(response.data);
+            } catch (error) {
+                console.error('Error fetching patients:', error);
+            }
+        };
+
+        fetchPatients();
+    }, []);
 
     const [selectedPatient, setSelectedPatient] = useState(null);
     const [newPatient, setNewPatient] = useState({ id: '', name: '', lastVisit: '' });
@@ -34,7 +39,7 @@ export default function Patients_List() {
 
     const openModalEditPatient = (patient) => {
         setSelectedPatient(patient);
-        setNewPatient({ ...patient });
+        setNewPatient({ ...patient, name: `${patient.FirstName} ${patient.LastName}` });
         setEditPatient(true);
     };
 
@@ -64,9 +69,10 @@ export default function Patients_List() {
         setSearchQuery(e.target.value);
     };
 
-    const filteredPatients = patientsInfo.filter((patient) =>
-        patient.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredPatients = patientsInfo.filter((patient) => {
+        const fullName = `${patient.FirstName} ${patient.LastName}`.toLowerCase();
+        return fullName.includes(searchQuery.toLowerCase());
+    });
 
     return (
         <div className='container mx-auto p-4'>
@@ -88,16 +94,13 @@ export default function Patients_List() {
             <div className='mt-4'>
                 <div className='flex w-full text-xl font-semibold border-b pb-2'>
                     <div className='flex-1'>Patient Name</div>
-                    <div className='flex-1  hidden lg:block'>Last Visit</div>
+                    <div className='flex-1 hidden lg:block'>Last Visit <span className='text-red-600'>(Un Available)</span></div>
                     <div className='flex-1 text-center'>Actions</div>
                 </div>
                 {filteredPatients.map((patient) => (
                     <div key={patient.id} className='flex w-full items-center border-b py-2'>
-                        <div className='flex-1'>{patient.name}</div>
-                        {/* <div className='flex-1'>{patient.lastVisit}</div> */}
-
-                        <div className='flex-1 hidden lg:block'>{patient.lastVisit} </div>
-
+                        <div className='flex-1'>{`${patient.FirstName} ${patient.LastName}`}</div>
+                        <div className='flex-1 hidden lg:block'>{patient.lastVisit}</div>
                         <div className='flex-1 flex gap-2 justify-center'>
                             <button className='text-blue-500' onClick={() => navigate('/PatientProfile')}>
                                 <span className="material-symbols-outlined">visibility</span>
@@ -190,7 +193,6 @@ export default function Patients_List() {
                         <button type="submit" className="btn btn-success text-sm mt-4">Update Patient</button>
                     </form>
                 </div>
-
 
             </Modal>
 
