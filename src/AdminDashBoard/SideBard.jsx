@@ -39,10 +39,11 @@ export default function Sidebar() {
                     <div className="flex flex-col items-center mb-8" onClick={handleImageClick}>
                         <div className="avatar">
                             <div className="w-24 rounded-full cursor-pointer">
-                                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" alt="Profile" />
+                                <img src="../../public/bini.jpg" alt="Profile" />
+
                             </div>
                         </div> 
-                        <span className="font-semibold">Boss Karen</span>
+                        <span className="font-semibold">Buni Mikha</span>
                     </div>
                     <div className="flex-grow">
                         <ul className="space-y-2">
