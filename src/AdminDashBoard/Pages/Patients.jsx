@@ -102,7 +102,7 @@ export default function Patients_List() {
                         <div className='flex-1'>{`${patient.FirstName} ${patient.LastName}`}</div>
                         <div className='flex-1 hidden lg:block'>{patient.lastVisit}</div>
                         <div className='flex-1 flex gap-2 justify-center'>
-                            <button className='text-blue-500' onClick={() => navigate('/PatientProfile')}>
+                            <button className='text-blue-500' onClick={() => navigate(`/PatientProfile/${patient.id}`)}>
                                 <span className="material-symbols-outlined">visibility</span>
                             </button>
                             <button className='text-yellow-500' onClick={() => openModalEditPatient(patient)}>

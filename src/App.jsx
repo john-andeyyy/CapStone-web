@@ -3,7 +3,7 @@ import Footer from './Guest/GuestComponents/Footer';
 import GuestNavBar from "./Guest/GuestNavigation/GuestNavBar";
 import CreateAccount from "./Guest/GuestPages/CreateAccount";
 import LandingPage from "./Guest/GuestPages/LandingPage";
-import AdminLogin from './Pages/AdminLogin';
+import AdminLogin from './Guest/GuestPages/AdminLogin';
 import Sidebar from './AdminDashBoard/SideBard';
 import Dashboard from './AdminDashBoard/Components/Dashboard';
 import ThemeController from './Guest/GuestComponents/ThemeController';
@@ -28,7 +28,7 @@ function AdminRoutes() {
         <Route path="/add_procedure" element={<Add_Procedure />} />
         <Route path="/medical_requests" element={<Medical_requests />} />
         <Route path="/ProfilePage" element={<ProfilePage />} />
-        <Route path="/PatientProfile" element={<PatientProfile />} />
+        <Route path="/PatientProfile/:id" element={<PatientProfile />} />
       </Routes>
     </div>
   );
