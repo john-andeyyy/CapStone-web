@@ -13,14 +13,18 @@ export default function Add_Procedure() {
 
   const [procedureList, setProcedureList] = useState([]);
 
-  const [newProcedure, setNewProcedure] = useState({ _id: '', Procedure: '', Duration: '', Price: '' });
+  const [newProcedure, setNewProcedure] = useState({ _id: '', Procedure_name: '', Duration: '', Price: '' });
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState('asc');
 
   useEffect(() => {
     const fetchProcedures = async () => {
       try {
-        const response = await axios.get(`${BASEURL}/Procedure/show`);
+        const response = await axios.get(`${BASEURL}/Procedure/show`,
+          {
+            withCredentials:true
+          });
+       
         if (Array.isArray(response.data)) {
           setProcedureList(response.data);
         } else {
@@ -138,9 +142,11 @@ export default function Add_Procedure() {
     );
   };
 
-  const filteredProcedures = Array.isArray(procedureList) ? procedureList.filter((procedure) =>
-    procedure.Procedure.toLowerCase().includes(searchQuery.toLowerCase())
-  ) : [];
+  const filteredProcedures = Array.isArray(procedureList) ? procedureList.filter((procedure) => {
+    // Check if Procedure is a string and include in the filter
+    const procedureName = typeof procedure.Procedure_name === 'string' ? procedure.Procedure_name : '';
+    return procedureName.toLowerCase().includes(searchQuery.toLowerCase());
+  }) : [];
 
   return (
     <div className='container mx-auto text-sm lg:text-md'>
@@ -172,7 +178,7 @@ export default function Add_Procedure() {
         </div>
         {filteredProcedures.map((procedure) => (
           <div key={procedure._id} className='flex w-full items-center border-b py-2'>
-            <div className='flex-1'>{procedure.Procedure}</div>
+            <div className='flex-1'>{procedure.Procedure_name}</div>
             <div className='flex-1 hidden lg:block'>{procedure.Duration}</div>
             <div className='flex-1 hidden lg:block'>{procedure.Price}</div>
             <div className='flex-1 flex gap-2 justify-center'>
