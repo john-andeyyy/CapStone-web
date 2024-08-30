@@ -3,6 +3,8 @@ import Modal from '../Components/Modal';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+import { fetchPatients } from '../Fetchs/patient/patient_account'
+
 export default function Patients_List() {
     const navigate = useNavigate();
     const [addPatient, setAddPatient] = useState(false);
@@ -10,27 +12,22 @@ export default function Patients_List() {
     const [deleteConfirmation, setDeleteConfirmation] = useState(false);
     const [patientsInfo, setPatientsInfo] = useState([]);
 
-    useEffect(() => {
-        const fetchPatients = async () => {
-            try {
-                const response = await axios.get(
-                    `${import.meta.env.VITE_BASEURL}/Patient/auth/getAllPatients`,
-                    {
-                        withCredentials: true
-                    }
-                );
-                setPatientsInfo(response.data);
-            } catch (error) {
-                console.error('Error fetching patients:', error);
-            }
-        };
-
-        fetchPatients();
-    }, []);
-
     const [selectedPatient, setSelectedPatient] = useState(null);
     const [newPatient, setNewPatient] = useState({ id: '', name: '', lastVisit: '' });
     const [searchQuery, setSearchQuery] = useState('');
+
+
+
+
+
+
+    useEffect(() => {
+        const fetch_patient = async () => {
+            const response = await fetchPatients()
+            setPatientsInfo(response);
+        }
+        fetch_patient()
+    }, []);
 
     const openModalAddPatient = () => {
         setNewPatient({ id: '', name: '', lastVisit: '' });
@@ -105,17 +102,17 @@ export default function Patients_List() {
                             <button className='text-blue-500' onClick={() => navigate(`/PatientProfile/${patient.id}`)}>
                                 <span className="material-symbols-outlined">visibility</span>
                             </button>
-                            <button className='text-yellow-500' onClick={() => openModalEditPatient(patient)}>
+                            {/* <button className='text-yellow-500' onClick={() => openModalEditPatient(patient)}>
                                 <span className="material-symbols-outlined">edit</span>
                             </button>
                             <button className='text-red-500' onClick={() => openModalDeleteConfirmation(patient)}>
                                 <span className="material-symbols-outlined">delete</span>
-                            </button>
+                            </button> */}
                         </div>
                     </div>
                 ))}
             </div>
-            <button className='btn btn-success fixed bottom-4 right-4' onClick={openModalAddPatient}>Add Patient</button>
+            {/* <button className='btn btn-success fixed bottom-4 right-4' onClick={openModalAddPatient}>Add Patient</button> */}
 
             <Modal isOpen={addPatient} close={() => setAddPatient(false)}>
                 <h3 className="font-bold text-lg">Add New Patient</h3>

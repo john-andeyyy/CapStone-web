@@ -6,7 +6,7 @@ import { get_profile } from './Fetchs/Admin/admin_profile';
 export default function Sidebar() {
     const [isOpen, setIsOpen] = useState(false);
     const [activeItem, setActiveItem] = useState('');
-    const [profilePic, setProfilePic] = useState('../../public/bini.jpg');
+    const [profilePic, setProfilePic] = useState('../../public/default-avatar.jpg');
     const [name, setName] = useState('name');
     const navigate = useNavigate();
 
@@ -14,7 +14,7 @@ export default function Sidebar() {
         const fetchProfile = async () => {
             try {
                 const res = await get_profile();
-                setProfilePic(res.ProfilePicture || '../../public/bini.jpg');
+                setProfilePic(res.ProfilePicture || profilePic);
                 setName(res.FirstName || 'name');
             } catch (error) {
                 console.error('Error fetching profile:', error);

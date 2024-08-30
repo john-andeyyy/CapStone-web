@@ -6,6 +6,7 @@ export default function Add_Procedure() {
   const BASEURL = import.meta.env.VITE_BASEURL;
   const [addPatientModalOpen, setAddPatientModalOpen] = useState(false);
   const [editProcedureModalOpen, setEditProcedureModalOpen] = useState(false);
+  const [viewProcedureModalOpen, setviewProcedureModalOpen] = useState(false);
   const [deleteConfirmationModalOpen, setDeleteConfirmationModalOpen] = useState(false);
   const [procedureToEdit, setProcedureToEdit] = useState(null);
   const [procedureToDelete, setProcedureToDelete] = useState(null);
@@ -38,10 +39,14 @@ export default function Add_Procedure() {
     setAddPatientModalOpen(true);
   };
 
-  const openEditProcedureModal = (procedure) => {
+  const openEditProcedureModal = (procedure, model) => {
     setProcedureToEdit(procedure);
     setNewProcedure({ ...procedure });
-    setEditProcedureModalOpen(true);
+    if (model == 'Edit') {
+      setEditProcedureModalOpen(true);
+    } else if (model == 'View') {
+      setviewProcedureModalOpen(true)
+    }
   };
 
   const openDeleteConfirmationModal = (procedure) => {
@@ -171,7 +176,10 @@ export default function Add_Procedure() {
             <div className='flex-1 hidden lg:block'>{procedure.Duration}</div>
             <div className='flex-1 hidden lg:block'>{procedure.Price}</div>
             <div className='flex-1 flex gap-2 justify-center'>
-              <button className='text-blue-500' onClick={() => openEditProcedureModal(procedure)}>
+              <button className='text-green-500' onClick={() => openEditProcedureModal(procedure, 'View')}>
+                <span className="material-symbols-outlined">visibility</span>
+              </button>
+              <button className='text-blue-500' onClick={() => openEditProcedureModal(procedure, 'Edit')}>
                 <span className="material-symbols-outlined">edit</span>
               </button>
               <button className='text-red-500' onClick={() => openDeleteConfirmationModal(procedure)}>
@@ -224,8 +232,17 @@ export default function Add_Procedure() {
         </form>
       </Modal>
 
-      <Modal isOpen={editProcedureModalOpen} close={() => setEditProcedureModalOpen(false)}>
-        <h3 className="font-bold text-lg">Edit Procedure</h3>
+      {/* VIEW AND EDIT MODAL */}
+      <Modal
+        isOpen={editProcedureModalOpen || viewProcedureModalOpen}
+        close={() => {
+          setEditProcedureModalOpen(false);
+          setviewProcedureModalOpen(false);
+        }}
+      >
+        <h3 className="font-bold text-lg">
+          {viewProcedureModalOpen ? "View Procedure" : "Edit Procedure"}
+        </h3>
         <form onSubmit={handleEditSubmit} className="flex flex-col">
           <div className="label">
             <span className="label-text">Procedure Name</span>
@@ -236,6 +253,7 @@ export default function Add_Procedure() {
             value={newProcedure.Procedure}
             onChange={(e) => setNewProcedure({ ...newProcedure, Procedure: e.target.value })}
             className="border p-2 mb-2"
+            readOnly={viewProcedureModalOpen}
             required
           />
           <div className="label">
@@ -247,6 +265,7 @@ export default function Add_Procedure() {
             value={newProcedure.Duration}
             onChange={(e) => setNewProcedure({ ...newProcedure, Duration: e.target.value })}
             className="border p-2 mb-2"
+            readOnly={viewProcedureModalOpen}
             required
           />
           <div className="label">
@@ -258,11 +277,15 @@ export default function Add_Procedure() {
             value={newProcedure.Price}
             onChange={(e) => setNewProcedure({ ...newProcedure, Price: e.target.value })}
             className="border p-2 mb-2"
+            readOnly={viewProcedureModalOpen}
             required
           />
-          <button type="submit" className="btn btn-success">Save Changes</button>
+          {!viewProcedureModalOpen && (
+            <button type="submit" className="btn btn-success">Save Changes</button>
+          )}
         </form>
       </Modal>
+
 
       <Modal isOpen={deleteConfirmationModalOpen} close={() => setDeleteConfirmationModalOpen(false)}>
         <h3 className="font-bold text-lg">Confirm Deletion</h3>

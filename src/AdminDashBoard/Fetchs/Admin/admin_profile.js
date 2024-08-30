@@ -32,7 +32,7 @@ export const update_profile = async (profileData) => {
     try {
         const response = await axios.put(
             `${BASEURL}/Admin/auth/Update`,
-            profileData, // Pass FormData directly
+            profileData, 
             {
                 withCredentials: true,
                 headers: {

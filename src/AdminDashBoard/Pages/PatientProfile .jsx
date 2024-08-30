@@ -1,8 +1,10 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { get_procedure_by_id } from '../Fetchs/patient/medical_certificate';
 
 const PatientProfile = () => {
+    const { id } = useParams();
     const [patient, setPatient] = useState({
         FirstName: "Alice",
         LastName: "Wonderland",
@@ -18,56 +20,63 @@ const PatientProfile = () => {
         id: "s",
     });
 
-    const [dentalHistory, setDentalHistory] = useState([
-        {
-            id: "01",
-            date: "03-12-2024",
-            procedures: ["Cleaning", "Checkup", "Tooth Extraction", "Root Canal", "Filling"],
-            Amount: "₱1,250.00"
-        }
-    ]);
+    const [profilePic, setProfilePic] = useState('../../public/default-avatar.jpg');
+    const [dentalHistory, setDentalHistory] = useState([]);
+    const [showButton, setShowButton] = useState(false); // State to control button visibility
 
-    const { id } = useParams();
+    //! FUNCTIONS!!!!
+    const get_patient = async () => {
+        try {
+            const response = await axios.get(
+                `${import.meta.env.VITE_BASEURL}/Patient/auth/view_patient_data`,
+                {
+                    params: { id },
+                    withCredentials: true
+                }
+            );
+
+            console.log('Procedure History:', response.data.procedureHistory);
+
+            // Check if any procedure has the Status 'done'
+            const anyDone = response.data.procedureHistory.some(procedure => procedure.Status === 'done');
+            setShowButton(anyDone);
+
+            // Format the procedureHistory dates
+            const formattedProcedureHistory = response.data.procedureHistory.map(procedure => ({
+                ...procedure,
+                date: new Date(procedure.date).toLocaleDateString(), // Convert timestamp to readable date
+                Amount: `₱${procedure.Amount}` // Format the amount as needed
+            }));
+
+            setDentalHistory(formattedProcedureHistory); // Set the formatted history
+            setPatient(response.data);
+
+        } catch (error) {
+            console.log(error.message);
+        }
+    };
 
     useEffect(() => {
-        const get_patient = async () => {
-            try {
-                const response = await axios.get(
-                    `${import.meta.env.VITE_BASEURL}/Patient/auth/view_patient_data`,
-                    {
-                        params: { id },
-                        withCredentials: true
-                    }
-                );
-                console.log(response.data.procedureHistory);
-
-                // Format the procedureHistory dates
-                const formattedProcedureHistory = response.data.procedureHistory.map(procedure => ({
-                    ...procedure,
-                    date: new Date(procedure.date).toLocaleDateString(), // Convert timestamp to readable date
-                    Amount: `₱${procedure.Amount}` // Format the amount as needed
-                }));
-
-                setDentalHistory(formattedProcedureHistory); // Set the formatted history
-
-                setPatient(response.data);
-
-            } catch (error) {
-                console.log(error.message);
-            }
-        };
-
         get_patient();
+        // med_cert()
     }, []);
 
-
-
-
     const formatProcedures = (procedures) => {
+        const exampleProcedure = "Xray";
         if (procedures.length > 3) {
-            return `${procedures.slice(0, 3).join(', ')}...`;
+            const displayedProcedures = procedures.slice(0, 2); // Show first two
+            const includesExample = procedures.includes(exampleProcedure);
+            if (includesExample) {
+                return `${displayedProcedures.join(', ')}... (${exampleProcedure})`;
+            } else {
+                return `${displayedProcedures.join(', ')}...`;
+            }
         }
         return procedures.join(', ');
+    };
+
+    const handleRowClick = (id) => {
+        alert(`Procedure ID: ${id}`);
     };
 
     return (
@@ -75,7 +84,7 @@ const PatientProfile = () => {
             <div className="flex flex-col lg:flex-row justify-between items-center mb-4">
                 <h1 className="text-2xl font-semibold py-4 lg:py-0">Patient Profile</h1>
                 <img
-                    src={patient.ProfilePicture}
+                    src={patient.ProfilePicture || profilePic}
                     alt="Profile Preview"
                     className="mt-4 w-40 h-40 mx-auto"
                 />
@@ -111,12 +120,11 @@ const PatientProfile = () => {
                 </div>
 
                 <div className="w-auto mt-6">
-                    <h3 className="text-xl font-semibold mt-6">Dental History</h3>
+                    <h3 className="text-xl font-semibold mt-6">Procedure History</h3>
                     <div className="overflow-x-auto mt-2">
                         <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-neutral">
                                 <tr>
-                                    {/* <th className="hidden md:table-cell px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th> */}
                                     <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">date</th>
                                     <th className="hidden md:table-cell px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Procedures</th>
                                     <th className="hidden md:table-cell px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
@@ -125,16 +133,17 @@ const PatientProfile = () => {
                             </thead>
                             <tbody className="divide-y divide-gray-200">
                                 {dentalHistory.map((record) => (
-                                    <tr key={record.id}>
-                                        {/* <td className="hidden md:table-cell px-2 py-4 whitespace-nowrap">{record.id}</td> */}
+                                    <tr key={record.id} onClick={() => handleRowClick(record.id)} className="cursor-pointer">
                                         <td className="px-2 py-4 whitespace-nowrap">{record.date}</td>
                                         <td className="hidden md:table-cell px-2 py-4 whitespace-nowrap">{formatProcedures(record.procedures)}</td>
                                         <td className="hidden md:table-cell px-2 py-4 whitespace-nowrap">{record.Amount}</td>
                                         <td className="px-2 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                            <button className="text-green-500 hover:text-green-700">
-                                                <span className="hidden md:inline">📝 Create medical certificate</span>
-                                                <span className="md:hidden">📝</span>
-                                            </button>
+                                            {showButton && (
+                                                <button className="text-green-500 hover:text-green-700">
+                                                    <span className="hidden md:inline">📝 Create medical certificate</span>
+                                                    <span className="md:hidden">📝</span>
+                                                </button>
+                                            )}
                                         </td>
                                     </tr>
                                 ))}
