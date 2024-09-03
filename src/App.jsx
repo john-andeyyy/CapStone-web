@@ -15,6 +15,7 @@ import ProfilePage from './AdminDashBoard/Pages/ProfilePage';
 import PatientProfile from './AdminDashBoard/Pages/PatientProfile ';
 import Tooth2d from './try/Tooth2d';
 import Appointment from './AdminDashBoard/Pages/Appointments'
+import AppointmentDetail from './AdminDashBoard/Pages/AppointmentDetails'; 
 
 function AdminRoutes() {
   const location = useLocation();
@@ -33,6 +34,8 @@ function AdminRoutes() {
         <Route path="/medical_requests" element={<Medical_requests />} />
         <Route path="/ProfilePage" element={<ProfilePage />} />
         <Route path="/PatientProfile/:id" element={<PatientProfile />} />
+        <Route path="/appointment/:id" element={<AppointmentDetail />} /> {/* Add this route */}
+
       </Routes>
     </div>
   );

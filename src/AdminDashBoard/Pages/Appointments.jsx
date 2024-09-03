@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { FaCheck, FaTimes } from 'react-icons/fa';
 import axios from 'axios';
+import { Link } from 'react-router-dom'; // Import Link for navigation
 
-export default function Appointment() {
+export default function Appointments() {
     const BASEURL = import.meta.env.VITE_BASEURL;
 
     const currentDate = new Date();
@@ -14,6 +15,11 @@ export default function Appointment() {
     });
 
     const [appointments, setAppointments] = useState([]);
+    const [filteredAppointments, setFilteredAppointments] = useState([]);
+    const [selectedStatus, setSelectedStatus] = useState(''); // State for selected status filter
+
+    // State to track status updates for each appointment
+    const [statusUpdates, setStatusUpdates] = useState({});
 
     useEffect(() => {
         // Fetch appointments data from the API
@@ -22,22 +28,43 @@ export default function Appointment() {
         })
             .then(response => {
                 setAppointments(response.data);
+                setFilteredAppointments(response.data); // Initialize filtered appointments
+                // Initialize status updates for each appointment
+                const initialStatusUpdates = response.data.reduce((acc, appointment) => {
+                    acc[appointment._id] = appointment.Status;
+                    return acc;
+                }, {});
+                setStatusUpdates(initialStatusUpdates);
             })
             .catch(error => {
                 console.error('Error fetching appointments:', error);
             });
     }, [BASEURL]);
 
+    useEffect(() => {
+        // Filter appointments based on the selected status
+        if (selectedStatus === '') {
+            setFilteredAppointments(appointments);
+        } else {
+            setFilteredAppointments(appointments.filter(app => app.Status === selectedStatus));
+        }
+    }, [selectedStatus, appointments]);
+
     const handleStatusUpdate = (id) => {
+        const newStatus = statusUpdates[id];
         // Send PATCH request to update the status
         axios.put(`${BASEURL}/ProcedureToPatient/appointmentUpdate/${id}`,
-            { Status: 'Approved' }, // Data to send
+            { Status: newStatus }, // Data to send
             { withCredentials: true } // Config object
         )
             .then(response => {
                 console.log('Status updated:', response.data);
                 setAppointments(appointments.map(app =>
-                    app._id === id ? { ...app, Status: 'Cancelled' } : app
+                    app._id === id ? { ...app, Status: newStatus } : app
+                ));
+                // Update the filtered appointments to reflect the status change
+                setFilteredAppointments(filteredAppointments.map(app =>
+                    app._id === id ? { ...app, Status: newStatus } : app
                 ));
             })
             .catch(error => {
@@ -51,8 +78,23 @@ export default function Appointment() {
             <div className="text-gray-600 mb-8">{formattedDate}</div>
             <div className="mb-8">
                 <h2 className="text-xl font-semibold mb-4">Appointment Requests List</h2>
+                <div className="mb-4">
+                    <select
+                        className="p-2 border rounded"
+                        value={selectedStatus}
+                        onChange={(e) => setSelectedStatus(e.target.value)}
+                    >
+                        <option value="">All Statuses</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Rejected">Rejected</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Missed">Missed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
                 <div className="space-y-4">
-                    {appointments.map(appointment => (
+                    {filteredAppointments.map(appointment => (
                         <div key={appointment._id} className="p-4 bg-base-200 rounded flex justify-between items-center">
                             <div>
                                 <div className="font-semibold">
@@ -69,16 +111,14 @@ export default function Appointment() {
                                         : appointment.procedures[0]}
                                 </div>
                             </div>
-                            <div className="flex space-x-2">
-                                <button
-                                    className="p-2 bg-green-500 text-white rounded"
-                                    onClick={() => handleStatusUpdate(appointment._id)}
+                            <div className="flex space-x-2 items-center">
+                               
+                                <Link
+                                    to={`/appointment/${appointment._id}`} // Navigate to the detail page
+                                    className="p-2 bg-gray-500 text-white rounded"
                                 >
-                                    <FaCheck />
-                                </button>
-                                <button className="p-2 bg-red-500 text-white rounded">
-                                    <FaTimes />
-                                </button>
+                                    View Details
+                                </Link>
                             </div>
                         </div>
                     ))}

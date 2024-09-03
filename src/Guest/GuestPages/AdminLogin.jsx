@@ -6,7 +6,7 @@ export default function AdminLogin() {
     const [Username, setUsername] = useState('admin123');
     const [Password, setPassword] = useState('admin123');
     const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false); // Add loading state
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
@@ -15,8 +15,8 @@ export default function AdminLogin() {
         const database = import.meta.env.VITE_BASEURL;
         console.log(database);
 
-        setLoading(true); // Set loading to true when request starts
-        setError(''); // Clear any previous error messages
+        setLoading(true); 
+        setError(''); 
 
         try {
             const response = await axios.post(`${database}/Admin/auth/login`, {

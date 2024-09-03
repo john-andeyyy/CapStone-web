@@ -44,7 +44,9 @@ export const update_profile = async (profileData) => {
             response: response.data,
             status: response.data.message
         }
-        // window.location.reload();
+
+        alert('update sucessfully')
+        window.location.reload();
 
         return data;
     } catch (error) {
