@@ -14,6 +14,7 @@ import Colorpallete from './Colorpallete';
 import ProfilePage from './AdminDashBoard/Pages/ProfilePage';
 import PatientProfile from './AdminDashBoard/Pages/PatientProfile ';
 import Tooth2d from './try/Tooth2d';
+import Appointment from './AdminDashBoard/Pages/Appointments'
 
 function AdminRoutes() {
   const location = useLocation();
@@ -23,6 +24,9 @@ function AdminRoutes() {
     <div className={`flex-1 ${isProfilePage ? '' : 'p-8'}`}>
       {/* <Tooth2d/> */}
       <Routes>
+        
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/appointments" element={<Appointment />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/patients" element={<Patients />} />
         <Route path="/add_procedure" element={<Add_Procedure />} />
@@ -39,7 +43,7 @@ function App() {
 
   return (
     <Router>
-      {/* <div className='text-center'><Colorpallete /><ThemeController /></div> */}
+      {/* check if the admin login */}
       {isLogin ? (
         <div className="flex">
           <Sidebar />

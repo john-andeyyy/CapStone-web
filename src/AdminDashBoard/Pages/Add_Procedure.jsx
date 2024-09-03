@@ -6,25 +6,23 @@ export default function Add_Procedure() {
   const BASEURL = import.meta.env.VITE_BASEURL;
   const [addPatientModalOpen, setAddPatientModalOpen] = useState(false);
   const [editProcedureModalOpen, setEditProcedureModalOpen] = useState(false);
-  const [viewProcedureModalOpen, setviewProcedureModalOpen] = useState(false);
+  const [viewProcedureModalOpen, setViewProcedureModalOpen] = useState(false);
   const [deleteConfirmationModalOpen, setDeleteConfirmationModalOpen] = useState(false);
   const [procedureToEdit, setProcedureToEdit] = useState(null);
   const [procedureToDelete, setProcedureToDelete] = useState(null);
 
   const [procedureList, setProcedureList] = useState([]);
 
-  const [newProcedure, setNewProcedure] = useState({ _id: '', Procedure_name: '', Duration: '', Price: '' });
+  const [newProcedure, setNewProcedure] = useState({ _id: '', Procedure_name: '', Duration: '', Price: '', Description: '' });
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState('asc');
 
   useEffect(() => {
     const fetchProcedures = async () => {
       try {
-        const response = await axios.get(`${BASEURL}/Procedure/show`,
-          {
-            withCredentials:true
-          });
-       
+        const response = await axios.get(`${BASEURL}/Procedure/show`, {
+          withCredentials: true
+        });
         if (Array.isArray(response.data)) {
           setProcedureList(response.data);
         } else {
@@ -36,20 +34,20 @@ export default function Add_Procedure() {
     };
 
     fetchProcedures();
-  }, []);
+  }, [BASEURL]);
 
   const openAddPatientModal = () => {
-    setNewProcedure({ _id: '', Procedure: '', Duration: '', Price: '' });
+    setNewProcedure({ _id: '', Procedure_name: '', Duration: '', Price: '', Description: '' });
     setAddPatientModalOpen(true);
   };
 
-  const openEditProcedureModal = (procedure, model) => {
+  const openEditProcedureModal = (procedure, mode) => {
     setProcedureToEdit(procedure);
     setNewProcedure({ ...procedure });
-    if (model == 'Edit') {
+    if (mode === 'Edit') {
       setEditProcedureModalOpen(true);
-    } else if (model == 'View') {
-      setviewProcedureModalOpen(true)
+    } else if (mode === 'View') {
+      setViewProcedureModalOpen(true);
     }
   };
 
@@ -60,7 +58,9 @@ export default function Add_Procedure() {
 
   const confirmDelete = async () => {
     try {
-      await axios.delete(`${BASEURL}/Procedure/delete/${procedureToDelete._id}`);
+      await axios.delete(`${BASEURL}/Procedure/delete/${procedureToDelete._id}`, {
+        withCredentials: true,
+      });
       setProcedureList(procedureList.filter((procedure) => procedure._id !== procedureToDelete._id));
       setDeleteConfirmationModalOpen(false);
       setProcedureToDelete(null);
@@ -73,25 +73,27 @@ export default function Add_Procedure() {
     e.preventDefault();
     try {
       const response = await axios.put(`${BASEURL}/Procedure/update/${newProcedure._id}`, {
-        Procedure: newProcedure.Procedure,
+        Procedure_name: newProcedure.Procedure_name,
         Duration: newProcedure.Duration,
-        Price: newProcedure.Price
+        Price: newProcedure.Price,
+        Description: newProcedure.Description
+      }, {
+        withCredentials: true,
       });
 
       if (response.status === 200) {
-        alert(response.data.message)
+        alert(response.data.message || 'Procedure updated successfully!');
+        setProcedureList((prev) =>
+          prev.map((procedure) =>
+            procedure._id === newProcedure._id ? newProcedure : procedure
+          )
+        );
       }
-      setProcedureList((prev) =>
-        prev.map((procedure) =>
-          procedure._id === newProcedure._id ? newProcedure : procedure
-        )
-      );
       setEditProcedureModalOpen(false);
       setProcedureToEdit(null);
     } catch (error) {
       console.error('Error updating procedure:', error);
-      alert(error.response.data.message);
-
+      alert(error.response?.data?.message || 'An error occurred.');
     }
   };
 
@@ -99,17 +101,14 @@ export default function Add_Procedure() {
     e.preventDefault();
 
     try {
-      const response = await axios.post(
-        `${BASEURL}/Procedure/add`,
-        {
-          Procedure: newProcedure.Procedure,
-          Duration: newProcedure.Duration,
-          Price: newProcedure.Price
-        },
-        {
-          withCredentials: true
-        }
-      );
+      const response = await axios.post(`${BASEURL}/Procedure/add`, {
+        Procedure_name: newProcedure.Procedure_name,
+        Duration: newProcedure.Duration,
+        Price: newProcedure.Price,
+        Description: newProcedure.Description
+      }, {
+        withCredentials: true
+      });
 
       if (response.status === 200) {
         alert(response.data.message || 'Procedure added successfully!');
@@ -124,29 +123,26 @@ export default function Add_Procedure() {
     setAddPatientModalOpen(false);
   };
 
-
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
 
   const handleSort = () => {
-    setSortOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
-    setProcedureList((prevList) =>
-      [...prevList].sort((a, b) => {
-        if (sortOrder === 'asc') {
-          return a.Procedure.localeCompare(b.Procedure);
-        } else {
-          return b.Procedure.localeCompare(a.Procedure);
-        }
-      })
-    );
+    const sortedProcedures = [...procedureList].sort((a, b) => {
+      if (sortOrder === 'asc') {
+        return a.Procedure_name.localeCompare(b.Procedure_name);
+      } else {
+        return b.Procedure_name.localeCompare(a.Procedure_name);
+      }
+    });
+
+    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    setProcedureList(sortedProcedures);
   };
 
-  const filteredProcedures = Array.isArray(procedureList) ? procedureList.filter((procedure) => {
-    // Check if Procedure is a string and include in the filter
-    const procedureName = typeof procedure.Procedure_name === 'string' ? procedure.Procedure_name : '';
-    return procedureName.toLowerCase().includes(searchQuery.toLowerCase());
-  }) : [];
+  const filteredProcedures = procedureList.filter((procedure) =>
+    procedure.Procedure_name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className='container mx-auto text-sm lg:text-md'>
@@ -195,6 +191,7 @@ export default function Add_Procedure() {
         ))}
       </div>
 
+      {/* Add Modal */}
       <Modal isOpen={addPatientModalOpen} close={() => setAddPatientModalOpen(false)}>
         <h3 className="font-bold text-lg">Add New Procedure</h3>
         <form onSubmit={handleAddSubmit} className="flex flex-col">
@@ -204,61 +201,9 @@ export default function Add_Procedure() {
           <input
             type="text"
             placeholder="Procedure Name"
-            value={newProcedure.Procedure}
-            onChange={(e) => setNewProcedure({ ...newProcedure, Procedure: e.target.value })}
+            value={newProcedure.Procedure_name}
+            onChange={(e) => setNewProcedure({ ...newProcedure, Procedure_name: e.target.value })}
             className="border p-2 mb-2"
-            required
-          />
-          <div className="label">
-            <span className="label-text">Duration</span>
-          </div>
-          <div className="flex items-center mb-2">
-            <input
-              type="text"
-              placeholder="Duration"
-              value={newProcedure.Duration}
-              onChange={(e) => setNewProcedure({ ...newProcedure, Duration: e.target.value })}
-              className="border p-2 mr-2 w-24"
-              required
-            />
-          </div>
-          <div className="label">
-            <span className="label-text">Price</span>
-          </div>
-          <input
-            type="number"
-            placeholder="Price"
-            value={newProcedure.Price}
-            onChange={(e) => setNewProcedure({ ...newProcedure, Price: e.target.value })}
-            className="border p-2 mb-2"
-            required
-          />
-          <button type="submit" className="btn btn-success">Save Changes</button>
-        </form>
-      </Modal>
-
-      {/* VIEW AND EDIT MODAL */}
-      <Modal
-        isOpen={editProcedureModalOpen || viewProcedureModalOpen}
-        close={() => {
-          setEditProcedureModalOpen(false);
-          setviewProcedureModalOpen(false);
-        }}
-      >
-        <h3 className="font-bold text-lg">
-          {viewProcedureModalOpen ? "View Procedure" : "Edit Procedure"}
-        </h3>
-        <form onSubmit={handleEditSubmit} className="flex flex-col">
-          <div className="label">
-            <span className="label-text">Procedure Name</span>
-          </div>
-          <input
-            type="text"
-            placeholder="Procedure Name"
-            value={newProcedure.Procedure}
-            onChange={(e) => setNewProcedure({ ...newProcedure, Procedure: e.target.value })}
-            className="border p-2 mb-2"
-            readOnly={viewProcedureModalOpen}
             required
           />
           <div className="label">
@@ -270,7 +215,6 @@ export default function Add_Procedure() {
             value={newProcedure.Duration}
             onChange={(e) => setNewProcedure({ ...newProcedure, Duration: e.target.value })}
             className="border p-2 mb-2"
-            readOnly={viewProcedureModalOpen}
             required
           />
           <div className="label">
@@ -282,22 +226,163 @@ export default function Add_Procedure() {
             value={newProcedure.Price}
             onChange={(e) => setNewProcedure({ ...newProcedure, Price: e.target.value })}
             className="border p-2 mb-2"
-            readOnly={viewProcedureModalOpen}
             required
           />
-          {!viewProcedureModalOpen && (
-            <button type="submit" className="btn btn-success">Save Changes</button>
-          )}
+          <div className="label">
+            <span className="label-text">Description</span>
+          </div>
+          <input
+            type="text"
+            placeholder="Description"
+            value={newProcedure.Description}
+            onChange={(e) => setNewProcedure({ ...newProcedure, Description: e.target.value })}
+            className="border p-2 mb-2"
+            required
+          />
+          <div className="modal-action">
+            <button className="btn btn-primary bg-green-400 hover:bg-green-400 text-white">Add Procedure</button>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => setAddPatientModalOpen(false)}
+            >
+              Cancel
+            </button>
+          </div>
         </form>
       </Modal>
 
+      {/* Edit Modal */}
+      <Modal isOpen={editProcedureModalOpen} close={() => setEditProcedureModalOpen(false)}>
+        <h3 className="font-bold text-lg">Edit Procedure</h3>
+        <form onSubmit={handleEditSubmit} className="flex flex-col">
+          <div className="label">
+            <span className="label-text">Procedure Name</span>
+          </div>
+          <input
+            type="text"
+            placeholder="Procedure Name"
+            value={newProcedure.Procedure_name}
+            onChange={(e) => setNewProcedure({ ...newProcedure, Procedure_name: e.target.value })}
+            className="border p-2 mb-2"
+            required
+          />
+          <div className="label">
+            <span className="label-text">Duration</span>
+          </div>
+          <input
+            type="text"
+            placeholder="Duration"
+            value={newProcedure.Duration}
+            onChange={(e) => setNewProcedure({ ...newProcedure, Duration: e.target.value })}
+            className="border p-2 mb-2"
+            required
+          />
+          <div className="label">
+            <span className="label-text">Price</span>
+          </div>
+          <input
+            type="number"
+            placeholder="Price"
+            value={newProcedure.Price}
+            onChange={(e) => setNewProcedure({ ...newProcedure, Price: e.target.value })}
+            className="border p-2 mb-2"
+            required
+          />
+          <div className="label">
+            <span className="label-text">Description</span>
+          </div>
+          <input
+            type="text"
+            placeholder="Description"
+            value={newProcedure.Description}
+            onChange={(e) => setNewProcedure({ ...newProcedure, Description: e.target.value })}
+            className="border p-2 mb-2"
+            required
+          />
+          <div className="modal-action">
+            <button className="btn btn-primary bg-blue-500 hover:bg-blue-500 text-white">Save Changes</button>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => setEditProcedureModalOpen(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </Modal>
 
+      {/* View Modal */}
+      <Modal isOpen={viewProcedureModalOpen} close={() => setViewProcedureModalOpen(false)}>
+        <h3 className="font-bold text-lg">View Procedure</h3>
+        <div className="flex flex-col">
+          <div className="label">
+            <span className="label-text">Procedure Name</span>
+          </div>
+          <input
+            type="text"
+            value={newProcedure.Procedure_name}
+            readOnly
+            className="border p-2 mb-2"
+          />
+          <div className="label">
+            <span className="label-text">Duration</span>
+          </div>
+          <input
+            type="text"
+            value={newProcedure.Duration}
+            readOnly
+            className="border p-2 mb-2"
+          />
+          <div className="label">
+            <span className="label-text">Price</span>
+          </div>
+          <input
+            type="number"
+            value={newProcedure.Price}
+            readOnly
+            className="border p-2 mb-2"
+          />
+          <div className="label">
+            <span className="label-text">Description</span>
+          </div>
+          <input
+            type="text"
+            value={newProcedure.Description}
+            readOnly
+            className="border p-2 mb-2"
+          />
+          <div className="modal-action">
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => setViewProcedureModalOpen(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
       <Modal isOpen={deleteConfirmationModalOpen} close={() => setDeleteConfirmationModalOpen(false)}>
-        <h3 className="font-bold text-lg">Confirm Deletion</h3>
-        <p>Are you sure you want to delete the procedure: <strong>{procedureToDelete?.Procedure}</strong>?</p>
-        <div className="mt-4 flex justify-end">
-          <button className="btn btn-danger" onClick={confirmDelete}>Delete</button>
-          <button className="btn btn-secondary ml-2" onClick={() => setDeleteConfirmationModalOpen(false)}>Cancel</button>
+        <h3 className="font-bold text-lg">Delete Procedure</h3>
+        <p>Are you sure you want to delete {procedureToDelete?.Procedure_name}?</p>
+        <div className="modal-action">
+          <button
+            className="btn bg-red-500 text-white"
+            onClick={confirmDelete}
+          >
+            Delete
+          </button>
+          <button
+            type="button"
+            className="btn btn-ghost"
+            onClick={() => setDeleteConfirmationModalOpen(false)}
+          >
+            Cancel
+          </button>
         </div>
       </Modal>
     </div>

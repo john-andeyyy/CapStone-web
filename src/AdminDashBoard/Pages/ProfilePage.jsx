@@ -61,6 +61,7 @@ const ProfilePage = () => {
         formData.append('contactNumber', profile.contactNumber);
         formData.append('Username', profile.Username);
 
+        
         if (profile.ProfilePicture) {
             formData.append('ProfilePicture', profile.ProfilePicture);
         }
@@ -68,7 +69,8 @@ const ProfilePage = () => {
         try {
             const response = await update_profile(formData);
             if (response) {
-                console.log('Profile updated successfully:', response);
+                console.log('Profile updated successfully:', response.status);
+
             } else {
                 console.error('Failed to update profile');
             }
