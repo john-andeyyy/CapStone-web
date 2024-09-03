@@ -19,6 +19,7 @@ export default function Add_Procedure() {
 
   useEffect(() => {
     const fetchProcedures = async () => {
+      alert(BASEURL)
       try {
         const response = await axios.get(`${BASEURL}/Procedure/show`, {
           withCredentials: true
@@ -94,6 +95,7 @@ export default function Add_Procedure() {
     } catch (error) {
       console.error('Error updating procedure:', error);
       alert(error.response?.data?.message || 'An error occurred.');
+      alert('line 97')
     }
   };
 
@@ -112,12 +114,15 @@ export default function Add_Procedure() {
 
       if (response.status === 200) {
         alert(response.data.message || 'Procedure added successfully!');
+        alert('line 116')
         setProcedureList([...procedureList, response.data.procedure]);
       } else {
         alert(response.data.message || 'Something went wrong.');
+        alert('line 119')
       }
     } catch (error) {
       alert(error.response?.data?.message || 'An error occurred.');
+      alert('line 124')
     }
 
     setAddPatientModalOpen(false);
