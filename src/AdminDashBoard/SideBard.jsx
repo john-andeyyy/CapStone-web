@@ -108,6 +108,17 @@ export default function Sidebar() {
                             </li>
                         </ul>
                     </div>
+                    <button
+                        className="w-full py-2 bg-red-500 text-white rounded flex items-center justify-center"
+                        onClick={() => {
+                            localStorage.clear();
+                            navigate('/');
+                            window.location.reload();
+                        }}
+                    >
+                        <FaSignOutAlt className="mr-2" />
+                        <span className="hidden md:inline">Log out</span>
+                    </button>
                 </div>
                 <div className="py-6">
                     <button
