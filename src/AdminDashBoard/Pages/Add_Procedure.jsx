@@ -114,7 +114,6 @@ export default function Add_Procedure() {
 
       if (response.status === 200) {
         alert(response.data.message || 'Procedure added successfully!');
-        alert('line 116')
         setProcedureList([...procedureList, response.data.procedure]);
       } else {
         alert(response.data.message || 'Something went wrong.');
