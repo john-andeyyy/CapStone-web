@@ -30,6 +30,11 @@ export default function AdminLogin() {
                 localStorage.setItem("Islogin", true);
                 localStorage.setItem("Token", response.data.token);
                 localStorage.setItem("expiresin", response.data.expiresIn);
+                const currentTime = new Date().getTime();
+                localStorage.setItem('lastActiveTime', currentTime);
+
+              
+
 
                 navigate('/dashboard');
                 window.location.reload();
