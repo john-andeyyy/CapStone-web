@@ -147,7 +147,7 @@ export default function Add_Procedure() {
   return (
     <div className='container mx-auto text-sm lg:text-md'>
       <div className='flex justify-between items-center'>
-        <h1 className='text-5xl font-semibold'>Procedure List</h1>
+        <h1 className='text-5xl font-semibold'>Procedure List...</h1>
         <div className='relative'>
           <input
             type='text'
