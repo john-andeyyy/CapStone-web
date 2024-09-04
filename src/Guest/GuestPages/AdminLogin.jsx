@@ -15,8 +15,8 @@ export default function AdminLogin() {
         const database = import.meta.env.VITE_BASEURL;
         console.log(database);
 
-        setLoading(true); 
-        setError(''); 
+        setLoading(true);
+        setError('');
 
         try {
             const response = await axios.post(`${database}/Admin/auth/login`, {
@@ -33,7 +33,7 @@ export default function AdminLogin() {
                 const currentTime = new Date().getTime();
                 localStorage.setItem('lastActiveTime', currentTime);
 
-              
+
 
 
                 navigate('/dashboard');
@@ -64,7 +64,7 @@ export default function AdminLogin() {
                         value={Username}
                         onChange={(e) => setUsername(e.target.value)}
                         required
-                        disabled={loading} 
+                        disabled={loading}
                     />
                     <input
                         className="p-2 my-2 rounded w-full focus:outline-blue-600"

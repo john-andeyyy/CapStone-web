@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { FaCheck, FaTimes } from 'react-icons/fa';
 import axios from 'axios';
 import { Link } from 'react-router-dom'; // Import Link for navigation
 
@@ -31,7 +30,7 @@ export default function Appointments() {
                 setFilteredAppointments(response.data); // Initialize filtered appointments
                 // Initialize status updates for each appointment
                 const initialStatusUpdates = response.data.reduce((acc, appointment) => {
-                    acc[appointment._id] = appointment.Status;
+                    acc[appointment.id] = appointment.status;
                     return acc;
                 }, {});
                 setStatusUpdates(initialStatusUpdates);
@@ -46,7 +45,7 @@ export default function Appointments() {
         if (selectedStatus === '') {
             setFilteredAppointments(appointments);
         } else {
-            setFilteredAppointments(appointments.filter(app => app.Status === selectedStatus));
+            setFilteredAppointments(appointments.filter(app => app.status === selectedStatus));
         }
     }, [selectedStatus, appointments]);
 
@@ -54,17 +53,17 @@ export default function Appointments() {
         const newStatus = statusUpdates[id];
         // Send PATCH request to update the status
         axios.put(`${BASEURL}/ProcedureToPatient/appointmentUpdate/${id}`,
-            { Status: newStatus }, // Data to send
+            { status: newStatus }, // Data to send
             { withCredentials: true } // Config object
         )
             .then(response => {
                 console.log('Status updated:', response.data);
                 setAppointments(appointments.map(app =>
-                    app._id === id ? { ...app, Status: newStatus } : app
+                    app.id === id ? { ...app, status: newStatus } : app
                 ));
                 // Update the filtered appointments to reflect the status change
                 setFilteredAppointments(filteredAppointments.map(app =>
-                    app._id === id ? { ...app, Status: newStatus } : app
+                    app.id === id ? { ...app, status: newStatus } : app
                 ));
             })
             .catch(error => {
@@ -95,26 +94,32 @@ export default function Appointments() {
                 </div>
                 <div className="space-y-4">
                     {filteredAppointments.map(appointment => (
-                        <div key={appointment._id} className="p-4 bg-base-200 rounded flex justify-between items-center">
+                        <div key={appointment.id} className="p-4 bg-base-200 rounded flex justify-between items-center">
                             <div>
                                 <div className="font-semibold">
-                                    {new Date(appointment.Start).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })} -
-                                    {new Date(appointment.End).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}
-                                    {new Date(appointment.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                    {appointment.start && !isNaN(new Date(appointment.start)) ? (
+                                        <>
+                                            {new Date(appointment.start).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })} -
+                                            {new Date(appointment.end).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}
+                                            {new Date(appointment.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                        </>
+                                    ) : (
+                                        <span className="text-red-500">Invalid Date: </span>
+                                    )}
                                 </div>
+
                                 <div className="text-gray-600">
                                     {appointment.patient.FirstName} {appointment.patient.LastName}
                                 </div>
                                 <div>
                                     {appointment.procedures.length > 1
-                                        ? `${appointment.procedures[0]}...`
-                                        : appointment.procedures[0]}
+                                        ? `${appointment.procedures[0].name}...`
+                                        : appointment.procedures[0].name}
                                 </div>
                             </div>
                             <div className="flex space-x-2 items-center">
-                               
                                 <Link
-                                    to={`/appointment/${appointment._id}`} // Navigate to the detail page
+                                    to={`/appointment/${appointment.id}`} // Navigate to the detail page
                                     className="p-2 bg-gray-500 text-white rounded"
                                 >
                                     View Details

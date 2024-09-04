@@ -14,45 +14,52 @@ import Colorpallete from './Colorpallete';
 import ProfilePage from './AdminDashBoard/Pages/ProfilePage';
 import PatientProfile from './AdminDashBoard/Pages/PatientProfile ';
 import Tooth2d from './try/Tooth2d';
-import Appointment from './AdminDashBoard/Pages/Appointments'
+import Appointment from './AdminDashBoard/Pages/Appointments';
 import AppointmentDetail from './AdminDashBoard/Pages/AppointmentDetails';
+import { useState, useEffect } from 'react';
 
 function AdminRoutes() {
   const location = useLocation();
   const isProfilePage = location.pathname === "/ProfilePage";
 
-  
+  const [isExpired, setIsExpired] = useState(false);
+
   // Function to check if the time has expired
   function checkExpiration() {
-    const isTimemout = parseInt(localStorage.getItem('expiresin'), 10);
+    const timeout = parseInt(localStorage.getItem('expiresin'), 10);
     const lastActiveTime = parseInt(localStorage.getItem('lastActiveTime'), 10);
-    const expirationTime = lastActiveTime + isTimemout * 1000;
+    const expirationTime = lastActiveTime + timeout * 1000;
 
     if (new Date().getTime() >= expirationTime) {
-      alert('1 hour has passed since your last activity.');
+      console.log('1 hour has passed since your last activity.');
+      setIsExpired(true);
     }
   }
 
-  // Event listener to reset last active time and check expiration
-  document.addEventListener('mousemove', () => {
-    checkExpiration();
-    const currentTime = new Date().getTime();
-    localStorage.setItem('lastActiveTime', currentTime);
-  });
+  // Event listeners to reset last active time and check expiration
+  useEffect(() => {
+    const handleActivity = () => {
+      checkExpiration();
+      const currentTime = new Date().getTime();
+      localStorage.setItem('lastActiveTime', currentTime);
+    };
 
-  document.addEventListener('keydown', () => {
-    checkExpiration();
-    const currentTime = new Date().getTime();
-    localStorage.setItem('lastActiveTime', currentTime);
-  });
+    document.addEventListener('mousemove', handleActivity);
+    document.addEventListener('keydown', handleActivity);
 
-  // Initial check when the page loads
-  checkExpiration();
+    // Initial check when the component mounts
+    checkExpiration();
+
+    // Cleanup event listeners on unmount
+    return () => {
+      document.removeEventListener('mousemove', handleActivity);
+      document.removeEventListener('keydown', handleActivity);
+    };
+  }, []);
+
   return (
     <div className={`flex-1 ${isProfilePage ? '' : 'p-8'}`}>
-      {/* <Tooth2d/> */}
       <Routes>
-
         <Route path="/" element={<Dashboard />} />
         <Route path="/appointments" element={<Appointment />} />
         <Route path="/dashboard" element={<Dashboard />} />
@@ -62,19 +69,30 @@ function AdminRoutes() {
         <Route path="/ProfilePage" element={<ProfilePage />} />
         <Route path="/PatientProfile/:id" element={<PatientProfile />} />
         <Route path="/appointment/:id" element={<AppointmentDetail />} />
-
       </Routes>
     </div>
   );
 }
 
 function App() {
+  const [isExpired, setIsExpired] = useState(false);
   const isLogin = localStorage.getItem('Islogin');
+
+  useEffect(() => {
+    const timeout = parseInt(localStorage.getItem('expiresin'), 10);
+    const lastActiveTime = parseInt(localStorage.getItem('lastActiveTime'), 10);
+    const expirationTime = lastActiveTime + timeout * 1000;
+
+    if (new Date().getTime() >= expirationTime) {
+      setIsExpired(true);
+      localStorage.clear()
+    }
+  }, []);
+
 
   return (
     <Router>
-      {/* check if the admin login */}
-      {isLogin ? (
+      {isLogin && !isExpired ? (
         <div className="flex">
           <Sidebar />
           <div className="flex-1 ml-0 md:ml-60">
