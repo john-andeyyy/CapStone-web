@@ -22,23 +22,32 @@ export default function Appointments() {
 
     useEffect(() => {
         // Fetch appointments data from the API
-        axios.get(`${BASEURL}/ProcedureToPatient/appointments`, {
-            withCredentials: true
-        })
-            .then(response => {
-                setAppointments(response.data);
-                setFilteredAppointments(response.data); // Initialize filtered appointments
-                // Initialize status updates for each appointment
-                const initialStatusUpdates = response.data.reduce((acc, appointment) => {
-                    acc[appointment.id] = appointment.status;
-                    return acc;
-                }, {});
-                setStatusUpdates(initialStatusUpdates);
-            })
-            .catch(error => {
+        const getAppointments = async () => {
+            try {
+                const response = await axios.get(`${BASEURL}/Appointments/appointments/filter`,
+                    {
+                        withCredentials: true
+                    }
+                )
+
+                if (response.status == 200) {
+                    setAppointments(response.data);
+                    setFilteredAppointments(response.data);
+                    const initialStatusUpdates = response.data.reduce((acc, appointment) => {
+                        acc[appointment.id] = appointment.status;
+                        return acc;
+                    }, {});
+                    setStatusUpdates(initialStatusUpdates);
+                    // console.log(response.data)
+                }
+            } catch (error) {
                 console.error('Error fetching appointments:', error);
-            });
-    }, [BASEURL]);
+
+            }
+        }
+
+        getAppointments()
+    }, []);
 
     useEffect(() => {
         // Filter appointments based on the selected status
@@ -49,31 +58,11 @@ export default function Appointments() {
         }
     }, [selectedStatus, appointments]);
 
-    const handleStatusUpdate = (id) => {
-        const newStatus = statusUpdates[id];
-        // Send PATCH request to update the status
-        axios.put(`${BASEURL}/ProcedureToPatient/appointmentUpdate/${id}`,
-            { status: newStatus }, // Data to send
-            { withCredentials: true } // Config object
-        )
-            .then(response => {
-                console.log('Status updated:', response.data);
-                setAppointments(appointments.map(app =>
-                    app.id === id ? { ...app, status: newStatus } : app
-                ));
-                // Update the filtered appointments to reflect the status change
-                setFilteredAppointments(filteredAppointments.map(app =>
-                    app.id === id ? { ...app, status: newStatus } : app
-                ));
-            })
-            .catch(error => {
-                console.error('Error updating status:', error);
-            });
-    };
 
     return (
         <div>
             <h1 className="text-3xl font-bold mb-4">Appointment Requests</h1>
+
             <div className="text-gray-600 mb-8">{formattedDate}</div>
             <div className="mb-8">
                 <h2 className="text-xl font-semibold mb-4">Appointment Requests List</h2>
@@ -111,16 +100,28 @@ export default function Appointments() {
                                 <div className="text-gray-600">
                                     {appointment.patient.FirstName} {appointment.patient.LastName}
                                 </div>
+
+
+
                                 <div>
                                     {appointment.procedures.length > 1
                                         ? `${appointment.procedures[0].name}...`
                                         : appointment.procedures[0].name}
                                 </div>
+                                <div className="text-gray-600">
+                                    <p>
+                                        <strong>Status: </strong>
+                                        <span className={appointment.status === 'Cancelled' ? 'text-red-500' : 'text-green-500'}>
+                                            {appointment.status}
+                                        </span>
+                                    </p>
+
+                                </div>
                             </div>
                             <div className="flex space-x-2 items-center">
                                 <Link
                                     to={`/appointment/${appointment.id}`} // Navigate to the detail page
-                                    className="p-2 bg-gray-500 text-white rounded"
+                                    className="p-2 bg-green-500 text-white rounded"
                                 >
                                     View Details
                                 </Link>

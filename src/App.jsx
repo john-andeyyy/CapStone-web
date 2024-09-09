@@ -17,6 +17,8 @@ import Tooth2d from './try/Tooth2d';
 import Appointment from './AdminDashBoard/Pages/Appointments';
 import AppointmentDetail from './AdminDashBoard/Pages/AppointmentDetails';
 import { useState, useEffect } from 'react';
+import NotificationComponent from './AdminDashBoard/Pages/NotificationComponent'
+
 
 function AdminRoutes() {
   const location = useLocation();
@@ -91,6 +93,9 @@ function App() {
 
 
   return (
+    // <>
+    //   <NotificationComponent/>
+    // </>
     <Router>
       {isLogin && !isExpired ? (
         <div className="flex">

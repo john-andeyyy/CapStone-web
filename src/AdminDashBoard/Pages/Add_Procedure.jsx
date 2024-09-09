@@ -19,7 +19,6 @@ export default function Add_Procedure() {
 
   useEffect(() => {
     const fetchProcedures = async () => {
-      alert(BASEURL)
       try {
         const response = await axios.get(`${BASEURL}/Procedure/show`, {
           withCredentials: true

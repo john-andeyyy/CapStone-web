@@ -1,7 +1,8 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import { useParams } from 'react-router-dom';
-import { get_procedure_by_id } from '../Fetchs/patient/medical_certificate';
 
 const PatientProfile = () => {
     const { id } = useParams();
@@ -19,7 +20,7 @@ const PatientProfile = () => {
         Username: 's',
         id: "s",
     });
-
+    const navigate = useNavigate()
     const [profilePic, setProfilePic] = useState('../../public/default-avatar.jpg');
     const [dentalHistory, setDentalHistory] = useState([]);
     const [showButton, setShowButton] = useState(false); // State to control button visibility
@@ -38,7 +39,7 @@ const PatientProfile = () => {
             console.log('Procedure History:', response.data.procedureHistory);
 
             // Check if any procedure has the Status 'done'
-            const anyDone = response.data.procedureHistory.some(procedure => procedure.Status === 'done');
+            const anyDone = response.data.procedureHistory.some(procedure => procedure.Status.toLowerCase() === 'done');
             setShowButton(anyDone);
 
             // Format the procedureHistory dates
@@ -76,7 +77,8 @@ const PatientProfile = () => {
     };
 
     const handleRowClick = (id) => {
-        alert(`Procedure ID: ${id}`);
+        navigate(`/appointment/${id}`);
+
     };
 
     return (
@@ -125,7 +127,7 @@ const PatientProfile = () => {
                         <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-neutral">
                                 <tr>
-                                    <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">date</th>
+                                    <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                                     <th className="hidden md:table-cell px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Procedures</th>
                                     <th className="hidden md:table-cell px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
                                     <th className="px-2 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Action</th>
@@ -138,7 +140,7 @@ const PatientProfile = () => {
                                         <td className="hidden md:table-cell px-2 py-4 whitespace-nowrap">{formatProcedures(record.procedures)}</td>
                                         <td className="hidden md:table-cell px-2 py-4 whitespace-nowrap">{record.Amount}</td>
                                         <td className="px-2 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                            {showButton && (
+                                            {showButton && record.Status.toLowerCase() === 'done' && (
                                                 <button className="text-green-500 hover:text-green-700">
                                                     <span className="hidden md:inline">📝 Create medical certificate</span>
                                                     <span className="md:hidden">📝</span>
