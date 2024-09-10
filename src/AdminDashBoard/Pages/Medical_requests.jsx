@@ -11,7 +11,7 @@ export default function MedicalRequests() {
   const [archiveConfirmation, setArchiveConfirmation] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [requests, setRequests] = useState([]);
-  const [statusFilter, setStatusFilter] = useState('Pending'); // Default filter status
+  const [statusFilter, setStatusFilter] = useState('all'); // Default filter status
 
   useEffect(() => {
     const getAppointments = async () => {
@@ -43,7 +43,7 @@ export default function MedicalRequests() {
         case 'Archive':
           return request.medcertiStatus === 'Archive';
         case 'All':
-          return request.medcertiStatus !== null; // Exclude requests with null medcertiStatus
+          return request.medcertiStatus !== 'null'; // Exclude requests with null medcertiStatus
         default:
           return false;
       }

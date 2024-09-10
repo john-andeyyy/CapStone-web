@@ -1,7 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import { useParams } from 'react-router-dom';
 
 const PatientProfile = () => {
@@ -9,23 +8,38 @@ const PatientProfile = () => {
     const [patient, setPatient] = useState({
         FirstName: "Alice",
         LastName: "Wonderland",
-        age: "21",
-        Address: "San Juan, Malolos, Bulacan",
-        Zipcode: "3000",
-        PhoneNumber: "095123478144",
-        CivilStatus: "Single",
-        Gender: "F",
-        Email: "alice@gmail.com",
+        age: "",
+        Address: "",
+        Zipcode: "",
+        PhoneNumber: "",
+        CivilStatus: "",
+        Gender: "",
+        Email: "",
         ProfilePicture: "",
-        Username: 's',
-        id: "s",
+        Username: '',
+        id: "",
+        MiddleName: "",
     });
-    const navigate = useNavigate()
+
+    const navigate = useNavigate();
     const [profilePic, setProfilePic] = useState('../../public/default-avatar.jpg');
     const [dentalHistory, setDentalHistory] = useState([]);
-    const [showButton, setShowButton] = useState(false); // State to control button visibility
+    const [showButton, setShowButton] = useState(false);
 
-    //! FUNCTIONS!!!!
+    const requiredFields = [
+        'FirstName',
+        'LastName',
+        'MiddleName',
+        'Email',
+        'Username',
+        'Address',
+        'PhoneNumber',
+        'Zipcode',
+        'age',
+        'CivilStatus',
+        'Gender'
+    ];
+
     const get_patient = async () => {
         try {
             const response = await axios.get(
@@ -38,19 +52,33 @@ const PatientProfile = () => {
 
             console.log('Procedure History:', response.data.procedureHistory);
 
-            // Check if any procedure has the Status 'done'
             const anyDone = response.data.procedureHistory.some(procedure => procedure.Status.toLowerCase() === 'done');
             setShowButton(anyDone);
 
-            // Format the procedureHistory dates
             const formattedProcedureHistory = response.data.procedureHistory.map(procedure => ({
                 ...procedure,
-                date: new Date(procedure.date).toLocaleDateString(), // Convert timestamp to readable date
-                Amount: `₱${procedure.Amount}` // Format the amount as needed
+                date: new Date(procedure.date).toLocaleDateString(),
+                Amount: `₱${procedure.Amount}`
             }));
 
-            setDentalHistory(formattedProcedureHistory); // Set the formatted history
-            setPatient(response.data);
+            setDentalHistory(formattedProcedureHistory);
+
+            // Set the patient data, using default empty string values if fields are missing
+            setPatient({
+                FirstName: response.data.FirstName || "...",
+                LastName: response.data.LastName || "...",
+                MiddleName: response.data.MiddleName || "...",
+                Email: response.data.Email || "...",
+                Username: response.data.Username || "...",
+                Address: response.data.Address || "...",
+                PhoneNumber: response.data.PhoneNumber || "...",
+                Zipcode: response.data.Zipcode || "...",
+                age: response.data.age || "...",
+                CivilStatus: response.data.CivilStatus || "...",
+                Gender: response.data.Gender || "...",
+                ProfilePicture: response.data.ProfilePicture || profilePic,
+                id: response.data.id || "..."
+            });
 
         } catch (error) {
             console.log(error.message);
@@ -59,13 +87,12 @@ const PatientProfile = () => {
 
     useEffect(() => {
         get_patient();
-        // med_cert()
     }, []);
 
     const formatProcedures = (procedures) => {
         const exampleProcedure = "Xray";
         if (procedures.length > 3) {
-            const displayedProcedures = procedures.slice(0, 2); // Show first two
+            const displayedProcedures = procedures.slice(0, 2);
             const includesExample = procedures.includes(exampleProcedure);
             if (includesExample) {
                 return `${displayedProcedures.join(', ')}... (${exampleProcedure})`;
@@ -78,7 +105,6 @@ const PatientProfile = () => {
 
     const handleRowClick = (id) => {
         navigate(`/appointment/${id}`);
-
     };
 
     return (
@@ -94,31 +120,17 @@ const PatientProfile = () => {
 
             <div className="shadow-md rounded-lg p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {Object.entries(patient)
-                        .filter(([key]) => [
-                            'FirstName',
-                            'LastName',
-                            'MiddleName',
-                            'Email',
-                            'Username',
-                            'Address',
-                            'PhoneNumber',
-                            'Zipcode',
-                            'age',
-                            'CivilStatus',
-                            'Gender'
-                        ].includes(key))
-                        .map(([key, value]) => (
-                            <div key={key} className="field">
-                                <label className="block text-sm font-medium text-gray-700 capitalize">{key}</label>
-                                <input
-                                    type="text"
-                                    value={value}
-                                    readOnly
-                                    className="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
-                                />
-                            </div>
-                        ))}
+                    {requiredFields.map((field) => (
+                        <div key={field} className="field">
+                            <label className="block text-sm font-medium text-gray-700 capitalize">{field}</label>
+                            <input
+                                type="text"
+                                value={patient[field] || ""} // Display empty string if no value
+                                readOnly
+                                className="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                            />
+                        </div>
+                    ))}
                 </div>
 
                 <div className="w-auto mt-6">

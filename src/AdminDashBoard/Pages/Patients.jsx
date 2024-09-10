@@ -87,10 +87,15 @@ export default function Patients_List() {
             ) : (
                 <>
                     <div className='flex flex-col lg:flex-row justify-between items-center'>
-                        <div>
-                            <h1 className='text-2xl font-semibold'>Patients List</h1>
-                            <button onClick={() => fetch_patient()} >Refresh</button>
-                        </div>
+                            <div className='flex justify-between items-center'>
+                                <h1 className='text-2xl font-semibold pb-2'>Patients List</h1>
+                                <button onClick={() => fetch_patient()} className='p-2'>
+                                    <span className="material-symbols-outlined">
+                                        refresh
+                                    </span>
+                                </button>
+                            </div>
+
                         <div className='relative'>
                             <input
                                 type='text'

@@ -13,6 +13,9 @@ export default function AppointmentDetails() {
     const [loading, setLoading] = useState(true);
     const [previewImages, setPreviewImages] = useState({ Before: null, After: null, Xray: null });
     const [fullScreenImage, setFullScreenImage] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState('');
+    const [modalAction, setModalAction] = useState(null);
 
     // To store original fetched values
     const [originalAppointment, setOriginalAppointment] = useState({});
@@ -30,13 +33,15 @@ export default function AppointmentDetails() {
                 Before: data.BeforeImage || '',
                 After: data.AfterImage || '',
                 notes: data.notes || '',
-                Xray: data.XrayImage || ''
+                Xray: data.XrayImage || '',
+                Amount: data.Amount || ''
             });
             setEditedAppointment({
                 Before: data.BeforeImage || '',
                 After: data.AfterImage || '',
                 notes: data.notes || '',
-                Xray: data.XrayImage || ''
+                Xray: data.XrayImage || '',
+                Amount: data.Amount || ''
             });
             setStatusUpdate(data.Status || 'Pending');
             setLoading(false);
@@ -84,6 +89,7 @@ export default function AppointmentDetails() {
         formData.append('Xray', files.Xray);
         formData.append('notes', editedAppointment.notes);
         formData.append('Status', statusUpdate);
+        formData.append('Amount', editedAppointment.Amount); // Added Amount to the form data
 
         axios.put(`${import.meta.env.VITE_BASEURL}/Appointments/appointmentUpdate/${id}`,
             formData,
@@ -96,7 +102,6 @@ export default function AppointmentDetails() {
                 setFiles({ Before: null, After: null, Xray: null });
                 setPreviewImages({ Before: null, After: null, Xray: null });
                 getdata();
-
             })
             .catch(error => {
                 console.error('Error updating appointment:', error);
@@ -104,11 +109,16 @@ export default function AppointmentDetails() {
     };
 
     const handleCancelEdit = () => {
-        // Reset to original values when canceling edit
-        setEditedAppointment({ ...originalAppointment });
-        setPreviewImages({ Before: null, After: null, Xray: null });
-        setFiles({ Before: null, After: null, Xray: null });
-        setIsEditing(false);
+        setModalMessage('Are you sure you want to cancel the changes? All unsaved changes will be lost.');
+        setModalAction(() => () => {
+            setEditedAppointment({ ...originalAppointment });
+            setPreviewImages({ Before: null, After: null, Xray: null });
+            setFiles({ Before: null, After: null, Xray: null });
+            setIsEditing(false);
+            setIsEditingNotes(false);
+            setShowModal(false);
+        });
+        setShowModal(true);
     };
 
     const handleImageClick = (image) => {
@@ -117,6 +127,14 @@ export default function AppointmentDetails() {
 
     const closeFullScreen = () => {
         setFullScreenImage(null);
+    };
+
+    const handleModalConfirm = () => {
+        if (modalAction) modalAction();
+    };
+
+    const handleModalCancel = () => {
+        setShowModal(false);
     };
 
     if (loading) return (
@@ -129,16 +147,17 @@ export default function AppointmentDetails() {
 
     return (
         <div className="p-6 max-w-4xl mx-auto">
-            <h1 className="text-3xl font-bold mb-6">Appointment Details</h1>
-
-            <div className="flex space-x-3">
+            <div className='flex justify-between items-center mb-6'>
+                <h1 className="text-3xl font-bold">Appointment Details</h1>
                 <button
-                    className={`p-3 ${isEditing ? 'bg-red-500' : 'px-9 bg-yellow-600'} text-white rounded-lg hover:${isEditing ? 'bg-gray-600' : 'bg-yellow-600'} transition`}
+                    className={`p-3 w-32 ${isEditing ? 'bg-red-500' : 'bg-yellow-600'} text-white rounded-lg hover:${isEditing ? 'bg-gray-600' : 'bg-yellow-500'} transition`}
                     onClick={() => isEditing ? handleCancelEdit() : setIsEditing(true)}
                 >
                     {isEditing ? 'Cancel Edit' : 'Edit'}
                 </button>
+            </div>
 
+            <div className="flex space-x-3">
                 {isEditing && (
                     <div className="">
                         <button
@@ -156,9 +175,40 @@ export default function AppointmentDetails() {
                 <p><strong>Start:</strong> {new Date(appointment.Start).toLocaleTimeString('en-US')}</p>
                 <p><strong>End:</strong> {new Date(appointment.End).toLocaleTimeString('en-US')}</p>
                 <p><strong>Patient:</strong> {appointment.patient?.FirstName || 'N/A'} {appointment.patient?.LastName || 'N/A'}</p>
-                <p><strong>Amount:</strong> ${appointment.Amount || 'N/A'}</p>
 
-                <p><strong>Notes: {appointment.notes || 'N/A'}</strong></p>
+                {/* Editable Amount */}
+                <p ><strong>Amount:</strong>
+                    {!isEditing ? (
+                        ` $ ${appointment.Amount || 'N/A'}`
+                    ) : (
+                        <input
+                            type="number"
+                            name="Amount"
+                            value={editedAppointment.Amount}
+                            onChange={handleEditChange}
+                            className="p-2 border border-gray-300 rounded-lg"
+                            placeholder="Enter Amount"
+                        />
+                    )}
+                </p>
+
+                {/* Display procedures */}
+                <p><strong>Procedures:</strong></p>
+                <ul className="list-disc list-inside">
+                    {appointment.procedures && appointment.procedures.length > 0 ? (
+                        appointment.procedures.map((procedure) => (
+                            <li key={procedure._id}>
+                                {procedure.Procedure_name}
+                            </li>
+                        ))
+                    ) : (
+                        <li>No procedures available</li>
+                    )}
+                </ul>
+
+                <p><strong>Notes:</strong> {appointment.notes || 'N/A'}</p>
+
+                {/* Edit Notes Section */}
                 {!isEditing ? (
                     <>
                     </>
@@ -173,6 +223,7 @@ export default function AppointmentDetails() {
                         />
                     </div>
                 )}
+
                 <p><strong>Status:</strong> {
                     !isEditing ? (
                         <>
@@ -180,8 +231,6 @@ export default function AppointmentDetails() {
                                 {appointment.Status}
                             </span>
                         </>
-
-
                     ) : (
                         <select
                             className="p-2 border border-gray-300 rounded-lg"
@@ -199,6 +248,7 @@ export default function AppointmentDetails() {
                 }</p>
                 <p><strong>Request to Cancel:</strong> {appointment.RequestToCancel ? 'Yes' : 'No'}</p>
 
+                {/* Image upload and preview section */}
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
                     <div>
                         <img
@@ -265,12 +315,33 @@ export default function AppointmentDetails() {
                 </div>
             </div>
 
+            {/* Fullscreen Image View */}
             {fullScreenImage && (
-                <div
-                    className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-80 flex items-center justify-center"
-                    onClick={closeFullScreen}
-                >
-                    <img src={fullScreenImage} alt="Full screen view" className="max-h-full max-w-full" />
+                <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-80 z-50 flex justify-center items-center" onClick={closeFullScreen}>
+                    <img src={fullScreenImage} alt="Full Screen" className="max-w-full max-h-full" />
+                </div>
+            )}
+
+            {/* Confirmation Modal */}
+            {showModal && (
+                <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-60 z-50 flex justify-center items-center">
+                    <div className="bg-white p-6 rounded-lg shadow-lg w-80">
+                        <p className="mb-4">{modalMessage}</p>
+                        <div className="flex justify-end space-x-4">
+                            <button
+                                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                                onClick={handleModalConfirm}
+                            >
+                                Yes
+                            </button>
+                            <button
+                                className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+                                onClick={handleModalCancel}
+                            >
+                                No
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>
