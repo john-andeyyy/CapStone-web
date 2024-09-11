@@ -92,13 +92,13 @@ export default function Sidebar() {
                                 <FaFileAlt className="mr-3" />
                                 <span className="hidden md:inline">Medical Requests</span>
                             </li>
-                            <li
+                            {/* <li
                                 className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'create-admin' ? 'bg-neutral text-white' : 'hover:bg-neutral'}`}
                                 onClick={() => handleNavigate('/create-admin', 'create-admin')}
                             >
                                 <FaUserPlus className="mr-3" />
                                 <span className="text-red-500 font-bold hidden md:inline">Create New Admin</span>
-                            </li>
+                            </li> */}
                             <li
                                 className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'add-procedure' ? 'bg-neutral text-white' : 'hover:bg-neutral'}`}
                                 onClick={() => handleNavigate('/Add_Procedure', 'add-procedure')}

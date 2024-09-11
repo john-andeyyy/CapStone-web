@@ -24,7 +24,7 @@ function AdminRoutes() {
   const location = useLocation();
   const isProfilePage = location.pathname === "/ProfilePage";
 
-  const [isExpired, setIsExpired] = useState(false);
+  // const [isExpired, setIsExpired] = useState(false);
 
   // Function to check if the time has expired
   function checkExpiration() {

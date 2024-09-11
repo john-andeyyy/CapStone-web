@@ -11,7 +11,7 @@ export default function MedicalRequests() {
   const [archiveConfirmation, setArchiveConfirmation] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [requests, setRequests] = useState([]);
-  const [statusFilter, setStatusFilter] = useState('all'); // Default filter status
+  const [statusFilter, setStatusFilter] = useState('All'); // Default filter status
 
   useEffect(() => {
     const getAppointments = async () => {

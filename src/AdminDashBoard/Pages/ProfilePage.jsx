@@ -16,17 +16,17 @@ const ProfilePage = () => {
         ProfilePicturePreview: null
     });
 
+    const [isEditable, setIsEditable] = useState(false); // State to toggle edit mode
 
     useEffect(() => {
         const fetchProfile = async () => {
-            const profile = await get_profile()
+            const profile = await get_profile();
             if (profile) {
-                setProfile(profile)
+                setProfile(profile);
             }
-        }
-        fetchProfile()
-    }, [])
-
+        };
+        fetchProfile();
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -44,13 +44,12 @@ const ProfilePage = () => {
                 setProfile((prevProfile) => ({
                     ...prevProfile,
                     ProfilePicturePreview: reader.result, // For previewing the image
-                    ProfilePicture: file // Store the file for uploading
+                    ProfilePicture: file, // Store the file for uploading
                 }));
             };
             reader.readAsDataURL(file); // Read the file as a data URL
         }
     };
-
 
     const handleProfileUpdate = async () => {
         const formData = new FormData();
@@ -61,7 +60,6 @@ const ProfilePage = () => {
         formData.append('contactNumber', profile.contactNumber);
         formData.append('Username', profile.Username);
 
-        
         if (profile.ProfilePicture) {
             formData.append('ProfilePicture', profile.ProfilePicture);
         }
@@ -70,7 +68,6 @@ const ProfilePage = () => {
             const response = await update_profile(formData);
             if (response) {
                 console.log('Profile updated successfully:', response.status);
-
             } else {
                 console.error('Failed to update profile');
             }
@@ -79,36 +76,21 @@ const ProfilePage = () => {
         }
     };
 
-
-    const handleAddAdmin = () => {
-        // Logic to add admin
-        console.log('Add Admin');
-    };
-
-    const handleAddDentist = () => {
-        // Logic to add dentist
-        console.log('Add Dentist');
+    const handleEditToggle = () => {
+        setIsEditable((prevEditable) => !prevEditable); // Toggle edit mode
     };
 
     return (
         <div className="min-h-screen flex justify-center items-center">
-            <div className=" p-6 rounded-lg shadow-lg w-full max-w-2xl">
+            <div className="p-6 rounded-lg shadow-lg w-full max-w-2xl">
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-2xl font-semibold">Profile Page</h1>
-                    {/* <div className="flex items-center">
-                        <button
-                            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 mr-2"
-                            onClick={handleAddAdmin}
-                        >
-                            Add Admin
-                        </button>
-                        <button
-                            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                            onClick={handleAddDentist}
-                        >
-                            Add Dentist
-                        </button>
-                    </div> */}
+                    <button
+                        className={`bg-${isEditable ? 'red' : 'blue'}-500 text-white px-4 py-2 rounded-md hover:bg-${isEditable ? 'red' : 'blue'}-600`}
+                        onClick={handleEditToggle}
+                    >
+                        {isEditable ? 'Cancel' : 'Edit'}
+                    </button>
                 </div>
                 <div className="profile-form space-y-4">
                     <div className="grid grid-cols-3 gap-4">
@@ -120,6 +102,7 @@ const ProfilePage = () => {
                                 value={profile.FirstName}
                                 onChange={handleChange}
                                 className="mt-1 p-2 w-full border rounded-md"
+                                readOnly={!isEditable} // Toggle between editable and read-only
                             />
                         </div>
 
@@ -131,27 +114,29 @@ const ProfilePage = () => {
                                 value={profile.LastName}
                                 onChange={handleChange}
                                 className="mt-1 p-2 w-full border rounded-md"
+                                readOnly={!isEditable}
                             />
                         </div>
                         <div className="form-group">
-                            <label className="block text-gray-700">MiddleName:</label>
+                            <label className="block text-gray-700">Middle Name:</label>
                             <input
                                 type="text"
                                 name="MiddleName"
                                 value={profile.MiddleName}
                                 onChange={handleChange}
                                 className="mt-1 p-2 w-full border rounded-md"
+                                readOnly={!isEditable}
                             />
                         </div>
                         <div className="form-group">
                             <label className="block text-gray-700">Email:</label>
                             <input
-                                readOnly={true}
                                 type="email"
                                 name="Email"
                                 value={profile.Email}
                                 onChange={handleChange}
                                 className="mt-1 p-2 w-full border rounded-md"
+                                readOnly={true} // Email remains read-only
                             />
                         </div>
                         <div className="form-group">
@@ -162,6 +147,7 @@ const ProfilePage = () => {
                                 value={profile.Username}
                                 onChange={handleChange}
                                 className="mt-1 p-2 w-full border rounded-md"
+                                readOnly={!isEditable}
                             />
                         </div>
                         <div className="form-group">
@@ -172,6 +158,7 @@ const ProfilePage = () => {
                                 value={profile.contactNumber}
                                 onChange={handleChange}
                                 className="mt-1 p-2 w-full border rounded-md"
+                                readOnly={!isEditable}
                             />
                         </div>
                         <div className="form-group col-span-2">
@@ -181,6 +168,7 @@ const ProfilePage = () => {
                                 accept="image/*"
                                 onChange={handleProfilePicChange}
                                 className="mt-1 w-full"
+                                disabled={!isEditable} // Disable file input when not editable
                             />
                             {profile.ProfilePicturePreview && (
                                 <img
@@ -190,15 +178,15 @@ const ProfilePage = () => {
                                 />
                             )}
                         </div>
-
-
                     </div>
 
-                    <div>
-                        <button className='btn' onClick={handleProfileUpdate}>
-                            Update
-                        </button>
-                    </div>
+                    {isEditable && (
+                        <div>
+                            <button className="btn" onClick={handleProfileUpdate}>
+                                Update
+                            </button>
+                        </div>
+                    )}
                     <ThemeController />
                 </div>
             </div>
