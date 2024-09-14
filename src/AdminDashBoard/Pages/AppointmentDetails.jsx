@@ -171,7 +171,7 @@ export default function AppointmentDetails() {
             </div>
 
             <div className="shadow-md rounded-lg p-6 mb-6 space-y-4">
-                <p><strong>Date:</strong> {new Date(appointment.date).toLocaleDateString('en-US')}</p>
+                {/* <p><strong>Date:</strong> {new Date(appointment.date).toLocaleDateString('en-US')}</p> */}
                 <p><strong>Start:</strong> {new Date(appointment.Start).toLocaleTimeString('en-US')}</p>
                 <p><strong>End:</strong> {new Date(appointment.End).toLocaleTimeString('en-US')}</p>
                 <p><strong>Patient:</strong> {appointment.patient?.FirstName || 'N/A'} {appointment.patient?.LastName || 'N/A'}</p>
@@ -179,7 +179,7 @@ export default function AppointmentDetails() {
                 {/* Editable Amount */}
                 <p ><strong>Amount:</strong>
                     {!isEditing ? (
-                        ` $ ${appointment.Amount || 'N/A'}`
+                        ` ₱${appointment.Amount || 'N/A'}`
                     ) : (
                         <input
                             type="number"

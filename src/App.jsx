@@ -18,14 +18,13 @@ import Appointment from './AdminDashBoard/Pages/Appointments';
 import AppointmentDetail from './AdminDashBoard/Pages/AppointmentDetails';
 import { useState, useEffect } from 'react';
 import NotificationComponent from './AdminDashBoard/Pages/NotificationComponent'
-
+import Dentist from './AdminDashBoard/Pages/Dentist';
 
 function AdminRoutes() {
   const location = useLocation();
   const isProfilePage = location.pathname === "/ProfilePage";
 
-  // const [isExpired, setIsExpired] = useState(false);
-
+  const [isExpired, setIsExpired] = useState(false);
   // Function to check if the time has expired
   function checkExpiration() {
     const timeout = parseInt(localStorage.getItem('expiresin'), 10);
@@ -71,6 +70,7 @@ function AdminRoutes() {
         <Route path="/ProfilePage" element={<ProfilePage />} />
         <Route path="/PatientProfile/:id" element={<PatientProfile />} />
         <Route path="/appointment/:id" element={<AppointmentDetail />} />
+        <Route path="/Dentist" element={<Dentist />} />
       </Routes>
     </div>
   );

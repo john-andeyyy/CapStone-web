@@ -167,6 +167,7 @@ export default function Add_Procedure() {
       <div className='text-right py-3'>
         <button className='btn bg-green-400 hover:bg-green-400 text-white' onClick={openAddPatientModal}>Create Procedure</button>
       </div>
+      
       <div className='mt-4 text-lg'>
         <div className='flex w-full font-semibold border-b pb-2'>
           <div className='flex-1'>Procedure Name <button onClick={handleSort} className='ml-2 text-blue-500'>{sortOrder === 'asc' ? '↑' : '↓'}</button></div>

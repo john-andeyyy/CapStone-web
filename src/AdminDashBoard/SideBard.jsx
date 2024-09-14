@@ -106,9 +106,16 @@ export default function Sidebar() {
                                 <FaPlus className="mr-3" />
                                 <span className="hidden md:inline">Add Procedure</span>
                             </li>
+                            <li
+                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'Dentist' ? 'bg-neutral text-white' : 'hover:bg-neutral'}`}
+                                onClick={() => handleNavigate('/Dentist', 'Dentist')}
+                            >
+                                <FaFileAlt className="mr-3" />
+                                <span className="hidden md:inline">Dentist</span>
+                            </li>
                         </ul>
                     </div>
-                    <button
+                    {/* <button
                         className="w-full py-2 bg-red-500 text-white rounded flex items-center justify-center"
                         onClick={() => {
                             localStorage.clear();
@@ -118,7 +125,7 @@ export default function Sidebar() {
                     >
                         <FaSignOutAlt className="mr-2" />
                         <span className="hidden md:inline">Log out</span>
-                    </button>
+                    </button> */}
                 </div>
                 <div className="py-6">
                     <button
