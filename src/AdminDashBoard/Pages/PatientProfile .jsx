@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
+import Tooth2d from '../Components/Tooth2d';
 
 const PatientProfile = () => {
     const { id } = useParams();
@@ -109,8 +110,8 @@ const PatientProfile = () => {
 
     return (
         <div className="container mx-auto p-4">
+            <h1 className="text-2xl font-semibold py-4 lg:py-0">Patient Profile</h1>
             <div className="flex flex-col lg:flex-row justify-between items-center mb-4">
-                <h1 className="text-2xl font-semibold py-4 lg:py-0">Patient Profile</h1>
                 <img
                     src={patient.ProfilePicture || profilePic}
                     alt="Profile Preview"
@@ -133,6 +134,9 @@ const PatientProfile = () => {
                     ))}
                 </div>
 
+                <Tooth2d/>
+                
+                {/*//! Procedure History */}
                 <div className="w-auto mt-6">
                     <h3 className="text-xl font-semibold mt-6">Procedure History</h3>
                     <div className="overflow-x-auto mt-2">

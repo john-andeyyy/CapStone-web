@@ -19,19 +19,19 @@ export default function Patients_List() {
 
     const fetch_patient = async () => {
         const response = await fetchPatients();
+        console.log(response)
         setPatientsInfo(response);
         sessionStorage.setItem('patientsData', JSON.stringify(response));
     };
+
     useEffect(() => {
         const cachedData = sessionStorage.getItem('patientsData');
 
+        fetch_patient();
 
         if (cachedData) {
-            // Use the cached data if available
             setPatientsInfo(JSON.parse(cachedData));
         } else {
-            // Fetch data from the API and cache it
-
             fetch_patient();
         }
     }, []);
@@ -87,14 +87,14 @@ export default function Patients_List() {
             ) : (
                 <>
                     <div className='flex flex-col lg:flex-row justify-between items-center'>
-                            <div className='flex justify-between items-center'>
-                                <h1 className='text-2xl font-semibold pb-2'>Patients List</h1>
-                                <button onClick={() => fetch_patient()} className='p-2'>
-                                    <span className="material-symbols-outlined">
-                                        refresh
-                                    </span>
-                                </button>
-                            </div>
+                        <div className='flex justify-between items-center'>
+                            <h1 className='text-2xl font-semibold pb-2'>Patients List</h1>
+                            <button onClick={() => fetch_patient()} className='p-2'>
+                                <span className="material-symbols-outlined">
+                                    refresh
+                                </span>
+                            </button>
+                        </div>
 
                         <div className='relative'>
                             <input
