@@ -84,29 +84,35 @@ export default function AppointmentDetails() {
         setLoading(true);
 
         const formData = new FormData();
-        formData.append('Before', files.Before);
-        formData.append('After', files.After);
-        formData.append('Xray', files.Xray);
-        formData.append('notes', editedAppointment.notes);
-        formData.append('Status', statusUpdate);
-        formData.append('Amount', editedAppointment.Amount); // Added Amount to the form data
+        if (files.Before) formData.append('Before', files.Before); // Ensure file exists before appending
+        if (files.After) formData.append('After', files.After);
+        if (files.Xray) formData.append('Xray', files.Xray);
 
+        // Ensure that text fields are not null or undefined
+        formData.append('notes', editedAppointment.notes || '');
+        formData.append('Status', statusUpdate || '');
+        formData.append('Amount', editedAppointment.Amount || '');
+
+        // Make the API call
         axios.put(`${import.meta.env.VITE_BASEURL}/Appointments/appointmentUpdate/${id}`,
             formData,
             { headers: { 'Content-Type': 'multipart/form-data' }, withCredentials: true }
         )
             .then(response => {
-                setAppointment(response.data);
+                setAppointment(response.data); // Assuming response contains the updated appointment data
                 setIsEditing(false);
                 setIsEditingNotes(false);
                 setFiles({ Before: null, After: null, Xray: null });
                 setPreviewImages({ Before: null, After: null, Xray: null });
-                getdata();
+                getdata();  // Refresh the data after update
             })
             .catch(error => {
-                console.error('Error updating appointment:', error);
+                // Log the error to understand what went wrong
+                console.error('Error updating appointment:', error.response ? error.response.data : error.message);
+                alert('Error updating appointment: ' + (error.response ? error.response.data.message : error.message));
             });
     };
+
 
     const handleCancelEdit = () => {
         setModalMessage('Are you sure you want to cancel the changes? All unsaved changes will be lost.');

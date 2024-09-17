@@ -19,6 +19,7 @@ import Appointment from './AdminDashBoard/Pages/Appointments';
 import AppointmentDetail from './AdminDashBoard/Pages/AppointmentDetails';
 import { useState, useEffect } from 'react';
 import NotificationComponent from './AdminDashBoard/Pages/NotificationComponent'
+
 import Dentist from './AdminDashBoard/Pages/Dentist';
 
 function AdminRoutes() {
@@ -61,6 +62,7 @@ function AdminRoutes() {
 
   return (
     <div className={`flex-1 ${isProfilePage ? '' : 'p-8'}`}>
+      <NotificationComponent />
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/appointments" element={<Appointment />} />

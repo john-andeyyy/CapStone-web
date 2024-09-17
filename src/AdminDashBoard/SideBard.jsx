@@ -106,13 +106,13 @@ export default function Sidebar() {
                                 <FaPlus className="mr-3" />
                                 <span className="hidden md:inline">Add Procedure</span>
                             </li>
-                            <li
+                            {/* <li
                                 className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'Dentist' ? 'bg-neutral text-white' : 'hover:bg-neutral'}`}
                                 onClick={() => handleNavigate('/Dentist', 'Dentist')}
                             >
                                 <FaFileAlt className="mr-3" />
                                 <span className="hidden md:inline">Dentist</span>
-                            </li>
+                            </li> */}
                         </ul>
                     </div>
                     {/* <button
