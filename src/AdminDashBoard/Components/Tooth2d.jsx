@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TeethSVG from '../../GrapicsFiles/Teeth'; // Adjust the path as needed
+import axios from 'axios';
 
-const Tooth2d = ({ topCount = 7, bottomCount = 10 }) => {
+
+const Tooth2d = ({ userIds}) => {
+    const userId = userIds || '66dc9c2425416b3e49ffae0e'
     const [notes, setNotes] = useState({}); // State to hold notes for each tooth
     const [hoveredTooth, setHoveredTooth] = useState(null); // State to track hovered tooth ID
     const [selectedTooth, setSelectedTooth] = useState(null); // State to track selected tooth for modal
@@ -9,6 +12,55 @@ const Tooth2d = ({ topCount = 7, bottomCount = 10 }) => {
     const [newNote, setNewNote] = useState(''); // State for new note input
     const [editingIndex, setEditingIndex] = useState(null); // Index of the note being edited
     const [expandedTooth, setExpandedTooth] = useState(null); // State to track expanded tooth for notes
+    const [topCount, settopCount] = useState(null); 
+    const [bottomCount, setbottomCount] = useState(null); 
+    const [expandedTeeth, setExpandedTeeth] = useState({});
+
+    useEffect(() => {
+        const fetchMedicalHistory = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3000/MedicalHistory/viewByUserId/${userId}`);
+                const data = response.data;
+
+                if (response.data.length > 0) {
+                    const record = response.data[0]; // Assuming you want the first record
+
+                    settopCount(record.topTeeth.length);
+                    setbottomCount(record.bottomTeeth.length);
+
+                    // Initialize the notes and status state with data from topTeeth and bottomTeeth
+                    const initialToothData = {};
+                    record.topTeeth.forEach(tooth => {
+                        initialToothData[`top-${tooth.toothNumber - 1}`] = {
+                            notes: tooth.notes || [],
+                            status: tooth.status || 'unknown', // Default to 'unknown' if status is missing
+                        };
+                    });
+                    record.bottomTeeth.forEach(tooth => {
+                        initialToothData[`bottom-${tooth.toothNumber - 1}`] = {
+                            notes: tooth.notes || [],
+                            status: tooth.status || 'unknown',
+                        };
+                    });
+                    setNotes(initialToothData); // Set the notes and status state with fetched data
+                }
+            } catch (error) {
+                console.error('Error fetching medical history:', error);
+            }
+        };
+
+        fetchMedicalHistory();
+    }, [userId]);
+
+    // Function to get all notes for a specific tooth
+    const getNotesForTooth = (toothId) => {
+        return notes[toothId]?.notes || [];
+    };
+
+
+    const getToothData = (toothId) => {
+        return notes[toothId] || { notes: [], status: 'unknown' };
+    };
 
     // Function to generate an array of numbers from 0 to n-1
     const range = (n) => Array.from({ length: n }, (_, i) => i);
@@ -36,7 +88,7 @@ const Tooth2d = ({ topCount = 7, bottomCount = 10 }) => {
                 setEditingIndex(null); // Reset after editing
             } else {
                 // Add new note at the top
-                updatedNotes[selectedTooth.id] = [newNote, ...(notes[selectedTooth.id] || [])];
+                updatedNotes[selectedTooth.id] = [newNote, ...(notes[selectedTooth.id] )];
             }
             setNotes(updatedNotes);
             setNewNote(''); // Clear input field
@@ -51,14 +103,13 @@ const Tooth2d = ({ topCount = 7, bottomCount = 10 }) => {
 
     // Function to toggle the expansion of notes for a tooth
     const toggleToothExpansion = (toothId) => {
-        setExpandedTooth(expandedTooth === toothId ? null : toothId);
+        setExpandedTeeth((prevState) => ({
+            ...prevState,
+            [toothId]: !prevState[toothId], 
+        }));
     };
 
-    // Function to get all notes for a specific tooth
-    const getNotesForTooth = (toothId) => {
-        return notes[toothId] || [];
-    };
-
+    
     // Function to determine if a tooth ID is being hovered
     const isToothHovered = (id) => hoveredTooth === id;
 
@@ -72,7 +123,7 @@ const Tooth2d = ({ topCount = 7, bottomCount = 10 }) => {
     };
 
     return (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center py-10">
             <div className="mb-4">
                 <div className="flex flex-wrap items-center justify-center space-x-4">
                     {/* Render SVG elements in the top row */}
@@ -121,18 +172,31 @@ const Tooth2d = ({ topCount = 7, bottomCount = 10 }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     {range(topCount + bottomCount).map((index) => {
                         const toothId = index < topCount ? `top-${index}` : `bottom-${index - topCount}`;
-                        const toothNotes = getNotesForTooth(toothId);
-                        const isToothExpanded = expandedTooth === toothId;
+                        const { notes: toothNotes, status: toothStatus } = getToothData(toothId);
+                        const isToothExpanded = expandedTeeth[toothId]; // Check if this specific tooth is expanded
                         const isToothHighlighted = isToothHovered(toothId);
 
                         return (
                             <div
                                 key={toothId}
-                                className={`p-4 bg-white shadow rounded-lg border border-gray-200 ${isToothHighlighted ? 'bg-blue-700 text-white' : ''}`} // Highlighted notes section
+                                className={`p-4 shadow rounded-lg border border-gray-200 ${isToothHighlighted ? ' text-white' : ''}`}
                                 onMouseEnter={() => handleMouseEnter(toothId)}
                                 onMouseLeave={handleMouseLeave}
                             >
-                                <span className="text-lg font-semibold mb-2">{index < topCount ? `Top: ${index + 1}` : `Bottom: ${index - topCount + 1}`}</span> {/* Label in notes section */}
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className={`text-lg font-semibold ${isToothHighlighted ? 'text-yellow-300' : 'text-white'}`}>
+                                        {index < topCount ? `Top: ${index + 1}` : `Bottom: ${index - topCount + 1}`}
+                                        <span className="uppercase"> {toothStatus}</span> {/* Display the status */}
+                                    </div>
+
+                                    <div
+                                        className="cursor-pointer text-blue-500 hover:underline"
+                                        onClick={() => handleSvgClick(toothId, index < topCount ? `Top: ${index + 1}` : `Bottom: ${index - topCount + 1}`)}
+                                    >
+                                        ADD
+                                    </div>
+                                </div>
+
                                 {toothNotes.length > 0 && (
                                     <div className="space-y-2 mb-2">
                                         <button
@@ -142,12 +206,9 @@ const Tooth2d = ({ topCount = 7, bottomCount = 10 }) => {
                                             {isToothExpanded ? 'Collapse Notes' : 'Expand Notes'}
                                         </button>
                                         {isToothExpanded && (
-                                            <div className="space-y-2 mt-2">
+                                            <div className={`space-y-2 mt-2 ${toothNotes.length >= 3 ? 'max-h-40 overflow-y-auto' : ''}`}>
                                                 {toothNotes.map((note, noteIndex) => (
-                                                    <div
-                                                        key={noteIndex}
-                                                        className={`p-2 bg-gray-100 border rounded hover:bg-gray-200 transition-colors ${isToothHighlighted ? 'bg-gray-200' : ''}`} // Highlighted notes
-                                                    >
+                                                    <div key={noteIndex} className="p-2 border rounded">
                                                         {note}
                                                     </div>
                                                 ))}
@@ -155,26 +216,31 @@ const Tooth2d = ({ topCount = 7, bottomCount = 10 }) => {
                                         )}
                                     </div>
                                 )}
-                                {toothNotes.length === 0 && (
-                                    <p className="text-gray-500">No notes</p>
-                                )}
+
+                                {toothNotes.length === 0 && <p className="text-gray-500">No notes</p>}
                             </div>
                         );
                     })}
                 </div>
             </div>
 
+
+
+
             {/* Modal for viewing, adding, and editing notes */}
             {isModalOpen && selectedTooth && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-75">
-                    <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
+                    <div className=" bg-base-100 p-6 rounded-lg shadow-lg w-full max-w-lg">
+
                         <h3 className="text-xl font-semibold mb-4">Notes for {selectedTooth.name}</h3>
 
                         {/* Scrollable table for notes */}
                         <div className="mb-4 max-h-60 overflow-y-auto">
                             <table className="table-auto w-full text-left border">
                                 <thead>
-                                    <tr className="bg-gray-200">
+                                    <tr
+                                        // className="bg-darkgray-200"
+                                    >
                                         <th className="px-4 py-2">Note</th>
                                         <th className="px-4 py-2">Actions</th>
                                     </tr>
@@ -183,7 +249,7 @@ const Tooth2d = ({ topCount = 7, bottomCount = 10 }) => {
                                     {getNotesForTooth(selectedTooth.id).map((note, index) => (
                                         <tr
                                             key={`modal-note-${index}`}
-                                            className="hover:bg-gray-100 cursor-pointer"
+                                            className=" border cursor-pointer"
                                         >
                                             <td className="px-4 py-2">{note}</td>
                                             <td className="px-4 py-2">

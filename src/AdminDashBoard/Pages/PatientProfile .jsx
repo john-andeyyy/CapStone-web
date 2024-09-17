@@ -5,7 +5,8 @@ import { useParams } from 'react-router-dom';
 import Tooth2d from '../Components/Tooth2d';
 
 const PatientProfile = () => {
-    const { id } = useParams();
+    const { id } = useParams(); // Get the 'id' from the URL
+    const userIds = id
     const [patient, setPatient] = useState({
         FirstName: "Alice",
         LastName: "Wonderland",
@@ -134,8 +135,9 @@ const PatientProfile = () => {
                     ))}
                 </div>
 
-                <Tooth2d/>
-                
+
+<Tooth2d userIds={userIds} />
+
                 {/*//! Procedure History */}
                 <div className="w-auto mt-6">
                     <h3 className="text-xl font-semibold mt-6">Procedure History</h3>
