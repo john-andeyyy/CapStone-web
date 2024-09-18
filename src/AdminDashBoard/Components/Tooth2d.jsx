@@ -4,6 +4,7 @@ import axios from 'axios';
 
 
 const Tooth2d = ({ userIds}) => {
+    const Baseurl = import.meta.env.VITE_BASEURL
     const userId = userIds 
     const [notes, setNotes] = useState({}); // State to hold notes for each tooth
     const [hoveredTooth, setHoveredTooth] = useState(null); // State to track hovered tooth ID
@@ -19,7 +20,7 @@ const Tooth2d = ({ userIds}) => {
     useEffect(() => {
         const fetchMedicalHistory = async () => {
             try {
-                const response = await axios.get(`http://localhost:3000/MedicalHistory/viewByUserId/${userId}`);
+                const response = await axios.get(`${Baseurl}/MedicalHistory/viewByUserId/${userId}`);
                 const data = response.data;
 
                 if (response.data.length > 0) {
@@ -79,19 +80,51 @@ const Tooth2d = ({ userIds}) => {
     };
 
     // Handler to add or edit a note
-    const handleSaveNote = () => {
+    const handleSaveNote = async () => {
         if (newNote.trim()) {
             const updatedNotes = { ...notes };
+            const toothType = selectedTooth.id.startsWith('top-') ? 'topTeeth' : 'bottomTeeth';
+            const toothIndex = parseInt(selectedTooth.id.split('-')[1], 10);
+
+            // Prepare the updated tooth data
+            const updatedToothData = {
+                toothNumber: toothIndex + 1,
+                notes: [...updatedNotes[selectedTooth.id]?.notes, newNote], // Add new note to the notes array
+                status: updatedNotes[selectedTooth.id]?.status || 'unknown',
+            };
+
+            // Update the notes state
             if (editingIndex !== null) {
-                // Edit an existing note
-                updatedNotes[selectedTooth.id][editingIndex] = newNote;
+                updatedNotes[selectedTooth.id].notes[editingIndex] = newNote;
                 setEditingIndex(null); // Reset after editing
             } else {
-                // Add new note at the top
-                updatedNotes[selectedTooth.id] = [newNote, ...(notes[selectedTooth.id] )];
+                updatedNotes[selectedTooth.id].notes = [...updatedNotes[selectedTooth.id]?.notes, newNote];
             }
+
             setNotes(updatedNotes);
             setNewNote(''); // Clear input field
+
+            // Prepare the data for the backend PUT request
+            const updatePayload = {
+                topTeeth: toothType === 'topTeeth' ? Object.keys(updatedNotes).filter(key => key.startsWith('top-')).map(key => ({
+                    toothNumber: parseInt(key.split('-')[1], 10) + 1,
+                    status: updatedNotes[key]?.status || 'unknown',
+                    notes: updatedNotes[key]?.notes || [],
+                })) : [],
+                bottomTeeth: toothType === 'bottomTeeth' ? Object.keys(updatedNotes).filter(key => key.startsWith('bottom-')).map(key => ({
+                    toothNumber: parseInt(key.split('-')[1], 10) + 1,
+                    status: updatedNotes[key]?.status || 'unknown',
+                    notes: updatedNotes[key]?.notes || [],
+                })) : [],
+            };
+
+            try {
+                // Make the PUT request to update the medical history
+                await axios.put(`${Baseurl}/MedicalHistory/update/${userId}`, updatePayload);
+                console.log('Notes updated successfully!');
+            } catch (error) {
+                console.error('Error updating notes:', error);
+            }
         }
     };
 

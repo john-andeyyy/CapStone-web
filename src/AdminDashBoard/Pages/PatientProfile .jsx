@@ -16,7 +16,7 @@ const PatientProfile = () => {
     const [showButton, setShowButton] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false); // To control the modal visibility
     const [fullPatient, setFullPatient] = useState(null); // To store full patient details
-
+    const Baseurl = import.meta.env.VITE_BASEURL
     const requiredFields = [
         'FirstName',
         'LastName',
@@ -34,7 +34,7 @@ const PatientProfile = () => {
     const get_patient = async () => {
         try {
             const response = await axios.get(
-                `${import.meta.env.VITE_BASEURL}/Patient/auth/view_patient_data`,
+                `${Baseurl}/Patient/auth/view_patient_data`,
                 {
                     params: { id },
                     withCredentials: true
