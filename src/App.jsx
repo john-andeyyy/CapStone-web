@@ -19,7 +19,7 @@ import Appointment from './AdminDashBoard/Pages/Appointments';
 import AppointmentDetail from './AdminDashBoard/Pages/AppointmentDetails';
 import { useState, useEffect } from 'react';
 import NotificationComponent from './AdminDashBoard/Pages/NotificationComponent'
-
+import NotificationPage from './AdminDashBoard/Pages/NotificationPage';
 import Dentist from './AdminDashBoard/Pages/Dentist';
 
 function AdminRoutes() {
@@ -61,7 +61,7 @@ function AdminRoutes() {
   }, []);
 
   return (
-    <div className={`flex-1 ${isProfilePage ? '' : 'p-8'}`}>
+    <div className={`flex-1 ${isProfilePage ? '' : 'p-8 pt-0.5'}`}>
       <NotificationComponent />
       <Routes>
         <Route path="/" element={<Dashboard />} />
@@ -74,6 +74,7 @@ function AdminRoutes() {
         <Route path="/PatientProfile/:id" element={<PatientProfile />} />
         <Route path="/appointment/:id" element={<AppointmentDetail />} />
         <Route path="/Dentist" element={<Dentist />} />
+        <Route path="/NotificationPage" element={<NotificationPage />} />
       </Routes>
     </div>
   );

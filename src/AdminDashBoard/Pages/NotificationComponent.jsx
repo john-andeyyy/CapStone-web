@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'; // Make sure to install axios
+import { useNavigate } from 'react-router-dom';
 
 const NotificationComponent = () => {
+    const navigate = useNavigate()
+
     const [isOpen, setIsOpen] = useState(false);
     const [notifications, setNotifications] = useState([]);
 
@@ -18,7 +21,7 @@ const NotificationComponent = () => {
 
     // Fetch notifications from the server
     useEffect(() => {
-        
+
         fetchNotifications();
     }, []);
 
@@ -65,6 +68,9 @@ const NotificationComponent = () => {
                     <div className="p-3 text-lg font-semibold bg-gray-100 border-b border-gray-200">
                         Notifications
                     </div>
+                    <button className="" onClick={() => navigate('/NotificationPage')}>
+                        view all
+                    </button>
                     <div className="max-h-60 overflow-y-auto">
                         {notifications.length === 0 ? (
                             <div className="p-3 text-center text-gray-500">No new notifications</div>
