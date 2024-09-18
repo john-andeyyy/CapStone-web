@@ -53,7 +53,7 @@ export default function AdminLogin() {
     return (
         <div className="max-w-5xl mx-auto flex items-center justify-center h-screen">
             <div className="card px-8 py-6 rounded-lg bg-base-200 w-72">
-                <h1 className="text-center font-bold text-3xl text-white pb-4">Login Admin</h1>
+                <h1 className="text-center font-bold text-3xl  pb-4">Login Admin</h1>
                 {error && <h1 className="text-center font-bold py-4 text-xl text-red-600">{error}</h1>}
                 {/* <h1>both admin123</h1> */}
                 <form className="pb-6" onSubmit={handleSubmit}>
