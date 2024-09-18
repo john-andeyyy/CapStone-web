@@ -65,12 +65,14 @@ const NotificationComponent = () => {
             {/* Notification Dropdown */}
             {isOpen && (
                 <div className="absolute top-full right-0 mt-2 w-80 bg-white shadow-lg rounded-lg z-10 overflow-hidden">
-                    <div className="p-3 text-lg font-semibold bg-gray-100 border-b border-gray-200">
-                        Notifications
+                    <div className="p-3 text-lg font-semibold bg-gray-100 border-b border-gray-200 flex justify-between">
+                        <div >
+                            Notifications
+                        </div>
+                        <button className="" onClick={() => navigate('/NotificationPage')}>
+                            view all
+                        </button>
                     </div>
-                    <button className="" onClick={() => navigate('/NotificationPage')}>
-                        view all
-                    </button>
                     <div className="max-h-60 overflow-y-auto">
                         {notifications.length === 0 ? (
                             <div className="p-3 text-center text-gray-500">No new notifications</div>

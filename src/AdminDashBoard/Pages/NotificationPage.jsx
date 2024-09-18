@@ -46,7 +46,7 @@ export default function NotificationPage() {
             const payload = {
                 Title: newNotification.title,
                 Message: newNotification.message,
-                isSendEmail: newNotification.isSendEmail, // Add this if using the email toggle
+                isSendEmail: newNotification.isSendEmail,
             };
 
             switch (newNotification.sendTo) {
@@ -54,10 +54,10 @@ export default function NotificationPage() {
                     endpoint = `${Baseurl}/Notification/all`;
                     break;
                 case 'sendToOne':
-                    endpoint = `${Baseurl}/Notification/single`; // Adjust the endpoint as needed
+                    endpoint = `${Baseurl}/Notification/single`;
                     break;
                 case 'sendToCustom':
-                    endpoint = `${Baseurl}/Notification/custom`; // Adjust the endpoint as needed
+                    endpoint = `${Baseurl}/Notification/custom`;
                     break;
                 default:
                     setError('Invalid send to option');
@@ -65,14 +65,14 @@ export default function NotificationPage() {
                     return;
             }
 
-            const response = await axios.post(endpoint, payload, { withCredentials: true });
-            setNotifications(prevNotifications => [response.data, ...prevNotifications.reverse()]); // Prepend new notification and reverse
-            setNewNotification({ title: '', message: '', sendTo: 'sendToAll', isSendEmail: false }); // Reset state
+            await axios.post(endpoint, payload, { withCredentials: true });
+            setNewNotification({ title: '', message: '', sendTo: 'sendToAll', isSendEmail: false });
             setError('');
             setModalType(null); // Close modal
-            setLoading(true);
 
+            // Refetch notifications to ensure unique keys and update state
             fetchNotifications();
+
         } catch (error) {
             setError('Error sending notification');
             console.error('Error sending notification:', error);
@@ -101,7 +101,7 @@ export default function NotificationPage() {
             const updatedNotifications = notifications.map(notif =>
                 notif._id === editedNotification.id ? response.data : notif
             );
-            setNotifications(updatedNotifications.reverse()); // Reverse order after update
+            setNotifications(updatedNotifications.reverse());
             setEditedNotification({ id: null, title: '', message: '' });
             setModalType(null); // Close modal
             setError('');
@@ -130,7 +130,7 @@ export default function NotificationPage() {
     return (
         <div className="p-4 pt-0 sm:p-6 max-w-full mx-auto flex flex-col h-screen">
             <div className='flex space-x-5 pb-2'>
-                <h2 className="text-2xl font-bold ">Notifications</h2>
+                <h2 className="text-2xl font-bold">Notifications</h2>
                 <button
                     onClick={() => setModalType('new')}
                     className="bg-green-500 text-white px-4 py-2 rounded"
@@ -145,7 +145,7 @@ export default function NotificationPage() {
                 <ul className="space-y-4">
                     {notifications.map(notif => (
                         <li
-                            key={notif._id} // Unique key prop
+                            key={notif._id} // Ensure unique key
                             className="p-4 border rounded shadow-sm cursor-pointer flex justify-between items-center"
                             onClick={() => viewNotificationDetails(notif)}
                         >
@@ -162,7 +162,7 @@ export default function NotificationPage() {
                             </div>
                             <button
                                 onClick={(e) => {
-                                    e.stopPropagation(); // Prevent triggering the onClick for viewing notification details
+                                    e.stopPropagation();
                                     handleEdit(notif);
                                 }}
                                 className="bg-yellow-500 text-white px-4 py-2 rounded"
@@ -173,6 +173,7 @@ export default function NotificationPage() {
                     ))}
                 </ul>
             </div>
+
 
             {modalType === 'new' && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">

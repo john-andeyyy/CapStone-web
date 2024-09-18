@@ -18,7 +18,7 @@ import Tooth2d from './AdminDashBoard/Components/Tooth2d';
 import Appointment from './AdminDashBoard/Pages/Appointments';
 import AppointmentDetail from './AdminDashBoard/Pages/AppointmentDetails';
 import { useState, useEffect } from 'react';
-import NotificationComponent from './AdminDashBoard/Pages/NotificationComponent'
+import NotificationComponent from './AdminDashBoard/Components/NotificationComponent'
 import NotificationPage from './AdminDashBoard/Pages/NotificationPage';
 import Dentist from './AdminDashBoard/Pages/Dentist';
 
@@ -80,6 +80,7 @@ function AdminRoutes() {
   );
 }
 
+
 function App() {
   const [isExpired, setIsExpired] = useState(false);
   const isLogin = localStorage.getItem('Islogin');
@@ -101,6 +102,9 @@ function App() {
     //   <NotificationComponent/>
     // </>
     <Router>
+      <div className="hidden">
+        <ThemeController />
+      </div>
       {isLogin && !isExpired ? (
         <div className="flex">
           <Sidebar />

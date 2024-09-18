@@ -65,49 +65,49 @@ export default function Sidebar() {
                     <div className="flex-grow">
                         <ul className="space-y-2">
                             <li
-                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'general' ? 'bg-neutral text-white' : 'hover:bg-neutral'}`}
+                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'general' ? 'bg-neutral text-white' : 'hover:bg-base-300'}`}
                                 onClick={() => handleNavigate('/dashboard', 'general')}
                             >
                                 <FaHome className="mr-3" />
                                 <span className="hidden md:inline">General</span>
                             </li>
                             <li
-                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'appointments' ? 'bg-neutral text-white' : 'hover:bg-neutral'}`}
+                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'appointments' ? 'bg-neutral text-white' : 'hover:bg-base-300'}`}
                                 onClick={() => handleNavigate('/appointments', 'appointments')}
                             >
                                 <FaCalendarAlt className="mr-3" />
                                 <span className="hidden md:inline">Appointments</span>
                             </li>
                             <li
-                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'patients' ? 'bg-neutral text-white' : 'hover:bg-neutral'}`}
+                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'patients' ? 'bg-neutral text-white' : 'hover:bg-base-300'}`}
                                 onClick={() => handleNavigate('/patients', 'patients')}
                             >
                                 <FaUser className="mr-3" />
                                 <span className="hidden md:inline">Patients</span>
                             </li>
                             <li
-                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'medical-requests' ? 'bg-neutral text-white' : 'hover:bg-neutral'}`}
+                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'medical-requests' ? 'bg-neutral text-white' : 'hover:bg-base-300'}`}
                                 onClick={() => handleNavigate('/Medical_requests', 'medical-requests')}
                             >
                                 <FaFileAlt className="mr-3" />
                                 <span className="hidden md:inline">Medical Requests</span>
                             </li>
                             {/* <li
-                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'create-admin' ? 'bg-neutral text-white' : 'hover:bg-neutral'}`}
+                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'create-admin' ? 'bg-neutral text-white' : 'hover:bg-base-300'}`}
                                 onClick={() => handleNavigate('/create-admin', 'create-admin')}
                             >
                                 <FaUserPlus className="mr-3" />
                                 <span className="text-red-500 font-bold hidden md:inline">Create New Admin</span>
                             </li> */}
                             <li
-                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'add-procedure' ? 'bg-neutral text-white' : 'hover:bg-neutral'}`}
+                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'add-procedure' ? 'bg-neutral text-white' : 'hover:bg-base-300'}`}
                                 onClick={() => handleNavigate('/Add_Procedure', 'add-procedure')}
                             >
                                 <FaPlus className="mr-3" />
                                 <span className="hidden md:inline">Add Procedure</span>
                             </li>
                             {/* <li
-                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'Dentist' ? 'bg-neutral text-white' : 'hover:bg-neutral'}`}
+                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'Dentist' ? 'bg-neutral text-white' : 'hover:bg-base-300'}`}
                                 onClick={() => handleNavigate('/Dentist', 'Dentist')}
                             >
                                 <FaFileAlt className="mr-3" />

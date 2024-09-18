@@ -4,7 +4,7 @@ import axios from 'axios';
 
 
 const Tooth2d = ({ userIds}) => {
-    const userId = userIds || '66dc9c2425416b3e49ffae0e'
+    const userId = userIds 
     const [notes, setNotes] = useState({}); // State to hold notes for each tooth
     const [hoveredTooth, setHoveredTooth] = useState(null); // State to track hovered tooth ID
     const [selectedTooth, setSelectedTooth] = useState(null); // State to track selected tooth for modal
@@ -179,12 +179,12 @@ const Tooth2d = ({ userIds}) => {
                         return (
                             <div
                                 key={toothId}
-                                className={`p-4 shadow rounded-lg border border-gray-200 ${isToothHighlighted ? ' text-white' : ''}`}
+                                className={`p-4 shadow rounded-lg border border-gray-200 ${isToothHighlighted ? ' ' : ''}`}
                                 onMouseEnter={() => handleMouseEnter(toothId)}
                                 onMouseLeave={handleMouseLeave}
                             >
                                 <div className="flex items-center justify-between mb-2">
-                                    <div className={`text-lg font-semibold ${isToothHighlighted ? 'text-yellow-300' : 'text-white'}`}>
+                                    <div className={`text-lg font-semibold ${isToothHighlighted ? 'text-yellow-300' : ''}`}>
                                         {index < topCount ? `Top: ${index + 1}` : `Bottom: ${index - topCount + 1}`}
                                         <span className="uppercase"> {toothStatus}</span> {/* Display the status */}
                                     </div>

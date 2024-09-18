@@ -82,7 +82,7 @@ const ProfilePage = () => {
 
     return (
         <div className="min-h-screen flex justify-center items-center  p-6">
-            <div className="bg-neutral p-8 rounded-lg shadow-lg w-full max-w-4xl">
+            <div className="bg-base-200 p-8 rounded-lg shadow-lg w-full max-w-4xl">
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-3xl font-bold">Profile Page</h1>
                     <button

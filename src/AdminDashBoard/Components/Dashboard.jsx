@@ -14,7 +14,9 @@ export default function Dashboard() {
         <div>
             <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
             <div className="text-gray-600 mb-8">{formattedDate}</div>
-            <div className="mb-8">
+           
+           <h1>graphs</h1>
+            {/* <div className="mb-8">
                 <h2 className="text-xl font-semibold mb-4">Appointment Requests History</h2>
                 <div className="space-y-4">
 
@@ -35,7 +37,8 @@ export default function Dashboard() {
                     </div>
 
                 </div>
-            </div>
+            </div> */}
+
 
         </div>
     );
