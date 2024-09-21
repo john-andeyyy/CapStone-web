@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios'; // Make sure to install axios
 import { useNavigate } from 'react-router-dom';
 
-const NotificationComponent = () => {
+const Notification_bell = () => {
     const navigate = useNavigate()
 
     const [isOpen, setIsOpen] = useState(false);
@@ -113,4 +113,4 @@ const NotificationComponent = () => {
     );
 };
 
-export default NotificationComponent;
+export default Notification_bell;

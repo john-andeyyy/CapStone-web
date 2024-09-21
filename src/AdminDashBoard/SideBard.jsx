@@ -106,6 +106,13 @@ export default function Sidebar() {
                                 <FaPlus className="mr-3" />
                                 <span className="hidden md:inline">Add Procedure</span>
                             </li>
+                            <li
+                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'CalendarComponent' ? 'bg-neutral text-white' : 'hover:bg-base-300'}`}
+                                onClick={() => handleNavigate('/CalendarComponent', 'CalendarComponent')}
+                            >
+                                <FaPlus className="mr-3" />
+                                <span className="hidden md:inline">CalendarComponent</span>
+                            </li>
                             {/* <li
                                 className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'Dentist' ? 'bg-neutral text-white' : 'hover:bg-base-300'}`}
                                 onClick={() => handleNavigate('/Dentist', 'Dentist')}

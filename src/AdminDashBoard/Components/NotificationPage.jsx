@@ -3,15 +3,15 @@ import axios from 'axios';
 
 export default function NotificationPage() {
     const [notifications, setNotifications] = useState([]);
-    const [selectedPatients, setSelectedPatients] = useState([]); // For sendToCustom
-    const [newNotification, setNewNotification] = useState({ title: '', message: '', sendTo: 'Announcements', isSendEmail: false });
+    const [selectedPatients, setSelectedPatients] = useState([]);
+    const [newNotification, setNewNotification] = useState({ title: '', message: '', sendTo: 'sendToOne', isSendEmail: false });
     const [editedNotification, setEditedNotification] = useState({ id: null, title: '', message: '' });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [modalType, setModalType] = useState(null);
     const [selectedNotification, setSelectedNotification] = useState(null);
-    const [patients, setPatients] = useState([]); // Store the list of patients
-    const [selectedPatient, setSelectedPatient] = useState(null); // Selected patient for custom or one
+    const [patients, setPatients] = useState([]);
+    const [selectedPatient, setSelectedPatient] = useState(null);
 
     const Baseurl = import.meta.env.VITE_BASEURL;
 
@@ -19,7 +19,7 @@ export default function NotificationPage() {
         setLoading(true);
         try {
             const response = await axios.get(`${Baseurl}/Notification/admin/getAllNotif`, { withCredentials: true });
-            setNotifications(response.data.reverse()); // Reverse the order here
+            setNotifications(response.data.reverse());
         } catch (error) {
             setError('Error fetching notifications');
             console.error('Error fetching notifications:', error);
@@ -28,7 +28,6 @@ export default function NotificationPage() {
         }
     };
 
-    // Fetch all patients when "sendTo" is set to "sendToOne" or "sendToCustom"
     const fetchPatients = async () => {
         try {
             const response = await axios.get(`${Baseurl}/Patient/auth/getAllPatients`, { withCredentials: true });
@@ -43,7 +42,6 @@ export default function NotificationPage() {
         fetchNotifications();
     }, []);
 
-    // Trigger fetching patients when "sendToOne" or "sendToCustom" is selected
     useEffect(() => {
         if (newNotification.sendTo === 'sendToOne' || newNotification.sendTo === 'sendToCustom') {
             fetchPatients();
@@ -62,7 +60,7 @@ export default function NotificationPage() {
         }
 
         setLoading(true);
-        setError(''); // Clear any previous errors
+        setError('');
         try {
             let endpoint = '';
             let payload = {
@@ -72,9 +70,6 @@ export default function NotificationPage() {
             };
 
             switch (newNotification.sendTo) {
-                case 'Announcements':
-                    endpoint = `${Baseurl}/Notification/all`;
-                    break;
                 case 'sendToOne':
                     if (selectedPatient) {
                         payload.patientId = selectedPatient.id;
@@ -87,7 +82,7 @@ export default function NotificationPage() {
                     break;
                 case 'sendToCustom':
                     if (selectedPatients.length > 0) {
-                        payload.patientIds = selectedPatients; // An array of selected patient IDs
+                        payload.patientIds = selectedPatients;
                         endpoint = `${Baseurl}/Notification/custom`;
                     } else {
                         setError('Please select at least one patient');
@@ -95,7 +90,6 @@ export default function NotificationPage() {
                         return;
                     }
                     break;
-
                 default:
                     setError('Invalid send to option');
                     setLoading(false);
@@ -103,11 +97,9 @@ export default function NotificationPage() {
             }
 
             await axios.post(endpoint, payload, { withCredentials: true });
-            setNewNotification({ title: '', message: '', sendTo: 'Announcements', isSendEmail: false });
-            setSelectedPatient(null); // Clear selected patient after sending
-            setModalType(null); // Close modal
-
-            // Refetch notifications after sending
+            setNewNotification({ title: '', message: '', sendTo: 'sendToOne', isSendEmail: false });
+            setSelectedPatient(null);
+            setModalType(null);
             fetchNotifications();
         } catch (error) {
             setError('Error sending notification');
@@ -116,7 +108,6 @@ export default function NotificationPage() {
             setLoading(false);
         }
     };
-
 
     const handleEdit = (notif) => {
         setEditedNotification({ id: notif._id, title: notif.Title, message: notif.Message });
@@ -140,7 +131,7 @@ export default function NotificationPage() {
             );
             setNotifications(updatedNotifications.reverse());
             setEditedNotification({ id: null, title: '', message: '' });
-            setModalType(null); // Close modal
+            setModalType(null);
             setError('');
         } catch (error) {
             setError('Error updating notification');
@@ -167,11 +158,11 @@ export default function NotificationPage() {
     return (
         <div className="p-4 pt-0 sm:p-6 max-w-full mx-auto flex flex-col h-screen">
             <div className='flex space-x-5 pb-2'>
-                <h2 className="text-2xl font-bold">Notifications</h2>
+                {/* <h2 className="text-2xl font-bold">Notifications</h2> */}
                 <button
                     onClick={() => {
-                        fetchPatients()
-                        setModalType('new')
+                        fetchPatients();
+                        setModalType('new');
                     }}
                     className="bg-green-500 text-white px-4 py-2 rounded"
                 >
@@ -182,34 +173,37 @@ export default function NotificationPage() {
 
             <div className="flex-grow overflow-auto">
                 <ul className="space-y-4">
-                    {notifications.map(notif => (
-                        <li
-                            key={notif._id} // Ensure unique key
-                            className="p-4 border rounded shadow-sm cursor-pointer flex justify-between items-center"
-                            onClick={() => viewNotificationDetails(notif)}
-                        >
-                            <div>
-                                <h3 className="text-xl font-semibold">{notif.Title}</h3>
-                                <p className="mb-2">{notif.Message}</p>
-                                <p className="text-gray-600">
-                                    Date Created: {new Date(notif.createdAt).toLocaleDateString('en-US', {
-                                        year: 'numeric',
-                                        month: 'short',
-                                        day: 'numeric',
-                                    })}
-                                </p>
-                            </div>
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleEdit(notif);
-                                }}
-                                className="bg-yellow-500 text-white px-4 py-2 rounded"
+                    {notifications
+                        .map(notif => (
+                            <li
+                                key={notif._id}
+                                className="p-4 border rounded shadow-sm cursor-pointer flex justify-between items-center"
+                                onClick={() => viewNotificationDetails(notif)}
                             >
-                                Edit
-                            </button>
-                        </li>
-                    ))}
+                                <div>
+                                    <h3 className="text-xl font-semibold" style={{ color: notif.isAnnouncement ? 'red' : 'inherit' }}>
+                                        {notif.Title}
+                                    </h3>
+                                    <p className="mb-2">{notif.Message}</p>
+                                    <p className="text-gray-600">
+                                        Date Created: {new Date(notif.createdAt).toLocaleDateString('en-US', {
+                                            year: 'numeric',
+                                            month: 'short',
+                                            day: 'numeric',
+                                        })}
+                                    </p>
+                                </div>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleEdit(notif);
+                                    }}
+                                    className="bg-yellow-500 text-white px-4 py-2 rounded"
+                                >
+                                    Edit
+                                </button>
+                            </li>
+                        ))}
                 </ul>
             </div>
 
@@ -244,7 +238,6 @@ export default function NotificationPage() {
                                         onChange={handleNewNotificationChange}
                                         className="block w-full mb-2 p-2 border rounded"
                                     >
-                                        <option value="Announcements">Announcements</option>
                                         <option value="sendToOne">Send to One patient</option>
                                         <option value="sendToCustom">Send to Custom Patients</option>
                                     </select>
@@ -267,9 +260,7 @@ export default function NotificationPage() {
                                 </div>
                             </div>
 
-
-                            {/* Show list of patients if "sendToOne" or "sendToCustom" is selected */}
-                            {(newNotification.sendTo === 'sendToOne') && (
+                            {newNotification.sendTo === 'sendToOne' && (
                                 <div className="mb-4">
                                     <label>Select Patient</label>
                                     <select
@@ -281,7 +272,7 @@ export default function NotificationPage() {
                                         }}
                                         className="block w-full p-2 border rounded"
                                     >
-                                        <option value="">Select a patient</option>
+                                        <option value="">Choose a patient...</option>
                                         {patients.map(patient => (
                                             <option key={patient.id} value={patient.id}>
                                                 {patient.FirstName} {patient.LastName}
@@ -291,46 +282,40 @@ export default function NotificationPage() {
                                 </div>
                             )}
 
-
-                            {/* Select multiple patients for "sendToCustom" */}
                             {newNotification.sendTo === 'sendToCustom' && (
                                 <div className="mb-4">
                                     <label>Select Patients</label>
-                                    <div className="space-y-2">
-                                        {patients.map(patient => (
-                                            <label key={patient.id} className="flex items-center">
-                                                <input
-                                                    type="checkbox"
-                                                    value={patient.id}
-                                                    checked={selectedPatients.includes(patient.id)}
-                                                    onChange={(e) => {
-                                                        const patientId = e.target.value;
-                                                        if (e.target.checked) {
-                                                            setSelectedPatients(prev => [...prev, patientId]);
-                                                        } else {
-                                                            setSelectedPatients(prev => prev.filter(id => id !== patientId));
-                                                        }
-                                                    }}
-                                                    className="mr-2"
-                                                />
-                                                {patient.FirstName} {patient.LastName}
-                                            </label>
-                                        ))}
-                                    </div>
+                                    {patients.map(patient => (
+                                        <div key={patient.id} className="flex items-center mb-2">
+                                            <input
+                                                type="checkbox"
+                                                value={patient.id}
+                                                checked={selectedPatients.includes(patient.id)}
+                                                onChange={(e) => {
+                                                    if (e.target.checked) {
+                                                        setSelectedPatients([...selectedPatients, patient.id]);
+                                                    } else {
+                                                        setSelectedPatients(selectedPatients.filter(id => id !== patient.id));
+                                                    }
+                                                }}
+                                                className="mr-2"
+                                            />
+                                            <span>{patient.FirstName} {patient.LastName}</span>
+                                        </div>
+                                    ))}
                                 </div>
                             )}
 
-
-
                             <button
                                 onClick={sendNotification}
-                                className="bg-green-500 text-white px-4 py-2 rounded w-full"
+                                className="bg-blue-500 text-white px-4 py-2 rounded"
                             >
-                                Send
+                                Send Notification
                             </button>
+
                             <button
                                 onClick={closeModal}
-                                className="mt-2 bg-gray-500 text-white px-4 py-2 rounded w-full"
+                                className="bg-red-500 text-white px-4 py-2 rounded"
                             >
                                 Cancel
                             </button>
@@ -341,8 +326,9 @@ export default function NotificationPage() {
 
             {modalType === 'edit' && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                    <div className="bg-white p-6 rounded shadow-lg max-w-md w-full">
+                    <div className="bg-base-100 p-6 rounded shadow-lg max-w-md w-full">
                         <h2 className="text-2xl font-bold mb-4">Edit Notification</h2>
+                        <h3>{error && <p className="text-red-500">{error}</p>}</h3>
                         <div className="space-y-4">
                             <input
                                 type="text"
@@ -362,13 +348,13 @@ export default function NotificationPage() {
                             />
                             <button
                                 onClick={saveEdit}
-                                className="bg-green-500 text-white px-4 py-2 rounded w-full"
+                                className="bg-blue-500 text-white px-4 py-2 rounded"
                             >
-                                Save
+                                Save Changes
                             </button>
                             <button
                                 onClick={closeModal}
-                                className="mt-2 bg-gray-500 text-white px-4 py-2 rounded w-full"
+                                className="bg-red-500 text-white px-4 py-2 rounded"
                             >
                                 Cancel
                             </button>
@@ -377,16 +363,21 @@ export default function NotificationPage() {
                 </div>
             )}
 
-            {modalType === 'details' && (
+            {modalType === 'details' && selectedNotification && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                    <div className="bg-white p-6 rounded shadow-lg max-w-md w-full">
+                    <div className="bg-base-100 p-6 rounded shadow-lg max-w-md w-full">
                         <h2 className="text-2xl font-bold mb-4">Notification Details</h2>
-                        <div>
-                            <h3 className="text-xl font-semibold">{selectedNotification?.Title}</h3>
-                            <p className="mb-4">{selectedNotification?.Message}</p>
+                        <div className="space-y-4">
+                            <h3 className="text-xl font-semibold">{selectedNotification.Title}</h3>
+                            <p>{selectedNotification.Message}</p>
+                            <p className="text-gray-600">Date Created: {new Date(selectedNotification.createdAt).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                            })}</p>
                             <button
                                 onClick={closeModal}
-                                className="bg-gray-500 text-white px-4 py-2 rounded w-full"
+                                className="bg-red-500 text-white px-4 py-2 rounded"
                             >
                                 Close
                             </button>

@@ -18,9 +18,14 @@ import Tooth2d from './AdminDashBoard/Components/Tooth2d';
 import Appointment from './AdminDashBoard/Pages/Appointments';
 import AppointmentDetail from './AdminDashBoard/Pages/AppointmentDetails';
 import { useState, useEffect } from 'react';
-import NotificationComponent from './AdminDashBoard/Components/NotificationComponent'
-import NotificationPage from './AdminDashBoard/Pages/NotificationPage';
+import Notification_bell from './AdminDashBoard/Components/Notification_bell'
+import NotificationPage from './AdminDashBoard//Components/NotificationPage';
 import Dentist from './AdminDashBoard/Pages/Dentist';
+import AnnouncementPage from './AdminDashBoard/Components/AnnouncementPage';
+import Annoucement_Notification from './AdminDashBoard/Pages/Annoucement_Notification';
+
+
+import CalendarComponent from './try/Calendar';
 
 function AdminRoutes() {
   const location = useLocation();
@@ -62,7 +67,7 @@ function AdminRoutes() {
 
   return (
     <div className={`flex-1 ${isProfilePage ? '' : 'p-8 pt-0.5'}`}>
-      <NotificationComponent />
+      <Notification_bell />
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/appointments" element={<Appointment />} />
@@ -74,7 +79,15 @@ function AdminRoutes() {
         <Route path="/PatientProfile/:id" element={<PatientProfile />} />
         <Route path="/appointment/:id" element={<AppointmentDetail />} />
         <Route path="/Dentist" element={<Dentist />} />
+        <Route path="/Annoucement_Notification" element={<Annoucement_Notification />} />
+
+
+
+        <Route path="/CalendarComponent" element={<CalendarComponent />} />
+
+        {/* //! components only! */}
         <Route path="/NotificationPage" element={<NotificationPage />} />
+        <Route path="/AnnouncementPage" element={<AnnouncementPage />} />
       </Routes>
     </div>
   );
@@ -99,12 +112,13 @@ function App() {
 
   return (
     // <>
-    //   <NotificationComponent/>
+    //   <Notification_bell/>
     // </>
     <Router>
       <div className="hidden">
         <ThemeController />
       </div>
+        <ThemeController />
       {isLogin && !isExpired ? (
         <div className="flex">
           <Sidebar />

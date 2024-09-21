@@ -6,7 +6,7 @@ export default function Modal({ isOpen, close, children }) {
             {isOpen && (
                 <dialog open className="modal ">
                     <div className="modal-box bg-modal">
-                        <h3 className="font-bold text-lg">Hello!</h3>
+                        <h3 className="font-bold text-lg">Hello! from the modal component</h3>
                         {children}
                         {/* <div className="modal-action">
                             <form method="dialog">
