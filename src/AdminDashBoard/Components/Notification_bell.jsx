@@ -69,7 +69,7 @@ const Notification_bell = () => {
                         <div >
                             Notifications
                         </div>
-                        <button className="" onClick={() => navigate('/NotificationPage')}>
+                        <button className="" onClick={() => navigate('/Annoucement_Notification')}>
                             view all
                         </button>
                     </div>

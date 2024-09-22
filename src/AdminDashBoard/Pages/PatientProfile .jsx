@@ -5,10 +5,11 @@ import Tooth2d from '../Components/Tooth2d';
 
 const PatientProfile = () => {
     const { id } = useParams();
+    const navigate = useNavigate()
     const userIds = id;
     const [patient, setPatient] = useState({
-        FirstName: "Alice",
-        LastName: "Wonderland",
+        FirstName: "",
+        LastName: "",
         MiddleName: "",
     });
     const [profilePic, setProfilePic] = useState('../../public/default-avatar.jpg');
