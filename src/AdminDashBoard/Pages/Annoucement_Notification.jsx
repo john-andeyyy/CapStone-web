@@ -19,10 +19,11 @@ function Announcement_Notification() {
                 <div className="mb-4">
                     <button
                         onClick={handleToggle}
-                        className={`px-4 py-2 mx-2 text-white rounded ${showAnnouncement ? 'bg-blue-500' : 'bg-green-500'
+                        // className={`px-4 py-2 mx-2 text-white rounded ${showAnnouncement ? 'bg-blue-500' : 'bg-green-500'
+                        className={`px-4 py-2 mx-2 text-white rounded ${showAnnouncement ? 'bg-orange-500' : 'bg-orange-500'
                             } hover:opacity-80 transition`}
                     >
-                        {showAnnouncement ? 'Show Notifications' : 'Show Announcements'}
+                        {showAnnouncement ? 'Send Notifications' : 'Send Announcements'}
                     </button>
                 </div>
 

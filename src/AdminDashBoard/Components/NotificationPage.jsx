@@ -174,6 +174,7 @@ export default function NotificationPage() {
             <div className="flex-grow overflow-auto">
                 <ul className="space-y-4">
                     {notifications
+                        .filter(notif => notif.toAll == false)
                         .map(notif => (
                             <li
                                 key={notif._id}
@@ -195,7 +196,7 @@ export default function NotificationPage() {
                                 </div>
                                 <button
                                     onClick={(e) => {
-                                        e.stopPropagation();
+                                        e.stopPropagation(); // Prevent click on button from triggering the list item click
                                         handleEdit(notif);
                                     }}
                                     className="bg-yellow-500 text-white px-4 py-2 rounded"
@@ -204,6 +205,7 @@ export default function NotificationPage() {
                                 </button>
                             </li>
                         ))}
+
                 </ul>
             </div>
 
@@ -305,20 +307,23 @@ export default function NotificationPage() {
                                     ))}
                                 </div>
                             )}
-
-                            <button
-                                onClick={sendNotification}
-                                className="bg-blue-500 text-white px-4 py-2 rounded"
-                            >
-                                Send Notification
-                            </button>
-
-                            <button
-                                onClick={closeModal}
-                                className="bg-red-500 text-white px-4 py-2 rounded"
-                            >
-                                Cancel
-                            </button>
+                            <div className="flex justify-end space-x-3">
+    
+                                <button
+                                    onClick={sendNotification}
+                                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                                >
+                                    Send Notification
+                                </button>
+    
+                                <button
+                                    onClick={closeModal}
+                                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                                >
+                                    Cancel
+                                </button>
+                                
+</div>
                         </div>
                     </div>
                 </div>

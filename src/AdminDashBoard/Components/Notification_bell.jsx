@@ -7,13 +7,14 @@ const Notification_bell = () => {
 
     const [isOpen, setIsOpen] = useState(false);
     const [notifications, setNotifications] = useState([]);
+    const [expanded, setExpanded] = useState({}); // Track expanded state for each notification
 
     const fetchNotifications = async () => {
         try {
             const response = await axios.get(`${import.meta.env.VITE_BASEURL}/Notification/admin/getAllNotif`, {
                 withCredentials: true
             });
-            setNotifications(response.data);
+            setNotifications(response.data.reverse());
         } catch (error) {
             console.error('Error fetching notifications:', error);
         }
@@ -21,7 +22,6 @@ const Notification_bell = () => {
 
     // Fetch notifications from the server
     useEffect(() => {
-
         fetchNotifications();
     }, []);
 
@@ -30,6 +30,9 @@ const Notification_bell = () => {
         setIsOpen(!isOpen);
     };
 
+    const toggleMessage = (id) => {
+        setExpanded(prev => ({ ...prev, [id]: !prev[id] })); // Toggle the expanded state for the specific notification
+    };
 
     // Format date
     const formatDate = (dateString) => {
@@ -66,9 +69,7 @@ const Notification_bell = () => {
             {isOpen && (
                 <div className="absolute top-full right-0 mt-2 w-80 bg-white shadow-lg rounded-lg z-10 overflow-hidden">
                     <div className="p-3 text-lg font-semibold bg-gray-100 border-b border-gray-200 flex justify-between">
-                        <div >
-                            Notifications
-                        </div>
+                        <div>Notifications</div>
                         <button className="" onClick={() => navigate('/Annoucement_Notification')}>
                             view all
                         </button>
@@ -85,21 +86,41 @@ const Notification_bell = () => {
                                     >
                                         <div className="flex justify-between items-center">
                                             <div className="flex flex-col">
-                                                <strong className="text-sm">{notification.Title}</strong>
+                                                <strong className={`text-sm ${notification.toAll ? 'text-red-500' : ''}`}>
+                                                    {notification.Title}
+                                                </strong>
                                                 {notification.toAll && (
-                                                    <span className="text-xs text-blue-500 mt-1">Notification to All</span>
+                                                    <span className="text-xs mt-1 font-semibold">Announcement!!!</span>
                                                 )}
                                             </div>
+
                                             <span className="text-xs text-gray-500">{formatDate(notification.createdAt)}</span>
+                                            
                                         </div>
-                                        <div className="mt-2 text-sm">{notification.Message}</div>
+                                        {notification.Message.length > 100 && ( // Show expand/collapse button if message is long
+                                            <button className="text-xs text-blue-500 mt-1" onClick={() => toggleMessage(notification._id)}>
+                                                {expanded[notification._id] ? 'Collapse' : 'Expand'}
+                                            </button>
+                                        )}
+                                        <div className={`mt-2 text-sm transition-all duration-300 ease-in-out ${expanded[notification._id] ? 'max-h-full' : 'max-h-12 overflow-hidden'}`}>
+                                            {notification.Message}
+                                        </div>
+
+                                       
+
                                         {!notification.toAll && (
                                             <ul className="mt-2 text-xs text-gray-600">
-                                                {notification.PatientStatus.map((status) => (
-                                                    <li key={status._id}>
-                                                        {status.patient.FirstName} {status.patient.LastName} ({status.patient.MiddleName})
-                                                    </li>
-                                                ))}
+                                                {notification.PatientStatus.length > 0 ? (
+                                                    notification.PatientStatus.map((status) => (
+                                                        status.patient ? (  // Check if patient exists
+                                                            <li key={status._id}>
+                                                                <p><span className='font-bold'>Patient: </span > {status.patient.FirstName} {status.patient.LastName} ({status.patient.MiddleName}) </p>
+                                                            </li>
+                                                        ) : null // Render nothing if patient is undefined
+                                                    ))
+                                                ) : (
+                                                    <li>No patients associated with this notification</li> // Fallback message if no patients
+                                                )}
                                             </ul>
                                         )}
                                     </li>

@@ -8,23 +8,30 @@ export default function AnnouncementPage() {
     const [announcements, setAnnouncements] = useState([]);
     const [formData, setFormData] = useState({
         isSendEmail: false,
-        Title: '',
+        Title: 'Announcement!!!',
         Message: ''
     });
-    const [showModal, setShowModal] = useState(false); // State for controlling the modal
-    const [expandedAnnouncement, setExpandedAnnouncement] = useState({}); // State to track expanded/collapsed announcements
+    const [showModal, setShowModal] = useState(false);
+    const [expandedAnnouncement, setExpandedAnnouncement] = useState({});
+    const [loading, setLoading] = useState(true);
 
-    // Fetch notifications
+    const FetchAnnouncement = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.get(`${Baseurl}/Notification/admin/getAllNotif`, { withCredentials: true });
+            const filtered = response.data.filter(notif => notif.isAnnouncement === true);
+            setAnnouncements(filtered.reverse());
+        } catch (error) {
+            console.error('Error fetching notifications:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        axios.get(`${Baseurl}/Notification/admin/getAllNotif`, { withCredentials: true })
-            .then(response => {
-                const filtered = response.data.filter(notif => notif.isAnnouncement === true);
-                setAnnouncements(filtered);
-            })
-            .catch(error => console.error('Error fetching notifications:', error));
+        FetchAnnouncement();
     }, []);
 
-    // Handle form input changes
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData(prevState => ({
@@ -33,7 +40,6 @@ export default function AnnouncementPage() {
         }));
     };
 
-    // Handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
         axios.post(`${Baseurl}/Notification/all`, formData, { withCredentials: true })
@@ -41,23 +47,22 @@ export default function AnnouncementPage() {
                 alert('Announcement sent!');
                 setFormData({
                     isSendEmail: false,
-                    Title: '',
+                    Title: 'Announcement!!!',
                     Message: ''
                 });
-                setShowModal(false); // Close the modal after submitting the form
+                FetchAnnouncement();
+                setShowModal(false);
             })
             .catch(error => console.error('Error sending announcement:', error));
     };
 
-    // Function to toggle the expanded state of an announcement
     const toggleExpand = (id) => {
         setExpandedAnnouncement(prevState => ({
             ...prevState,
-            [id]: !prevState[id] // Toggle the expanded state
+            [id]: !prevState[id]
         }));
     };
 
-    // Helper function to limit text length
     const truncateText = (text, maxLength) => {
         if (text.length > maxLength) {
             return text.slice(0, maxLength) + '...';
@@ -67,19 +72,15 @@ export default function AnnouncementPage() {
 
     return (
         <div className="container mx-auto p-4">
-            {/* <h1 className="text-2xl font-bold mb-4">Announcement Page</h1> */}
-
-            {/* Button to open modal */}
             <button
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
                 onClick={() => setShowModal(true)}
             >
                 Send New Announcement
             </button>
 
-            {/* Modal for sending new announcement */}
             <Modal isOpen={showModal}>
-                <h3 className="font-bold text-lg">Send Annoucement!</h3>
+                <h3 className="font-bold text-lg">Send Announcement!</h3>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="mb-4">
                         <label className="block mb-2 font-semibold">Title:</label>
@@ -144,60 +145,65 @@ export default function AnnouncementPage() {
                 </form>
             </Modal>
 
-            {/* Announcements table */}
             <h2 className="text-xl font-semibold mt-8 mb-4">Announcements</h2>
-            <div className="overflow-x-auto">
-                <table className="min-w-full bg-white border border-gray-200">
-                    <thead>
-                        <tr>
-                            <th className="px-4 py-2 border">Title</th>
-                            <th className="px-4 py-2 border">Message</th>
-                            <th className="px-4 py-2 border">Date Created</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {announcements.length > 0 ? (
-                            announcements.map(announcement => (
-                                <tr key={announcement._id} className="hover:bg-gray-100">
-                                    <td className="px-2 py-2 border">
-                                        {expandedAnnouncement[announcement._id]
-                                            ? announcement.Title
-                                            : truncateText(announcement.Title, 30)}
-                                        {announcement.Title.length > 30 && (
-                                            <button
-                                                onClick={() => toggleExpand(announcement._id)}
-                                                className="text-blue-500 ml-2"
-                                            >
-                                                {expandedAnnouncement[announcement._id] ? 'Show less' : 'Read more'}
-                                            </button>
-                                        )}
-                                    </td>
-                                    <td className="px-4 py-2 border">
-                                        {expandedAnnouncement[announcement._id]
-                                            ? announcement.Message
-                                            : truncateText(announcement.Message, 50)}
-                                        {announcement.Message.length > 50 && (
-                                            <button
-                                                onClick={() => toggleExpand(announcement._id)}
-                                                className="text-blue-500 ml-2"
-                                            >
-                                                {expandedAnnouncement[announcement._id] ? 'Show less' : 'Read more'}
-                                            </button>
-                                        )}
-                                    </td>
-                                    <td className="px-4 py-2 border">
-                                        {new Date(announcement.createdAt).toLocaleDateString()}
-                                    </td>
-                                </tr>
-                            ))
-                        ) : (
+            {loading ? (
+                <div className="flex justify-center items-center">
+                    <p className="text-gray-500">Loading announcements...</p>
+                </div>
+            ) : (
+                <div className="overflow-x-auto">
+                    <table className="min-w-full bg-white border border-gray-200 table-fixed">
+                        <thead>
                             <tr>
-                                <td className="px-4 py-2 border text-center" colSpan="3">No announcements available</td>
+                                <th className="px-4 py-2 border">Title</th>
+                                <th className="px-4 py-2 border">Message</th>
+                                <th className="px-4 py-2 border">Date Created</th>
                             </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                            {announcements.length > 0 ? (
+                                announcements.map(announcement => (
+                                    <tr key={announcement._id} className="hover:bg-gray-100">
+                                        <td className="px-2 py-2 border break-words">
+                                            {expandedAnnouncement[announcement._id]
+                                                ? announcement.Title
+                                                : truncateText(announcement.Title, 30)}
+                                            {announcement.Title.length > 30 && (
+                                                <button
+                                                    onClick={() => toggleExpand(announcement._id)}
+                                                    className="text-blue-500 ml-2"
+                                                >
+                                                    {expandedAnnouncement[announcement._id] ? 'Show less' : 'Read more'}
+                                                </button>
+                                            )}
+                                        </td>
+                                        <td className="px-4 py-2 border break-words">
+                                            {expandedAnnouncement[announcement._id]
+                                                ? announcement.Message
+                                                : truncateText(announcement.Message, 50)}
+                                            {announcement.Message.length > 50 && (
+                                                <button
+                                                    onClick={() => toggleExpand(announcement._id)}
+                                                    className="text-blue-500 ml-2"
+                                                >
+                                                    {expandedAnnouncement[announcement._id] ? 'Show less' : 'Read more'}
+                                                </button>
+                                            )}
+                                        </td>
+                                        <td className="px-4 py-2 border">
+                                            {new Date(announcement.createdAt).toLocaleDateString()}
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td className="px-4 py-2 border text-center" colSpan="3">No announcements available</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            )}
         </div>
     );
 }
