@@ -168,8 +168,7 @@ export default function AppointmentDetails() {
                     <div className="">
                         <button
                             className="p-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
-                            onClick={handleUpdate}
-                        >
+                            onClick={handleUpdate}>
                             Save Changes
                         </button>
                     </div>
@@ -177,10 +176,23 @@ export default function AppointmentDetails() {
             </div>
 
             <div className="shadow-md rounded-lg p-6 mb-6 space-y-4">
-                {/* <p><strong>Date:</strong> {new Date(appointment.date).toLocaleDateString('en-US')}</p> */}
+                <p><strong>Patient Name:</strong> {appointment.patient?.FirstName || 'N/A'} {appointment.patient?.LastName || 'N/A'}</p>
                 <p><strong>Start:</strong> {new Date(appointment.Start).toLocaleTimeString('en-US')}</p>
                 <p><strong>End:</strong> {new Date(appointment.End).toLocaleTimeString('en-US')}</p>
-                <p><strong>Patient:</strong> {appointment.patient?.FirstName || 'N/A'} {appointment.patient?.LastName || 'N/A'}</p>
+
+                {/* Display procedures */}
+                <p><strong>Procedures:</strong></p>
+                <ul className="list-disc list-inside">
+                    {appointment.procedures && appointment.procedures.length > 0 ? (
+                        appointment.procedures.map((procedure) => (
+                            <li key={procedure._id}>
+                                {procedure.Procedure_name} {`₱${procedure.Price}`}
+                            </li>
+                        ))
+                    ) : (
+                        <li>No procedures available</li>
+                    )}
+                </ul>
 
                 {/* Editable Amount */}
                 <p ><strong>Amount:</strong>
@@ -197,20 +209,6 @@ export default function AppointmentDetails() {
                         />
                     )}
                 </p>
-
-                {/* Display procedures */}
-                <p><strong>Procedures:</strong></p>
-                <ul className="list-disc list-inside">
-                    {appointment.procedures && appointment.procedures.length > 0 ? (
-                        appointment.procedures.map((procedure) => (
-                            <li key={procedure._id}>
-                                {procedure.Procedure_name}
-                            </li>
-                        ))
-                    ) : (
-                        <li>No procedures available</li>
-                    )}
-                </ul>
 
                 <p><strong>Notes:</strong> {appointment.notes || 'N/A'}</p>
 
@@ -253,6 +251,8 @@ export default function AppointmentDetails() {
                     )
                 }</p>
                 <p><strong>Request to Cancel:</strong> {appointment.RequestToCancel ? 'Yes' : 'No'}</p>
+                <p><strong>Request for Medical Certificate:</strong> {appointment.medcertiStatus}</p>
+                <h1>add here a button to send the medical cerificacte to the user email</h1>
 
                 {/* Image upload and preview section */}
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>

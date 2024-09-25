@@ -93,9 +93,7 @@ const Notification_bell = () => {
                                                     <span className="text-xs mt-1 font-semibold">Announcement!!!</span>
                                                 )}
                                             </div>
-
                                             <span className="text-xs text-gray-500">{formatDate(notification.createdAt)}</span>
-                                            
                                         </div>
                                         {notification.Message.length > 100 && ( // Show expand/collapse button if message is long
                                             <button className="text-xs text-blue-500 mt-1" onClick={() => toggleMessage(notification._id)}>
