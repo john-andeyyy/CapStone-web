@@ -36,7 +36,7 @@ export const update_profile = async (profileData) => {
             {
                 withCredentials: true,
                 headers: {
-                    'Content-Type': 'multipart/form-data', // Ensure the correct content type
+                    'Content-Type': 'multipart/form-data',
                 },
             }
         );

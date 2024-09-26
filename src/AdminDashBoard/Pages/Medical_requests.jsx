@@ -11,10 +11,14 @@ export default function MedicalRequests() {
   const [archiveConfirmation, setArchiveConfirmation] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [requests, setRequests] = useState([]);
-  const [statusFilter, setStatusFilter] = useState('All'); // Default filter status
+  const [statusFilter, setStatusFilter] = useState('Pending');
+  const [loading, setLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [detailModalOpen, setDetailModalOpen] = useState(false); 
 
   useEffect(() => {
     const getAppointments = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(`${BASEURL}/Appointments/appointments/filter`, {
           withCredentials: true
@@ -25,11 +29,13 @@ export default function MedicalRequests() {
         }
       } catch (error) {
         console.error('Error fetching appointments:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
     getAppointments();
-  }, [BASEURL]);
+  }, []);
 
   const filteredRequests = requests.filter((request) => {
     const showBasedOnStatus = (status) => {
@@ -43,7 +49,7 @@ export default function MedicalRequests() {
         case 'Archive':
           return request.medcertiStatus === 'Archive';
         case 'All':
-          return request.medcertiStatus !== 'null'; // Exclude requests with null medcertiStatus
+          return ['Pending', 'Approved', 'Rejected', 'Archive'].includes(request.medcertiStatus);
         default:
           return false;
       }
@@ -57,28 +63,35 @@ export default function MedicalRequests() {
 
   const handleDeleteRequest = async () => {
     if (selectedRequest) {
-      const confirmed = window.confirm(`Are you sure you want to delete the request for: ${selectedRequest.patient.FirstName} ${selectedRequest.patient.LastName}?`);
-      if (confirmed) {
-        try {
-          await axios.delete(`${BASEURL}/Appointments/appointments/${selectedRequest.id}`, {
-            withCredentials: true
-          });
-          setRequests(requests.filter((request) => request.id !== selectedRequest.id));
-          setDeleteConfirmation(false);
-          setSelectedRequest(null);
-        } catch (error) {
-          console.error('Error deleting request:', error);
-        }
+      setActionLoading(true);
+      try {
+        await axios.get(`${BASEURL}/SendDentalCertificate/${selectedRequest.id}`, {
+          headers: {
+            'Status': 'Rejected'
+          },
+          withCredentials: true
+        });
+        setRequests(requests.filter((request) => request.id !== selectedRequest.id));
+        setDeleteConfirmation(false);
+        setSelectedRequest(null);
+      } catch (error) {
+        console.error('Error deleting request:', error);
+      } finally {
+        setActionLoading(false);
       }
     }
   };
 
   const handleArchiveRequest = async () => {
+    setActionLoading(true);
     try {
-      await axios.patch(`${BASEURL}/Appointments/appointments/${selectedRequest.id}`,
-        { status: 'Archive' },
-        { withCredentials: true }
-      );
+      await axios.get(`${BASEURL}/SendDentalCertificate/${selectedRequest.id}`, {
+        headers: {
+          'Status': 'Archive'
+        },
+        withCredentials: true
+      });
+
       setRequests(requests.map((request) =>
         request.id === selectedRequest.id ? { ...request, medcertiStatus: 'Archive' } : request
       ));
@@ -86,15 +99,20 @@ export default function MedicalRequests() {
       setSelectedRequest(null);
     } catch (error) {
       console.error('Error archiving request:', error);
+    } finally {
+      setActionLoading(false); // Stop action loading
     }
   };
 
   const handleAcceptRequest = async () => {
+    setActionLoading(true); // Start action loading
     try {
-      await axios.patch(`${BASEURL}/Appointments/appointments/${selectedRequest.id}`,
-        { status: 'Accepted' },
-        { withCredentials: true }
-      );
+      await axios.get(`${BASEURL}/SendDentalCertificate/${selectedRequest.id}`, {
+        headers: {
+          'Status': 'Accepted'
+        },
+        withCredentials: true
+      });
       setRequests(requests.map((request) =>
         request.id === selectedRequest.id ? { ...request, medcertiStatus: 'Accepted' } : request
       ));
@@ -102,7 +120,14 @@ export default function MedicalRequests() {
       setSelectedRequest(null);
     } catch (error) {
       console.error('Error accepting request:', error);
+    } finally {
+      setActionLoading(false); // Stop action loading
     }
+  };
+
+  const openDetailModal = (request) => {
+    setSelectedRequest(request);
+    setDetailModalOpen(true);
   };
 
   return (
@@ -136,85 +161,114 @@ export default function MedicalRequests() {
           <option value="Pending">Pending</option>
           <option value="Approved">Approved</option>
           <option value="Rejected">Rejected</option>
-          <option value="Archive">Archive</option>
+          <option value="Archive">Archive (delete)</option>
         </select>
       </div>
 
-      {/* Requests Section */}
-      <div className="shadow-md rounded overflow-hidden">
-        <div className="bg-neutral p-2 flex text-white">
-          <div className="flex-1 font-bold">Name</div>
-          <div className="flex-1 font-bold">Date</div>
-          <div className="flex-1 font-bold hidden md:block">Procedure</div>
-          <div className="flex-1 font-bold hidden md:block">Status</div> {/* Add Status Column */}
-          {statusFilter === 'Pending' && (
-            <div className="flex-1 font-bold text-center">Actions</div>
-          )}
-        </div>
-        {filteredRequests.length === 0 ? (
-          <div className="p-4 text-gray-500">No requests found.</div>
-        ) : (
-          filteredRequests.map((request) => (
-            <div key={request.id} className="flex justify-between border-b p-2 px-4">
-              <div className="flex-1">{request.patient.FirstName} {request.patient.LastName}</div>
-              <div className="flex-1">{new Date(request.date).toLocaleDateString()}</div>
-              <div className="flex-1 hidden md:block">{request.procedures.map(proc => proc.name).join(', ')}</div>
-              <div className="flex-1 hidden md:block">{request.medcertiStatus}</div> {/* Display Status */}
-              {request.medcertiStatus === 'Pending' && statusFilter === 'Pending' && (
-                <div className="flex-1 text-center">
-                  <button className="text-green-500 " onClick={() => {
-                    setSelectedRequest(request);
-                    setAcceptConfirmation(true);
-                  }}>
-                    <span className="material-symbols-outlined">check_circle</span>
-                  </button>
-                  <button className="text-red-500 mx-2" onClick={() => {
-                    setSelectedRequest(request);
-                    setDeleteConfirmation(true);
-                  }}>
-                    <span className="material-symbols-outlined">delete</span>
-                  </button>
-                  <button className="text-white-500" onClick={() => {
-                    setSelectedRequest(request);
-                    setArchiveConfirmation(true);
-                  }}>
-                    <span className="material-symbols-outlined">archive</span>
-                  </button>
-                </div>
+      {/* Show Loading */}
+      {loading ? (
+        <div className="text-center">Loading lists...</div>
+      ) : (
+        <>
+          {/* Requests Section */}
+          <div className="shadow-md rounded overflow-hidden">
+            <div className="bg-neutral p-2 flex text-white">
+              <div className="flex-1 font-bold">Name</div>
+              <div className="flex-1 font-bold">Date</div>
+              <div className="flex-1 font-bold hidden md:block">Procedure</div>
+              <div className="flex-1 font-bold hidden md:block">Status</div>
+                {statusFilter === 'Pending' || statusFilter === 'Archive' && (
+                <div className="flex-1 font-bold text-center">Actions</div>
               )}
             </div>
-          ))
-        )}
-      </div>
+            {filteredRequests.length === 0 ? (
+              <div className="p-4 text-gray-500">No requests found.</div>
+            ) : (
+              filteredRequests.map((request) => (
+                <div
+                  key={request.id}
+                  className="flex justify-between border-b p-2 px-4 cursor-pointer hover:bg-base-300" 
+                  onClick={() => openDetailModal(request)} 
+                >
+                  <div className="flex-1">{request.patient.FirstName} {request.patient.LastName}</div>
+                  <div className="flex-1">{new Date(request.date).toLocaleDateString()}</div>
+                  <div className="flex-1 hidden md:block">{request.procedures.map(proc => proc.name).join(', ')}</div>
+                  <div className="flex-1 hidden md:block">{request.medcertiStatus}</div>
+                  {request.medcertiStatus === 'Pending' && statusFilter === 'Pending' || request.medcertiStatus === 'Archive' && statusFilter === 'Archive' && (
+                    <div className="flex-1 text-center">
+                      <button className="text-green-500 " onClick={() => {
+                        setSelectedRequest(request);
+                        setAcceptConfirmation(true);
+                      }}>
+                        <span className="material-symbols-outlined">check_circle</span>
+                      </button>
+                      <button className="text-red-500 mx-2" onClick={() => {
+                        setSelectedRequest(request);
+                        setDeleteConfirmation(true);
+                      }}>
+                        <span className="material-symbols-outlined">delete</span>
+                      </button>
+                      <button className="text-white-500" onClick={() => {
+                        setSelectedRequest(request);
+                        setArchiveConfirmation(true);
+                      }}>
+                        <span className="material-symbols-outlined">archive</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        </>
+      )}
 
-      {/* Delete Confirmation Modal */}
+      {/* Action Loading Indicator */}
+      {actionLoading && <div className="text-center my-2">Processing...</div>}
+
+      {/* Modals for Confirmation */}
       <Modal isOpen={deleteConfirmation} close={() => setDeleteConfirmation(false)}>
         <h3 className="font-bold text-lg">Confirm Deletion</h3>
         <p className="text-sm">Are you sure you want to delete the request for: {selectedRequest?.patient.FirstName} {selectedRequest?.patient.LastName}?</p>
         <div className="flex justify-end mt-4">
-          <button onClick={handleDeleteRequest} className="btn btn-danger text-sm mr-2">Yes, Delete</button>
-          <button onClick={() => setDeleteConfirmation(false)} className="btn btn-secondary text-sm">Cancel</button>
+          <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setDeleteConfirmation(false)}>Cancel</button>
+          <button className="px-4 py-2 bg-red-600 text-white rounded" onClick={handleDeleteRequest}>Delete</button>
         </div>
       </Modal>
 
-      {/* Accept Confirmation Modal */}
+      <Modal isOpen={archiveConfirmation} close={() => setArchiveConfirmation(false)}>
+        <h3 className="font-bold text-lg">Confirm Archive</h3>
+        <p className="text-sm">Are you sure you want to archive the request for: {selectedRequest?.patient.FirstName} {selectedRequest?.patient.LastName}?</p>
+        <div className="flex justify-end mt-4">
+          <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setArchiveConfirmation(false)}>Cancel</button>
+          <button className="px-4 py-2 bg-red-600 text-white rounded" onClick={handleArchiveRequest}>Archive</button>
+        </div>
+      </Modal>
+
       <Modal isOpen={acceptConfirmation} close={() => setAcceptConfirmation(false)}>
         <h3 className="font-bold text-lg">Confirm Acceptance</h3>
-        <p className="text-sm">Are you sure you want to accept the request from: {selectedRequest?.patient.FirstName} {selectedRequest?.patient.LastName}?</p>
+        <p className="text-sm">Are you sure you want to accept the request for: {selectedRequest?.patient.FirstName} {selectedRequest?.patient.LastName}?</p>
         <div className="flex justify-end mt-4">
-          <button onClick={handleAcceptRequest} className="btn btn-success text-sm mr-2">Okay</button>
-          <button onClick={() => setAcceptConfirmation(false)} className="btn btn-secondary text-sm">Close</button>
+          <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setAcceptConfirmation(false)}>Cancel</button>
+          <button className="px-4 py-2 bg-green-600 text-white rounded" onClick={handleAcceptRequest}>Accept</button>
         </div>
       </Modal>
 
-      {/* Archive Confirmation Modal */}
-      <Modal isOpen={archiveConfirmation} close={() => setArchiveConfirmation(false)}>
-        <h3 className="font-bold text-lg">Confirm Archiving</h3>
-        <p className="text-sm">Are you sure you want to archive the request from: {selectedRequest?.patient.FirstName} {selectedRequest?.patient.LastName}?</p>
-        <div className="flex justify-end mt-4">
-          <button onClick={handleArchiveRequest} className="btn btn-success text-sm mr-2">Archive</button>
-          <button onClick={() => setArchiveConfirmation(false)} className="btn btn-secondary text-sm">Cancel</button>
-        </div>
+      {/* Detail Modal for Selected Request */}
+      <Modal isOpen={detailModalOpen} close={() => setDetailModalOpen(false)}>
+        {selectedRequest && (
+          <>
+            <h3 className="font-bold text-lg">Request Details</h3>
+            <p><strong>Patient Name:</strong> {selectedRequest.patient.FirstName} {selectedRequest.patient.LastName}</p>
+            <p><strong>Date:</strong> {new Date(selectedRequest.date).toLocaleDateString()}</p>
+            <p><strong>Procedures:</strong> {selectedRequest.procedures.map(proc => proc.name).join(', ')}</p>
+            <p><strong>Status:</strong> {selectedRequest.medcertiStatus}</p>
+            <p><strong>Notes:</strong> {selectedRequest.notes}</p>
+            <div className="flex justify-end mt-4">
+              <button className="px-4 py-2 bg-gray-300 rounded" onClick={() => setDetailModalOpen(false)}>Close</button>
+            </div>
+          </>
+        )}
       </Modal>
     </div>
   );

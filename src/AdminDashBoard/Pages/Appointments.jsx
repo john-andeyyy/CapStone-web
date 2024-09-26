@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom'; // Import Link for navigation
+import { Link } from 'react-router-dom';
 
 export default function Appointments() {
     const BASEURL = import.meta.env.VITE_BASEURL;
@@ -15,38 +15,34 @@ export default function Appointments() {
 
     const [appointments, setAppointments] = useState([]);
     const [filteredAppointments, setFilteredAppointments] = useState([]);
-    const [selectedStatus, setSelectedStatus] = useState(''); // State for selected status filter
-
-    // State to track status updates for each appointment
-    const [statusUpdates, setStatusUpdates] = useState({});
+    const [selectedStatus, setSelectedStatus] = useState('Pending'); // Default to 'Pending'
+    const [loading, setLoading] = useState(true); // Add loading state
+    const [error, setError] = useState(null); // Add error state
 
     useEffect(() => {
         // Fetch appointments data from the API
         const getAppointments = async () => {
+            setLoading(true); // Start loading
+            setError(null); // Reset error state before fetching
             try {
-                const response = await axios.get(`${BASEURL}/Appointments/appointments/filter`,
-                    {
-                        withCredentials: true
-                    }
-                )
+                const response = await axios.get(`${BASEURL}/Appointments/appointments/filter`, {
+                    withCredentials: true
+                });
 
-                if (response.status == 200) {
+                if (response.status === 200) {
                     setAppointments(response.data);
-                    setFilteredAppointments(response.data);
-                    const initialStatusUpdates = response.data.reduce((acc, appointment) => {
-                        acc[appointment.id] = appointment.status;
-                        return acc;
-                    }, {});
-                    setStatusUpdates(initialStatusUpdates);
-                    // console.log(response.data)
+                    setFilteredAppointments(response.data.filter(app => app.status === 'Pending'));
+                    console.log('ajshd')
                 }
             } catch (error) {
+                setError('Error fetching appointments. Please try again.');
                 console.error('Error fetching appointments:', error);
-
+            } finally {
+                setLoading(false); // End loading once fetching is done
             }
-        }
+        };
 
-        getAppointments()
+        getAppointments();
     }, []);
 
     useEffect(() => {
@@ -58,11 +54,44 @@ export default function Appointments() {
         }
     }, [selectedStatus, appointments]);
 
+    // Function to sort appointments by date and time in ascending order
+    const sortAppointments = () => {
+        const sorted = [...filteredAppointments].sort((a, b) => new Date(a.start) - new Date(b.start));
+        setFilteredAppointments(sorted);
+    };
+
+    // Function to get status color
+    const getStatusColor = (status) => {
+        switch (status) {
+            case 'Rejected':
+                return 'text-red-500'; // Red for Rejected
+            case 'Completed':
+            case 'Pending':
+                return 'text-green-500'; // Green for Completed and Pending
+            default:
+                return 'text-gray-500'; // Default color for other statuses
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="text-lg">Loading appointments...</div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="text-lg text-red-500">{error}</div>
+            </div>
+        );
+    }
 
     return (
         <div>
             <h1 className="text-3xl font-bold mb-4">Appointment Requests</h1>
-
             <div className="text-gray-600 mb-8">{formattedDate}</div>
             <div className="mb-8">
                 <h2 className="text-xl font-semibold mb-4">Appointment Requests List</h2>
@@ -72,7 +101,7 @@ export default function Appointments() {
                         value={selectedStatus}
                         onChange={(e) => setSelectedStatus(e.target.value)}
                     >
-                        <option value="">All Statuses</option>
+                        <option value="">View All</option>
                         <option value="Pending">Pending</option>
                         <option value="Rejected">Rejected</option>
                         <option value="Approved">Approved</option>
@@ -80,6 +109,12 @@ export default function Appointments() {
                         <option value="Missed">Missed</option>
                         <option value="Cancelled">Cancelled</option>
                     </select>
+                    <button
+                        className="ml-4 p-2 bg-blue-500 text-white rounded"
+                        onClick={sortAppointments}
+                    >
+                        Sort by Date & Time
+                    </button>
                 </div>
                 <div className="space-y-4">
                     {filteredAppointments.map(appointment => (
@@ -93,15 +128,13 @@ export default function Appointments() {
                                             {new Date(appointment.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                                         </>
                                     ) : (
-                                        <span className="text-red-500">Invalid Date: </span>
+                                        <span className="text-red-500">Invalid Date</span>
                                     )}
                                 </div>
 
                                 <div className="text-gray-600">
                                     {appointment.patient.FirstName} {appointment.patient.LastName}
                                 </div>
-
-
 
                                 <div>
                                     {appointment.procedures.length > 1
@@ -111,16 +144,15 @@ export default function Appointments() {
                                 <div className="text-gray-600">
                                     <p>
                                         <strong>Status: </strong>
-                                        <span className={appointment.status === 'Cancelled' ? 'text-red-500' : 'text-green-500'}>
+                                        <span className={getStatusColor(appointment.status)}>
                                             {appointment.status}
                                         </span>
                                     </p>
-
                                 </div>
                             </div>
                             <div className="flex space-x-2 items-center">
                                 <Link
-                                    to={`/appointment/${appointment.id}`} // Navigate to the detail page
+                                    to={`/appointment/${appointment.id}`}
                                     className="p-2 bg-green-500 text-white rounded"
                                 >
                                     View Details

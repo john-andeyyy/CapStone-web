@@ -118,7 +118,7 @@ function App() {
       <div className="hidden">
         <ThemeController />
       </div>
-        {/* <ThemeController /> */}
+        <ThemeController />
       {isLogin && !isExpired ? (
         <div className="flex">
           <Sidebar />
