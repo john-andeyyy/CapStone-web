@@ -1,4 +1,5 @@
 import axios from "axios";
+import { showToast } from '../../Components/ToastNotification';
 
 const BASEURL = import.meta.env.VITE_BASEURL;
 
@@ -44,10 +45,11 @@ export const update_profile = async (profileData) => {
             response: response.data,
             status: response.data.message
         }
+        showToast('success', 'Update successful!');
 
-        alert('update sucessfully')
+        setTimeout(() => {
         window.location.reload();
-
+        }, 3000);
         return data;
     } catch (error) {
         console.log(error);

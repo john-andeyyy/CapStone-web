@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+import  { showToast } from '../../AdminDashBoard/Components/ToastNotification';
 export default function AdminLogin() {
-    const [Username, setUsername] = useState('admin123');
-    const [Password, setPassword] = useState('admin123');
+    const [Username, setUsername] = useState('admin');
+    const [Password, setPassword] = useState('admin');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -34,10 +34,16 @@ export default function AdminLogin() {
                 localStorage.setItem('lastActiveTime', currentTime);
 
 
+                showToast('info', 'Login successful!');
+                
+                
+                setTimeout(() => {
+                    navigate('/dashboard');
+                    // navigate('/admindashboard'); // Ensure this path matches your Routes
+                    // navigate('/dashboard');
+                    window.location.reload();
 
-
-                navigate('/dashboard');
-                window.location.reload();
+                }, 1000);
             } else {
                 setError(response.data.message || 'Login failed');
             }

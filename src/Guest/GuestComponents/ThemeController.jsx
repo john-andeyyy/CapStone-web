@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import  { showToast } from '../../AdminDashBoard/Components/ToastNotification';
 
 const ThemeController = () => {
     const defaultColor = 'light';  
@@ -6,10 +7,14 @@ const ThemeController = () => {
 
     // Function to toggle between themes
     const toggleTheme = () => {
+        
+
         const newTheme = theme === 'light' ? 'dark' : 'light';  // Compare with 'light' or 'dark'
         setTheme(newTheme);
         localStorage.setItem('theme', newTheme);
         document.documentElement.setAttribute('data-theme', newTheme);
+        showToast('info', `Theme changed to ${newTheme}`);
+
     };
 
     useEffect(() => {

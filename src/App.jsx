@@ -23,6 +23,7 @@ import NotificationPage from './AdminDashBoard//Components/NotificationPage';
 import Dentist from './AdminDashBoard/Pages/Dentist';
 import AnnouncementPage from './AdminDashBoard/Components/AnnouncementPage';
 import Annoucement_Notification from './AdminDashBoard/Pages/Annoucement_Notification';
+import ToastNotification from './AdminDashBoard/Components/ToastNotification';
 
 
 import CalendarComponent from './try/Calendar';
@@ -81,7 +82,7 @@ function AdminRoutes() {
         <Route path="/Dentist" element={<Dentist />} />
         <Route path="/Annoucement_Notification" element={<Annoucement_Notification />} />
 
-
+        <Route path="/admindashboard" element={<Dashboard />} />
 
         <Route path="/CalendarComponent" element={<CalendarComponent />} />
 
@@ -118,6 +119,7 @@ function App() {
       <div className="hidden">
         <ThemeController />
       </div>
+        <ToastNotification/>
         <ThemeController />
       {isLogin && !isExpired ? (
         <div className="flex">
@@ -135,6 +137,8 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/CreateAccount" element={<CreateAccount />} />
             <Route path="/AdminLogin" element={<AdminLogin />} />
+              <Route path="/admindashboard" element={<Dashboard />} />
+
           </Routes>
           <Footer />
         </>
