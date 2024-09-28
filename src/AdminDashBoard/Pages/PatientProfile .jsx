@@ -97,10 +97,10 @@ const PatientProfile = () => {
                 />
             </div>
 
-            <div className="shadow-md rounded-lg p-6 bg-base-300">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="shadow-md rounded-lg p-6 bg-primary">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="field">
-                        <label className="block text-sm font-medium text-gray-700 capitalize">First Name</label>
+                        <label className="block text-sm font-medium text-white">First Name</label>
                         <input
                             type="text"
                             value={patient.FirstName || ""}
@@ -109,7 +109,7 @@ const PatientProfile = () => {
                         />
                     </div>
                     <div className="field">
-                        <label className="block text-sm font-medium text-gray-700 capitalize">Last Name</label>
+                        <label className="block text-sm font-medium text-white">Last Name</label>
                         <input
                             type="text"
                             value={patient.LastName || ""}
@@ -118,7 +118,7 @@ const PatientProfile = () => {
                         />
                     </div>
                     <div className="field">
-                        <label className="block text-sm font-medium text-gray-700 capitalize">Middle Name</label>
+                        <label className="block text-sm font-medium text-white">Middle Name</label>
                         <input
                             type="text"
                             value={patient.MiddleName || ""}
@@ -131,7 +131,7 @@ const PatientProfile = () => {
 
             {/* Full Details Button */}
             <div className="mt-4">
-                <button onClick={() => setIsModalOpen(true)} className="btn btn-primary">
+                <button onClick={() => setIsModalOpen(true)} className="btn text-white btn-primary">
                     Full Details
                 </button>
             </div>
@@ -139,7 +139,7 @@ const PatientProfile = () => {
             {/* Custom Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/2">
+                    <div className=" bg-accent p-6 rounded-lg shadow-lg w-11/12 md:w-1/2">
                         <h2 className="text-xl font-semibold mb-4">Full Patient Details</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {fullPatient && requiredFields.map((field) => (
@@ -154,7 +154,7 @@ const PatientProfile = () => {
                                 </div>
                             ))}
                         </div>
-                        <button onClick={() => setIsModalOpen(false)} className="btn btn-secondary mt-4">
+                        <button onClick={() => setIsModalOpen(false)} className="btn btn-primary mt-4">
                             Close
                         </button>
                     </div>
@@ -166,33 +166,36 @@ const PatientProfile = () => {
             <div className="w-auto mt-6">
                 <h3 className="text-xl font-semibold mt-6">Procedure History</h3>
                 <div className="overflow-x-auto mt-2">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-neutral">
-                            <tr>
-                                <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                <th className="hidden md:table-cell px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Procedures</th>
-                                <th className="hidden md:table-cell px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                                <th className="px-2 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200">
-                            {dentalHistory.map((record) => (
-                                <tr key={record.id} onClick={() => handleRowClick(record.id)} className="cursor-pointer">
-                                    <td className="px-2 py-4 whitespace-nowrap">{record.date}</td>
-                                    <td className="hidden md:table-cell px-2 py-4 whitespace-nowrap">{formatProcedures(record.procedures)}</td>
-                                    <td className="hidden md:table-cell px-2 py-4 whitespace-nowrap">{record.Amount}</td>
-                                    <td className="px-2 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                        {showButton && record.Status.toLowerCase() === 'done' && (
-                                            <button className="text-green-500 hover:text-green-700">
-                                                <span className="hidden md:inline">📝 Create medical certificate</span>
-                                                <span className="md:hidden">📝</span>
-                                            </button>
-                                        )}
-                                    </td>
+                    <div className="max-h-96 overflow-y-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-primary text-white sticky top-0 z-10">
+                                <tr>
+                                    <th className="px-2 py-3 text-left text-xs font-medium  uppercase tracking-wider">Date</th>
+                                    <th className="hidden md:table-cell px-2 py-3 text-left text-xs font-medium  uppercase tracking-wider">Procedures</th>
+                                    <th className="hidden md:table-cell px-2 py-3 text-left text-xs font-medium uppercase tracking-wider">Amount</th>
+                                    <th className="px-2 py-3 text-xs font-medium  uppercase tracking-wider text-center">Action</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody className="divide-y divide-gray-200">
+                                {dentalHistory.map((record) => (
+                                    <tr key={record.id} onClick={() => handleRowClick(record.id)} className="cursor-pointer">
+                                        <td className="px-2 py-4 whitespace-nowrap">{record.date}</td>
+                                        <td className="hidden md:table-cell px-2 py-4 whitespace-nowrap">{formatProcedures(record.procedures)}</td>
+                                        <td className="hidden md:table-cell px-2 py-4 whitespace-nowrap">{record.Amount}</td>
+                                        <td className="px-2 py-4 whitespace-nowrap text-center text-sm font-medium">
+                                            {showButton && record.Status.toLowerCase() === 'done' && (
+                                                <button className="text-green-500 hover:text-green-700">
+                                                    <span className="hidden md:inline">📝 Create medical certificate</span>
+                                                    <span className="md:hidden">📝</span>
+                                                </button>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
                 </div>
             </div>
         </div>

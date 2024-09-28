@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'; // Make sure to install axios
 import { useNavigate } from 'react-router-dom';
-
+import ThemeController from '../../Guest/GuestComponents/ThemeController';
 const Notification_bell = () => {
     const navigate = useNavigate()
 
@@ -42,8 +42,11 @@ const Notification_bell = () => {
 
     return (
         <div className="relative flex justify-end items-center bg-base-100">
-            {/* Notification Button with Bell Icon */}
-            <button className="btn btn-ghost btn-circle relative p-2" onClick={toggleDropdown}>
+            <div>
+                <ThemeController />
+
+            </div>            {/* Notification Button with Bell Icon */}
+            <button className="btn btn-ghost btn-circle relative" onClick={toggleDropdown}>
                 <div className="indicator">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -67,7 +70,7 @@ const Notification_bell = () => {
 
             {/* Notification Dropdown */}
             {isOpen && (
-                <div className="absolute top-full right-0 mt-2 w-80 bg-base-300 shadow-lg rounded-lg z-10 overflow-hidden">
+                <div className="absolute top-full right-0 mt-2 w-80 bg-neutral shadow-lg rounded-lg z-10 overflow-hidden">
                     <div className="p-3 text-lg font-semibold  border-b border-gray-200 flex justify-between">
                         <div>Notifications</div>
                         <button className="" onClick={() => {

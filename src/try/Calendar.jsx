@@ -146,7 +146,9 @@ const CalendarComponent = () => {
     return (
         <div className="p-4 min-h-screen">
             {loading ? (
-                <div className="text-center text-xl text-gray-700">Loading...</div>
+                <div className="flex justify-center items-center h-screen">
+                    <span className="loading loading-spinner loading-lg"></span>
+                </div>
             ) : (
                 <div className="">
 

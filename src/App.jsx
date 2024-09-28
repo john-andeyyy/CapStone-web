@@ -1,3 +1,5 @@
+import '../custom.css'; /* Import your custom file */
+
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import Footer from './Guest/GuestComponents/Footer';
 import GuestNavBar from "./Guest/GuestNavigation/GuestNavBar";
@@ -120,7 +122,6 @@ function App() {
         <ThemeController />
       </div>
         <ToastNotification/>
-        <ThemeController />
       {isLogin && !isExpired ? (
         <div className="flex">
           <Sidebar />

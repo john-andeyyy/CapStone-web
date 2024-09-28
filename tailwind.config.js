@@ -11,8 +11,8 @@ module.exports = {
           "primary": "#42B68C",        // Custom green base color
           "secondary": "#91dfc3",      // Custom secondary color
           "accent": "#C6E4DA",         // Accent color
-          "neutral": "#3d4451",        // Neutral color
           "base-100": "#ffffff",       // Base background color (light mode)
+          "neutral": "#F3F4F6",  
 
           "info": "#3ABFF8",           // Info color
           "success": "#22c55e",        // Success color (green)
@@ -32,7 +32,7 @@ module.exports = {
           "primary": "#191E24",        // Custom primary color for dark mode
           "secondary": "#6B7280",      // Custom secondary color for dark mode
           "accent": "#6B7280",         // Accent color for dark mode
-          "neutral": "#F3F4F6",        // Neutral color for dark mode
+          "neutral": "#3d4451",        // Neutral color
           "base-100": "#1D232A",       // Base background color (dark mode)
 
           "info": "#3ABFF8",           // Info color for dark mode

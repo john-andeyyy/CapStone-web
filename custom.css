@@ -1,0 +1,5 @@
+.my-modal-color {
+    @apply bg-accent border border-2 border-gray-300;
+}
+
+                                /* <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50"> */

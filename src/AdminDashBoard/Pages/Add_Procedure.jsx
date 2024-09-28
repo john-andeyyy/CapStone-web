@@ -153,8 +153,8 @@ export default function Add_Procedure() {
 
   return (
     <div className='container mx-auto text-sm lg:text-md'>
-      <div className='flex justify-between items-center'>
-        <h1 className='text-5xl font-semibold'>Procedure List...</h1>
+      <div className='flex justify-between items-center pb-5'>
+        <h1 className='text-2xl font-semibold l:text-sm'>Procedure List...</h1>
         <div className='relative'>
           <input
             type='text'
@@ -168,17 +168,18 @@ export default function Add_Procedure() {
           </div>
         </div>
       </div>
-      <div className='text-right py-3'>
-        <button className='btn bg-green-400 hover:bg-green-400 text-white' onClick={openAddPatientModal}>Create Procedure</button>
+
+
+
+
+      <div className='flex w-full font-semibold lg:text-xl sm:text-xl border-b p-3 bg-primary rounded-lg text-white '>
+        <div className='flex-1'>Procedure Name <button onClick={handleSort} className='ml-2 text-white text-xl'>{sortOrder === 'asc' ? '↑' : '↓'}</button></div>
+        <div className='flex-1 hidden lg:block'>Duration</div>
+        <div className='flex-1 hidden lg:block'>Price</div>
+        <div className='flex-1 text-center'>Actions</div>
       </div>
 
-      <div className='mt-4 text-lg'>
-        <div className='flex w-full font-semibold border-b pb-2'>
-          <div className='flex-1'>Procedure Name <button onClick={handleSort} className='ml-2 text-blue-500'>{sortOrder === 'asc' ? '↑' : '↓'}</button></div>
-          <div className='flex-1 hidden lg:block'>Duration</div>
-          <div className='flex-1 hidden lg:block'>Price</div>
-          <div className='flex-1 text-center'>Actions</div>
-        </div>
+      <div className='mt-4 text-lg overflow-auto max-h-80'>
         {filteredProcedures.map((procedure) => (
           <div key={procedure._id} className='flex w-full items-center border-b py-2'>
             <div className='flex-1'>{procedure.Procedure_name}</div>
@@ -197,6 +198,13 @@ export default function Add_Procedure() {
             </div>
           </div>
         ))}
+      </div>
+      <div className=' '>
+        <div className='absolute bottom-3 right-3'>
+          <button className='btn bg-primary hover:bg-secondary text-white' onClick={openAddPatientModal}>
+            Create Procedure
+          </button>
+        </div>
       </div>
 
       {/* Add Modal */}
@@ -262,69 +270,75 @@ export default function Add_Procedure() {
 
       {/* Edit Modal */}
       <Modal isOpen={editProcedureModalOpen} close={() => setEditProcedureModalOpen(false)}>
-        <h3 className="font-bold text-lg">Edit Procedure</h3>
-        <form onSubmit={handleEditSubmit} className="flex flex-col">
-          <div className="label">
-            <span className="label-text">Procedure Name</span>
-          </div>
-          <input
-            type="text"
-            placeholder="Procedure Name"
-            value={newProcedure.Procedure_name}
-            onChange={(e) => setNewProcedure({ ...newProcedure, Procedure_name: e.target.value })}
-            className="border p-2 mb-2"
-            required
-          />
-          <div className="label">
-            <span className="label-text">Duration</span>
-          </div>
-          <input
-            type="text"
-            placeholder="Duration"
-            value={newProcedure.Duration}
-            onChange={(e) => setNewProcedure({ ...newProcedure, Duration: e.target.value })}
-            className="border p-2 mb-2"
-            required
-          />
-          <div className="label">
-            <span className="label-text">Price</span>
-          </div>
-          <input
-            type="number"
-            placeholder="Price"
-            value={newProcedure.Price}
-            onChange={(e) => setNewProcedure({ ...newProcedure, Price: e.target.value })}
-            className="border p-2 mb-2"
-            required
-          />
-          <div className="label">
-            <span className="label-text">Description</span>
-          </div>
-          <input
-            type="text"
-            placeholder="Description"
-            value={newProcedure.Description}
-            onChange={(e) => setNewProcedure({ ...newProcedure, Description: e.target.value })}
-            className="border p-2 mb-2"
-            required
-          />
-          <div className="modal-action">
-            <button className="btn btn-primary bg-blue-500 hover:bg-blue-500 text-white">Save Changes</button>
-            <button
-              type="button"
-              className="btn btn-ghost"
-              onClick={() => setEditProcedureModalOpen(false)}
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
+        <div className='text-white'>
+          <h3 className="font-bold text-lg text-center ">Edit Procedure</h3>
+          <form onSubmit={handleEditSubmit} className="flex flex-col">
+            <div className="label">
+              <span className="label-text">Procedure Name</span>
+            </div>
+            <input
+              type="text"
+              placeholder="Procedure Name"
+              value={newProcedure.Procedure_name}
+              onChange={(e) => setNewProcedure({ ...newProcedure, Procedure_name: e.target.value })}
+              className="border p-2 mb-2"
+              required
+            />
+            <div className="label">
+              <span className="label-text">Duration</span>
+            </div>
+            <input
+              type="text"
+              placeholder="Duration"
+              value={newProcedure.Duration}
+              onChange={(e) => setNewProcedure({ ...newProcedure, Duration: e.target.value })}
+              className="border p-2 mb-2"
+              required
+            />
+            <div className="label">
+              <span className="label-text">Price</span>
+            </div>
+            <input
+              type="number"
+              placeholder="Price"
+              value={newProcedure.Price}
+              onChange={(e) => setNewProcedure({ ...newProcedure, Price: e.target.value })}
+              className="border p-2 mb-2"
+              required
+            />
+            <div className="label">
+              <span className="label-text">Description</span>
+            </div>
+            <input
+              type="text"
+              placeholder="Description"
+              value={newProcedure.Description}
+              onChange={(e) => setNewProcedure({ ...newProcedure, Description: e.target.value })}
+              className="border p-2 mb-2"
+              required
+            />
+            <div className="modal-action">
+              <button className="btn btn-success bg-blue-500 hover:bg-blue-500 text-white">
+                Save Changes
+              </button>
+
+              <button
+                type="button"
+                className="btn btn-error text-white"
+                onClick={() => setEditProcedureModalOpen(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
       </Modal>
 
       {/* View Modal */}
       <Modal isOpen={viewProcedureModalOpen} close={() => setViewProcedureModalOpen(false)}>
-        <h3 className="font-bold text-lg">View Procedure</h3>
-        <div className="flex flex-col">
+
+        <h3 className="font-bold text-lg text-center">View Procedure</h3>
+        <div className="flex flex-col text-white">
           <div className="label">
             <span className="label-text">Procedure Name</span>
           </div>
@@ -364,29 +378,31 @@ export default function Add_Procedure() {
           <div className="modal-action">
             <button
               type="button"
-              className="btn btn-ghost"
+              className="btn btn-error text-white"
               onClick={() => setViewProcedureModalOpen(false)}
             >
               Close
             </button>
           </div>
         </div>
+
       </Modal>
 
       {/* Delete Confirmation Modal */}
       <Modal isOpen={deleteConfirmationModalOpen} close={() => setDeleteConfirmationModalOpen(false)}>
-        <h3 className="font-bold text-lg">Delete Procedure</h3>
+        <h3 className="font-bold text-lg text-center text-white">Delete Procedure</h3>
         <p>Are you sure you want to delete {procedureToDelete?.Procedure_name}?</p>
         <div className="modal-action">
           <button
-            className="btn bg-red-500 text-white"
+            type="button"
+            className="btn btn-error text-white"
             onClick={confirmDelete}
           >
             Delete
           </button>
           <button
             type="button"
-            className="btn btn-ghost"
+            className="btn btn-accent"
             onClick={() => setDeleteConfirmationModalOpen(false)}
           >
             Cancel

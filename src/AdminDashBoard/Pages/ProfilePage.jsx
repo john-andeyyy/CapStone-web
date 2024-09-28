@@ -82,7 +82,7 @@ const ProfilePage = () => {
 
     return (
         <div className="min-h-screen flex justify-center items-center  p-6">
-            <div className="bg-base-200 p-8 rounded-lg shadow-lg w-full max-w-4xl">
+            <div className="bg-secondary p-8 rounded-lg shadow-lg w-full max-w-4xl">
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-3xl font-bold">Profile Page</h1>
                     <button
@@ -96,7 +96,7 @@ const ProfilePage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {/* Profile Picture */}
                     <div className="col-span-1 flex flex-col items-center">
-                        <label className="block text-primary mb-2">Profile Picture:</label>
+                        <label className="block text-white mb-2">Profile Picture:</label>
                         {profile.ProfilePicturePreview && (
                             <img
                                 src={profile.ProfilePicturePreview}
@@ -109,7 +109,7 @@ const ProfilePage = () => {
                                 type="file"
                                 accept="image/*"
                                 onChange={handleProfilePicChange}
-                                className="mt-2 w-full text-sm text-primary"
+                                className="mt-2 w-full text-sm text-white"
                             />
                         )}
                     </div>
@@ -118,7 +118,7 @@ const ProfilePage = () => {
                     <div className="col-span-2 space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="form-group">
-                                <label className="block text-primary">First Name:</label>
+                                <label className="block text-white">First Name:</label>
                                 <input
                                     type="text"
                                     name="FirstName"
@@ -130,7 +130,7 @@ const ProfilePage = () => {
                             </div>
 
                             <div className="form-group">
-                                <label className="block text-primary">Last Name:</label>
+                                <label className="block text-white">Last Name:</label>
                                 <input
                                     type="text"
                                     name="LastName"
@@ -144,7 +144,7 @@ const ProfilePage = () => {
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="form-group">
-                                <label className="blocktext-primary text-primary">Middle Name:</label>
+                                <label className="block text-white">Middle Name:</label>
                                 <input
                                     type="text"
                                     name="MiddleName"
@@ -156,7 +156,7 @@ const ProfilePage = () => {
                             </div>
 
                             <div className="form-group">
-                                <label className="block text-primary">Email:</label>
+                                <label className="block text-white">Email:</label>
                                 <input
                                     type="email"
                                     name="Email"
@@ -170,7 +170,7 @@ const ProfilePage = () => {
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="form-group">
-                                <label className="block text-primary">Username:</label>
+                                <label className="block text-white">Username:</label>
                                 <input
                                     type="text"
                                     name="Username"
@@ -182,7 +182,7 @@ const ProfilePage = () => {
                             </div>
 
                             <div className="form-group">
-                                <label className="block text-primary">Contact Number:</label>
+                                <label className="block text-white">Contact Number:</label>
                                 <input
                                     type="text"
                                     name="contactNumber"

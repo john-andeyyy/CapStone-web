@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import  { showToast } from '../../AdminDashBoard/Components/ToastNotification';
+import { showToast } from '../../AdminDashBoard/Components/ToastNotification';
+
 export default function AdminLogin() {
     const [Username, setUsername] = useState('admin');
     const [Password, setPassword] = useState('admin');
@@ -33,16 +34,11 @@ export default function AdminLogin() {
                 const currentTime = new Date().getTime();
                 localStorage.setItem('lastActiveTime', currentTime);
 
-
                 showToast('info', 'Login successful!');
-                
-                
+
                 setTimeout(() => {
                     navigate('/dashboard');
-                    // navigate('/admindashboard'); // Ensure this path matches your Routes
-                    // navigate('/dashboard');
                     window.location.reload();
-
                 }, 1000);
             } else {
                 setError(response.data.message || 'Login failed');
@@ -52,19 +48,18 @@ export default function AdminLogin() {
             console.warn('Login error:', errorMessage);
             setError(errorMessage);
         } finally {
-            setLoading(false); // Set loading to false when request ends
+            setLoading(false);
         }
     };
 
     return (
-        <div className="max-w-5xl mx-auto flex items-center justify-center h-screen">
-            <div className="card px-8 py-6 rounded-lg bg-base-200 w-72">
-                <h1 className="text-center font-bold text-3xl  pb-4">Login Admin</h1>
+        <div className="flex flex-col items-center justify-center h-screen ">
+            <div className="w-full max-w-sm bg-secondary rounded-lg shadow-md p-6">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Login Admin</h2>
                 {error && <h1 className="text-center font-bold py-4 text-xl text-red-600">{error}</h1>}
-                {/* <h1>both admin123</h1> */}
-                <form className="pb-6" onSubmit={handleSubmit}>
+                <form className="flex flex-col" onSubmit={handleSubmit}>
                     <input
-                        className="p-2 my-2 rounded w-full focus:outline-blue-600"
+                        className="bg-gray-100 text-gray-900 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                         placeholder="Username"
                         type="text"
                         value={Username}
@@ -73,18 +68,25 @@ export default function AdminLogin() {
                         disabled={loading}
                     />
                     <input
-                        className="p-2 my-2 rounded w-full focus:outline-blue-600"
+                        className="bg-gray-100 text-gray-900 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                         placeholder="Password"
                         type="password"
                         value={Password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        disabled={loading} // Disable input while loading
+                        disabled={loading}
                     />
+                    <div className="flex items-center justify-between flex-wrap mb-4">
+                        <label className="text-sm text-gray-900 cursor-pointer">
+                            <input type="checkbox" className="mr-2" />
+                            Remember me
+                        </label>
+                        <a href="#" className="text-sm text-blue-500 hover:underline mb-0.5">Forgot password?</a>
+                    </div>
                     <button
-                        className="bg-blue-600 hover:bg-blue-500 text-white font-semibold p-2 mt-3 rounded w-full"
+                        className="bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-indigo-600 transition ease-in-out duration-150"
                         type="submit"
-                        disabled={loading} // Disable button while loading
+                        disabled={loading}
                     >
                         {loading ? 'Logging in...' : 'Login'}
                     </button>

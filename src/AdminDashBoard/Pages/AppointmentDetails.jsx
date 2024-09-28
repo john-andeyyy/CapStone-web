@@ -147,7 +147,7 @@ export default function AppointmentDetails() {
 
     if (loading) return (
         <div className="flex justify-center items-center h-screen">
-            <h1>Loading...</h1>
+            <div className="text-center py-20"><span className="loading loading-spinner loading-lg"></span></div>
         </div>
     );
 

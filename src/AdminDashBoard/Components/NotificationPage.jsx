@@ -16,6 +16,11 @@ export default function NotificationPage() {
 
     const Baseurl = import.meta.env.VITE_BASEURL;
 
+    useEffect(() => {
+        fetchNotifications();
+        fetchPatients();
+    }, []);
+
     const fetchNotifications = async () => {
         setLoading(true);
         try {
@@ -39,16 +44,6 @@ export default function NotificationPage() {
         }
     };
 
-    useEffect(() => {
-        fetchNotifications();
-    }, []);
-
-    useEffect(() => {
-        if (newNotification.sendTo === 'sendToOne' || newNotification.sendTo === 'sendToCustom') {
-            fetchPatients();
-        }
-    }, [newNotification.sendTo]);
-
     const handleNewNotificationChange = (e) => {
         const { name, value } = e.target;
         setNewNotification(prevState => ({ ...prevState, [name]: value }));
@@ -70,46 +65,35 @@ export default function NotificationPage() {
                 isSendEmail: newNotification.isSendEmail
             };
 
-            switch (newNotification.sendTo) {
-                case 'sendToOne':
-                    if (selectedPatient) {
-                        payload.patientId = selectedPatient.id;
-                        endpoint = `${Baseurl}/Notification/one`;
-                    } else {
-                        setError('Please select a patient');
-                        setLoading(false);
-                        return;
-                    }
-                    break;
-                case 'sendToCustom':
-                    if (selectedPatients.length > 0) {
-                        payload.patientIds = selectedPatients;
-                        endpoint = `${Baseurl}/Notification/custom`;
-                    } else {
-                        setError('Please select at least one patient');
-                        setLoading(false);
-                        return;
-                    }
-                    break;
-                default:
-                    setError('Invalid send to option');
-                    setLoading(false);
-                    return;
+            if (newNotification.sendTo === 'sendToOne' && selectedPatient) {
+                payload.patientId = selectedPatient.id;
+                endpoint = `${Baseurl}/Notification/one`;
+            } else if (newNotification.sendTo === 'sendToCustom' && selectedPatients.length > 0) {
+                payload.patientIds = selectedPatients;
+                endpoint = `${Baseurl}/Notification/custom`;
+            } else {
+                setError('Please select a valid patient or patients');
+                setLoading(false);
+                return;
             }
 
             await axios.post(endpoint, payload, { withCredentials: true });
-            setNewNotification({ title: '', message: '', sendTo: 'sendToOne', isSendEmail: false });
-            setSelectedPatient(null);
-            setModalType(null);
+            showToast('success', 'Successfully sent!');
+            resetNewNotificationForm();
             fetchNotifications();
-            showToast('success', 'Successfully send!');
-
         } catch (error) {
             setError('Error sending notification');
             console.error('Error sending notification:', error);
         } finally {
             setLoading(false);
         }
+    };
+
+    const resetNewNotificationForm = () => {
+        setNewNotification({ title: '', message: '', sendTo: 'sendToOne', isSendEmail: false });
+        setSelectedPatient(null);
+        setSelectedPatients([]);
+        setModalType(null);
     };
 
     const handleEdit = (notif) => {
@@ -133,11 +117,8 @@ export default function NotificationPage() {
                 notif._id === editedNotification.id ? response.data : notif
             );
             setNotifications(updatedNotifications.reverse());
-            setEditedNotification({ id: null, title: '', message: '' });
             showToast('success', 'Saved Changes!');
-
-            setModalType(null);
-            setError('');
+            resetEditForm();
         } catch (error) {
             setError('Error updating notification');
             console.error('Error updating notification:', error);
@@ -146,9 +127,9 @@ export default function NotificationPage() {
         }
     };
 
-    const handleEditedNotificationChange = (e) => {
-        const { name, value } = e.target;
-        setEditedNotification(prevState => ({ ...prevState, [name]: value }));
+    const resetEditForm = () => {
+        setEditedNotification({ id: null, title: '', message: '' });
+        setModalType(null);
     };
 
     const viewNotificationDetails = (notif) => {
@@ -158,28 +139,32 @@ export default function NotificationPage() {
 
     const closeModal = () => {
         setModalType(null);
+        resetNewNotificationForm(); // Clear form when modal closes
     };
+
+    if (loading) {
+        return (
+            <div className="text-center py-20">
+                <span className="loading loading-spinner loading-lg"></span>
+            </div>
+        );
+    }
 
     return (
         <div className="p-4 pt-0 sm:p-6 max-w-full mx-auto flex flex-col h-screen">
             <div className='flex space-x-5 pb-2'>
-                {/* <h2 className="text-2xl font-bold">Notifications</h2> */}
                 <button
-                    onClick={() => {
-                        fetchPatients();
-                        setModalType('new');
-                    }}
+                    onClick={() => setModalType('new')}
                     className="bg-green-500 text-white px-4 py-2 rounded"
                 >
                     Send New Notification
                 </button>
             </div>
-            {loading && <p className="text-blue-500">Loading...</p>}
 
             <div className="flex-grow overflow-auto">
                 <ul className="space-y-4">
                     {notifications
-                        .filter(notif => notif.toAll == false)
+                        .filter(notif => !notif.toAll)
                         .map(notif => (
                             <li
                                 key={notif._id}
@@ -210,15 +195,15 @@ export default function NotificationPage() {
                                 </button>
                             </li>
                         ))}
-
                 </ul>
             </div>
 
+            {/* New Notification Modal */}
             {modalType === 'new' && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-base-100 p-6 rounded shadow-lg max-w-md w-full">
                         <h2 className="text-2xl font-bold mb-4">Send New Notification</h2>
-                        <h3>{error && <p className="text-red-500">{error}</p>}</h3>
+                        {error && <p className="text-red-500">{error}</p>}
                         <div className="space-y-4">
                             <input
                                 type="text"
@@ -238,160 +223,142 @@ export default function NotificationPage() {
                             />
 
                             <div className="flex items-center justify-between space-x-5">
-                                <div className="w-2/8">
-                                    <select
-                                        name="sendTo"
-                                        value={newNotification.sendTo}
-                                        onChange={handleNewNotificationChange}
-                                        className="block w-full mb-2 p-2 border rounded"
-                                    >
-                                        <option value="sendToOne">Send to One patient</option>
-                                        <option value="sendToCustom">Send to Custom Patients</option>
-                                    </select>
-                                </div>
+                                <select
+                                    name="sendTo"
+                                    value={newNotification.sendTo}
+                                    onChange={handleNewNotificationChange}
+                                    className="block w-2/8 mb-2 p-2 border rounded"
+                                >
+                                    <option value="sendToOne">Send to One Patient</option>
+                                    <option value="sendToCustom">Send to Custom Patients</option>
+                                </select>
 
-                                <div className="flex items-center">
-                                    <input
-                                        type="checkbox"
-                                        name="isSendEmail"
-                                        checked={newNotification.isSendEmail}
-                                        onChange={(e) =>
-                                            setNewNotification((prevState) => ({
-                                                ...prevState,
-                                                isSendEmail: e.target.checked,
-                                            }))
-                                        }
-                                        className="mr-2"
-                                    />
-                                    <label>Send as Email</label>
-                                </div>
-                            </div>
-
-                            {newNotification.sendTo === 'sendToOne' && (
-                                <div className="mb-4">
-                                    <label>Select Patient</label>
+                                {newNotification.sendTo === 'sendToOne' && (
                                     <select
-                                        name="patient"
-                                        value={selectedPatient?.id || ''}
+                                        value={selectedPatient ? selectedPatient.name : ''}
                                         onChange={(e) => {
-                                            const patient = patients.find(p => p.id === e.target.value);
-                                            setSelectedPatient(patient);
+                                            const patient = patients.find(p => p.name === e.target.value);
+                                            setSelectedPatient(patient || null);
                                         }}
-                                        className="block w-full p-2 border rounded"
+                                        className="block w-4/8 mb-2 p-2 border rounded"
                                     >
-                                        <option value="">Choose a patient...</option>
+                                        <option value="">Select Patient</option>
                                         {patients.map(patient => (
-                                            <option key={patient.id} value={patient.id}>
-                                                {patient.FirstName} {patient.LastName}
-                                            </option>
+                                            <option key={patient.id} value={patient.name}>{patient.name}</option>
                                         ))}
                                     </select>
-                                </div>
-                            )}
+                                )}
 
-                            {newNotification.sendTo === 'sendToCustom' && (
-                                <div className="mb-4">
-                                    <label>Select Patients</label>
-                                    {patients.map(patient => (
-                                        <div key={patient.id} className="flex items-center mb-2">
-                                            <input
-                                                type="checkbox"
-                                                value={patient.id}
-                                                checked={selectedPatients.includes(patient.id)}
-                                                onChange={(e) => {
-                                                    if (e.target.checked) {
-                                                        setSelectedPatients([...selectedPatients, patient.id]);
-                                                    } else {
-                                                        setSelectedPatients(selectedPatients.filter(id => id !== patient.id));
-                                                    }
-                                                }}
-                                                className="mr-2"
-                                            />
-                                            <span>{patient.FirstName} {patient.LastName}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                            <div className="flex justify-end space-x-3">
+                                {newNotification.sendTo === 'sendToCustom' && (
+                                    <div>
+                                        <p className="mb-1">Select Patients:</p>
+                                        {patients.map(patient => (
+                                            <div key={patient.id}>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedPatients.includes(patient.id)}
+                                                    onChange={() => {
+                                                        if (selectedPatients.includes(patient.id)) {
+                                                            setSelectedPatients(prev => prev.filter(id => id !== patient.id));
+                                                        } else {
+                                                            setSelectedPatients(prev => [...prev, patient.id]);
+                                                        }
+                                                    }}
+                                                />
+                                                {patient.name}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
 
+                                <label className="flex items-center">
+                                    <input
+                                        type="checkbox"
+                                        checked={newNotification.isSendEmail}
+                                        onChange={() => setNewNotification(prev => ({ ...prev, isSendEmail: !prev.isSendEmail }))}
+                                    />
+                                    <span className="ml-2">Send Email</span>
+                                </label>
+                            </div>
+
+                            <div className="flex justify-end space-x-4">
                                 <button
                                     onClick={sendNotification}
-                                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                                    className="bg-blue-500 text-white px-4 py-2 rounded"
                                 >
                                     Send Notification
                                 </button>
-
                                 <button
                                     onClick={closeModal}
-                                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                                    className="bg-gray-400 text-white px-4 py-2 rounded"
                                 >
                                     Cancel
                                 </button>
-
                             </div>
                         </div>
                     </div>
                 </div>
             )}
 
+            {/* Edit Notification Modal */}
             {modalType === 'edit' && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-base-100 p-6 rounded shadow-lg max-w-md w-full">
                         <h2 className="text-2xl font-bold mb-4">Edit Notification</h2>
-                        <h3>{error && <p className="text-red-500">{error}</p>}</h3>
+                        {error && <p className="text-red-500">{error}</p>}
                         <div className="space-y-4">
                             <input
                                 type="text"
                                 name="title"
                                 placeholder="Title"
                                 value={editedNotification.title}
-                                onChange={handleEditedNotificationChange}
+                                onChange={(e) => setEditedNotification({ ...editedNotification, title: e.target.value })}
                                 className="block mb-2 p-2 border rounded w-full"
                             />
                             <textarea
                                 name="message"
                                 placeholder="Message"
                                 value={editedNotification.message}
-                                onChange={handleEditedNotificationChange}
+                                onChange={(e) => setEditedNotification({ ...editedNotification, message: e.target.value })}
                                 className="block mb-2 p-2 border rounded w-full"
                                 rows="4"
                             />
-                            <button
-                                onClick={saveEdit}
-                                className="bg-blue-500 text-white px-4 py-2 rounded"
-                            >
-                                Save Changes
-                            </button>
-                            <button
-                                onClick={closeModal}
-                                className="bg-red-500 text-white px-4 py-2 rounded"
-                            >
-                                Cancel
-                            </button>
+                            <div className="flex justify-end space-x-4">
+                                <button
+                                    onClick={saveEdit}
+                                    className="bg-blue-500 text-white px-4 py-2 rounded"
+                                >
+                                    Save
+                                </button>
+                                <button
+                                    onClick={resetEditForm}
+                                    className="bg-gray-400 text-white px-4 py-2 rounded"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             )}
 
+            {/* Notification Details Modal */}
             {modalType === 'details' && selectedNotification && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-base-100 p-6 rounded shadow-lg max-w-md w-full">
-                        <h2 className="text-2xl font-bold mb-4">Notification Details</h2>
-                        <div className="space-y-4">
-                            <h3 className="text-xl font-semibold">{selectedNotification.Title}</h3>
-                            <p>{selectedNotification.Message}</p>
-                            <p className="text-gray-600">Date Created: {new Date(selectedNotification.createdAt).toLocaleDateString('en-US', {
-                                year: 'numeric',
-                                month: 'short',
-                                day: 'numeric',
-                            })}</p>
-                            <button
-                                onClick={closeModal}
-                                className="bg-red-500 text-white px-4 py-2 rounded"
-                            >
-                                Close
-                            </button>
-                        </div>
+                        <h2 className="text-2xl font-bold mb-4">{selectedNotification.Title}</h2>
+                        <p>{selectedNotification.Message}</p>
+                        <p className="text-gray-600 mt-4">Date Created: {new Date(selectedNotification.createdAt).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                        })}</p>
+                        <button
+                            onClick={resetEditForm}
+                            className="bg-gray-400 text-white px-4 py-2 rounded mt-4"
+                        >
+                            Close
+                        </button>
                     </div>
                 </div>
             )}

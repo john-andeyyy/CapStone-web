@@ -83,7 +83,7 @@ export default function Patients_List() {
         <div className='container mx-auto p-4'>
             {loading ? (
                 <div className='flex justify-center items-center h-screen'>
-                    <span className="text-2xl">Loading...</span>
+                    <span className="loading loading-spinner loading-lg"></span>
                 </div>
             ) : (
                 <>
@@ -110,8 +110,9 @@ export default function Patients_List() {
                             </div>
                         </div>
                     </div>
-                    <div className='mt-4'>
-                        <div className='flex w-full text-xl font-semibold border-b pb-2'>
+
+                    <div className='mt-4 overflow-auto max-h-70'>
+                        <div className='flex w-full text-xl text-white font-semibold border-b pb-2 bg-primary p-3 rounded-lg'>
                             <div className='flex-1'>Patient Name</div>
                             <div className='flex-1 hidden lg:block'>Last Visit <span className='text-red-600'>(Unavailable)</span></div>
                             <div className='flex-1 text-center'>Actions</div>

@@ -110,7 +110,7 @@ export default function Dentist() {
         <div className="container mx-auto p-4">
             <h1 className="text-3xl font-bold mb-4 text-center ">Dentist List</h1>
             {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-            <div className="flex justify-between mb-4">
+            <div className="flex justify-between mb-4 text-white">
                 <button
                     className="bg-primary py-2 px-4 rounded-lg hover:bg-primary"
                     onClick={handleAddDentist}
@@ -121,7 +121,7 @@ export default function Dentist() {
             <div className="overflow-x-auto">
                 <table className="min-w-full text-left ">
                     <thead>
-                        <tr className="text-sm text-gray-400">
+                        <tr className="text-sm text-white bg-primary rounded-lg ">
                             <th className="py-3 px-5">Name</th>
                             <th className="py-3 px-5">Available</th>
                         </tr>
@@ -129,7 +129,9 @@ export default function Dentist() {
                     <tbody>
                         {loading ? (
                             <tr>
-                                <td colSpan="2" className="py-3 px-5 text-center">Loading...</td>
+                                <td colSpan="2" className="py-3 px-5 text-center"><span className="loading loading-spinner loading-lg"></span></td>
+
+                                
                             </tr>
                         ) : dentists.length > 0 ? (
                             dentists.map((dentist) => (

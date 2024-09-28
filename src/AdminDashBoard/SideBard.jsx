@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FaHome, FaCalendarAlt, FaUser, FaFileAlt, FaUserPlus, FaPlus, FaSignOutAlt, FaBars, FaTimes, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { get_profile } from './Fetchs/Admin/admin_profile';
+import ThemeController from '../Guest/GuestComponents/ThemeController';
 
 export default function Sidebar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -28,8 +29,16 @@ export default function Sidebar() {
     const handleNavigate = (path, item) => {
         setActiveItem(item);
         navigate(path);
+
+        // Keep the dropdown open for appointments and calendar
+        if (item !== 'appointmentList' && item !== 'calendar') {
+            setIsDropdownOpen(false);
+        }
+
+        // Close the sidebar if in mobile view
         if (isOpen) setIsOpen(false);
     };
+
 
     const handleImageClick = () => {
         setActiveItem('');
@@ -45,15 +54,14 @@ export default function Sidebar() {
         <>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="md:hidden fixed top-4 left-4 z-50"
+                className="md:hidden fixed top-4 left-4 z-50 text-primary"
             >
                 {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
             </button>
 
-            <div className={`fixed z-50 h-screen w-60 bg-primary p-4 flex flex-col justify-between transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+            <div className={`fixed z-20 h-screen w-60 bg-primary p-4 flex flex-col justify-between transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
                 <div>
                     <div className="flex justify-between items-center mb-8">
-
                         <button
                             className=""
                             onClick={() => {
@@ -64,7 +72,9 @@ export default function Sidebar() {
                         >
                             <span className="material-symbols-outlined text-red-500">
                                 logout
-                            </span>                        </button>
+                            </span>
+                        </button>
+
                         <h2 className="text-xl font-bold hidden md:block"><span className='text-white'>Alejandria's Dental</span> Clinic</h2>
                         <button
                             onClick={() => setIsOpen(!isOpen)}
@@ -81,30 +91,31 @@ export default function Sidebar() {
                         </div>
                         <span className="font-semibold text-center mt-2 text-white ">{name}</span>
                     </div>
-                    <div className="flex-grow">
+                    <div className="flex-grow text-white">
                         <ul className="space-y-2">
                             <li
-                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'general' ? 'bg-secondary ' : 'hover:bg-secondary'}`}
+                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'general' ? 'bg-secondary text-gray-800  ' : 'hover:bg-secondary'}`}
                                 onClick={() => handleNavigate('/dashboard', 'general')}
                             >
                                 <FaHome className="mr-3" />
-                                <span className="hidden md:inline">General</span>
+                                <span>General</span>
                             </li>
 
                             {/* Appointments Dropdown */}
                             <li className="relative">
                                 <div
-                                    className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'appointments' ? 'bg-secondary' : 'hover:bg-secondary'}`}
+                                    className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'appointments' ? 'bg-secondary text-gray-800' : 'hover:bg-secondary'}`}
                                     onClick={toggleDropdown}
                                 >
                                     <FaCalendarAlt className="mr-3" />
-                                    <span className="hidden md:inline">Appointments</span>
+                                    <span className="">Appointments</span>
                                     {isDropdownOpen ? <FaChevronUp className="ml-auto" /> : <FaChevronDown className="ml-auto" />}
                                 </div>
+
                                 {isDropdownOpen && (
                                     <ul className="ml-8 mt-2 space-y-1">
                                         <li
-                                            className={`p-2 rounded cursor-pointer flex items-center ${activeItem === 'appointmentList' ? 'bg-secondary' : 'hover:bg-secondary'}`}
+                                            className={`p-2 rounded cursor-pointer flex items-center ${activeItem === 'appointmentList' ? 'bg-secondary text-gray-800' : 'hover:bg-secondary'}`}
                                             onClick={() => handleNavigate('/appointments', 'appointmentList')}
                                         >
                                             <span className="material-symbols-outlined mr-2">
@@ -113,7 +124,7 @@ export default function Sidebar() {
                                             Appointments
                                         </li>
                                         <li
-                                            className={`p-2 rounded cursor-pointer flex items-center ${activeItem === 'calendar' ? 'bg-secondary' : 'hover:bg-secondary'}`}
+                                            className={`p-2 rounded cursor-pointer flex items-center ${activeItem === 'calendar' ? 'bg-secondary text-gray-800' : 'hover:bg-secondary'}`}
                                             onClick={() => handleNavigate('/CalendarComponent', 'calendar')}
                                         >
                                             <span className="material-symbols-outlined mr-2 ">
@@ -122,40 +133,38 @@ export default function Sidebar() {
                                             Calendar
                                         </li>
                                     </ul>
-
-                                    
                                 )}
                             </li>
 
                             <li
-                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'patients' ? 'bg-secondary' : 'hover:bg-secondary'}`}
+                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'patients' ? 'bg-secondary text-gray-800' : 'hover:bg-secondary'}`}
                                 onClick={() => handleNavigate('/patients', 'patients')}
                             >
                                 <FaUser className="mr-3" />
-                                <span className="hidden md:inline">Patients</span>
+                                <span className="">Patients</span>
                             </li>
 
                             <li
-                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'medical-requests' ? 'bg-secondary' : 'hover:bg-secondary'}`}
+                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'medical-requests' ? 'bg-secondary text-gray-800' : 'hover:bg-secondary'}`}
                                 onClick={() => handleNavigate('/Medical_requests', 'medical-requests')}
                             >
                                 <FaFileAlt className="mr-3" />
-                                <span className="hidden md:inline">Medical Requests</span>
+                                <span className="">Medical Requests</span>
                             </li>
 
                             <li
-                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'add-procedure' ? 'bg-secondary' : 'hover:bg-secondary'}`}
+                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'add-procedure' ? 'bg-secondary text-gray-800' : 'hover:bg-secondary'}`}
                                 onClick={() => handleNavigate('/Add_Procedure', 'add-procedure')}
                             >
                                 <FaPlus className="mr-3" />
-                                <span className="hidden md:inline">Add Procedure</span>
+                                <span className="">Add Procedure</span>
                             </li>
                             <li
-                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'Dentist' ? 'bg-secondary' : 'hover:bg-secondary'}`}
+                                className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'Dentist' ? 'bg-secondary text-gray-800' : 'hover:bg-secondary'}`}
                                 onClick={() => handleNavigate('/Dentist', 'Dentist')}
                             >
                                 <FaPlus className="mr-3" />
-                                <span className="hidden md:inline">Dentist</span>
+                                <span className="">Dentist</span>
                             </li>
                         </ul>
                     </div>
@@ -171,9 +180,10 @@ export default function Sidebar() {
                         }}
                     >
                         <FaSignOutAlt className="mr-2" />
-                        <span className="hidden md:inline">Log out</span>
+                        <span className="">Log out</span>
                     </button>
                 </div>
+
             </div>
         </>
     );

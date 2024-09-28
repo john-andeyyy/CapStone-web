@@ -33,7 +33,7 @@ export default function Appointments() {
                 if (response.status === 200) {
                     setAppointments(response.data);
                     setFilteredAppointments(response.data.filter(app => app.status === 'Pending'));
-                    
+
                 }
             } catch (error) {
                 setError('Error fetching appointments. Please try again.');
@@ -77,7 +77,7 @@ export default function Appointments() {
     if (loading) {
         return (
             <div className="flex justify-center items-center h-screen">
-                <div className="text-lg">Loading appointments...</div>
+                <span className="loading loading-spinner loading-lg"></span>
             </div>
         );
     }
