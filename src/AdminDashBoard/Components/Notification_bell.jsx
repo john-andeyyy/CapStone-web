@@ -67,10 +67,13 @@ const Notification_bell = () => {
 
             {/* Notification Dropdown */}
             {isOpen && (
-                <div className="absolute top-full right-0 mt-2 w-80 bg-white shadow-lg rounded-lg z-10 overflow-hidden">
-                    <div className="p-3 text-lg font-semibold bg-gray-100 border-b border-gray-200 flex justify-between">
+                <div className="absolute top-full right-0 mt-2 w-80 bg-base-300 shadow-lg rounded-lg z-10 overflow-hidden">
+                    <div className="p-3 text-lg font-semibold  border-b border-gray-200 flex justify-between">
                         <div>Notifications</div>
-                        <button className="" onClick={() => navigate('/Annoucement_Notification')}>
+                        <button className="" onClick={() => {
+                            navigate('/Annoucement_Notification')
+                            toggleDropdown()
+                        }}>
                             view all
                         </button>
                     </div>
@@ -82,7 +85,7 @@ const Notification_bell = () => {
                                 {notifications.map((notification) => (
                                     <li
                                         key={notification._id}
-                                        className="p-3 border-b border-gray-200 hover:bg-gray-50"
+                                        className="p-1 border-b border-gray-200 hover:bg-base-100"
                                     >
                                         <div className="flex justify-between items-center">
                                             <div className="flex flex-col">
@@ -104,7 +107,7 @@ const Notification_bell = () => {
                                             {notification.Message}
                                         </div>
 
-                                       
+
 
                                         {!notification.toAll && (
                                             <ul className="mt-2 text-xs text-gray-600">

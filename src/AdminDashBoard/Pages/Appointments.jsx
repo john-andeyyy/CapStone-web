@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
+
 export default function Appointments() {
     const BASEURL = import.meta.env.VITE_BASEURL;
 
@@ -32,7 +33,7 @@ export default function Appointments() {
                 if (response.status === 200) {
                     setAppointments(response.data);
                     setFilteredAppointments(response.data.filter(app => app.status === 'Pending'));
-                    console.log('ajshd')
+                    
                 }
             } catch (error) {
                 setError('Error fetching appointments. Please try again.');

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-
+import { showToast } from '../Components/ToastNotification';
 export default function AppointmentDetails() {
     const { id } = useParams();
     const [appointment, setAppointment] = useState(null);
@@ -104,7 +104,9 @@ export default function AppointmentDetails() {
                 setIsEditingNotes(false);
                 setFiles({ Before: null, After: null, Xray: null });
                 setPreviewImages({ Before: null, After: null, Xray: null });
-                getdata();  // Refresh the data after update
+                showToast('success', 'Update Successfully');
+
+                getdata(); 
             })
             .catch(error => {
                 // Log the error to understand what went wrong

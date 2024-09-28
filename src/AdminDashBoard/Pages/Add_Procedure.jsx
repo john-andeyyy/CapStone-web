@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Modal from '../Components/Modal';
 import axios from 'axios';
+import { showToast } from '../Components/ToastNotification';
 
 export default function Add_Procedure() {
   const BASEURL = import.meta.env.VITE_BASEURL;
@@ -62,9 +63,12 @@ export default function Add_Procedure() {
         withCredentials: true,
       });
       setProcedureList(procedureList.filter((procedure) => procedure._id !== procedureToDelete._id));
+      showToast('success', 'Delete successful!');
+
       setDeleteConfirmationModalOpen(false);
       setProcedureToDelete(null);
     } catch (error) {
+      showToast('error', 'Error deleting procedure:', error);
       console.error('Error deleting procedure:', error);
     }
   };
@@ -82,7 +86,8 @@ export default function Add_Procedure() {
       });
 
       if (response.status === 200) {
-        alert(response.data.message || 'Procedure updated successfully!');
+        showToast('success', 'Procedure updated successfully!');
+        // alert(response.data.message || 'Procedure updated successfully!');
         setProcedureList((prev) =>
           prev.map((procedure) =>
             procedure._id === newProcedure._id ? newProcedure : procedure
@@ -93,8 +98,7 @@ export default function Add_Procedure() {
       setProcedureToEdit(null);
     } catch (error) {
       console.error('Error updating procedure:', error);
-      alert(error.response?.data?.message || 'An error occurred.');
-      alert('line 97')
+      showToast('error', error.response?.data?.message || 'An error occurred.');
     }
   };
 
@@ -112,15 +116,15 @@ export default function Add_Procedure() {
       });
 
       if (response.status === 200) {
-        alert(response.data.message || 'Procedure added successfully!');
+        showToast('success', response.data.message || 'Procedure added successfully!');
+
+        // alert(response.data.message || 'Procedure added successfully!');
         setProcedureList([...procedureList, response.data.procedure]);
       } else {
-        alert(response.data.message || 'Something went wrong.');
-        alert('line 119')
+        showToast('error', response.data.message || 'Something went wrong.');
       }
     } catch (error) {
-      alert(error.response?.data?.message || 'An error occurred.');
-      alert('line 124')
+      showToast('error', error.response?.data?.message || 'An error occurred.');
     }
 
     setAddPatientModalOpen(false);
@@ -167,7 +171,7 @@ export default function Add_Procedure() {
       <div className='text-right py-3'>
         <button className='btn bg-green-400 hover:bg-green-400 text-white' onClick={openAddPatientModal}>Create Procedure</button>
       </div>
-      
+
       <div className='mt-4 text-lg'>
         <div className='flex w-full font-semibold border-b pb-2'>
           <div className='flex-1'>Procedure Name <button onClick={handleSort} className='ml-2 text-blue-500'>{sortOrder === 'asc' ? '↑' : '↓'}</button></div>

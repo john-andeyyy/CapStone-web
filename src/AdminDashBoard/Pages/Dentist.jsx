@@ -108,18 +108,18 @@ export default function Dentist() {
 
     return (
         <div className="container mx-auto p-4">
-            <h1 className="text-3xl font-bold mb-4 text-center text-white">Dentist List</h1>
+            <h1 className="text-3xl font-bold mb-4 text-center ">Dentist List</h1>
             {error && <p className="text-red-500 text-center mb-4">{error}</p>}
             <div className="flex justify-between mb-4">
                 <button
-                    className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600"
+                    className="bg-primary py-2 px-4 rounded-lg hover:bg-primary"
                     onClick={handleAddDentist}
                 >
                     Add Dentist
                 </button>
             </div>
             <div className="overflow-x-auto">
-                <table className="min-w-full text-left text-white">
+                <table className="min-w-full text-left ">
                     <thead>
                         <tr className="text-sm text-gray-400">
                             <th className="py-3 px-5">Name</th>
@@ -153,10 +153,10 @@ export default function Dentist() {
             </div>
 
             {showModal && selectedDentist && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                    <div className="p-6 bg-gray-800 text-white rounded-lg shadow-lg relative w-11/12 max-w-md">
+                <div className="fixed inset-0  flex justify-center items-center">
+                    <div className="p-6 bg-accent  rounded-lg shadow-lg relative w-11/12 max-w-md">
                         <button
-                            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                            className="absolute top-2 right-2  hover:text-gray-700"
                             onClick={handleCloseModal}
                         >
                             &times;
@@ -172,107 +172,117 @@ export default function Dentist() {
             )}
 
             {showAddModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                    <div className="p-6 bg-gray-800 text-white rounded-lg shadow-lg relative w-11/12 max-w-md">
-                        <button
-                            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-                            onClick={handleCloseAddModal}
-                        >
-                            &times;
-                        </button>
-                        <h2 className="text-xl font-bold mb-4">Add New Dentist</h2>
-                        <div className="mb-4">
-                            <label className="block text-sm font-bold mb-2">First Name</label>
-                            <input
-                                type="text"
-                                name="FirstName"
-                                value={newDentist.FirstName}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                                placeholder="Enter first name"
-                                required
-                            />
+                <div className="fixed inset-0 flex justify-center items-center  text-primary">
+                    <div className="p-6 bg-accent rounded-lg shadow-lg relative w-11/12 max-w-3xl">
+
+                        <h2 className="text-xl font-bold mb-4 text-center">Add New Dentist</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="mb-4">
+                                <label className="block text-sm font-bold mb-2">First Name</label>
+                                <input
+                                    type="text"
+                                    name="FirstName"
+                                    value={newDentist.FirstName}
+                                    onChange={handleChange}
+                                    className="w-full p-2 border rounded"
+                                    placeholder="Enter first name"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-bold mb-2">Last Name</label>
+                                <input
+                                    type="text"
+                                    name="LastName"
+                                    value={newDentist.LastName}
+                                    onChange={handleChange}
+                                    className="w-full p-2 border rounded"
+                                    placeholder="Enter last name"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-bold mb-2">Middle Name</label>
+                                <input
+                                    type="text"
+                                    name="MiddleName"
+                                    value={newDentist.MiddleName}
+                                    onChange={handleChange}
+                                    className="w-full p-2 border rounded"
+                                    placeholder="Enter middle name"
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-bold mb-2">Contact Number</label>
+                                <input
+                                    type="tel"
+                                    name="ContactNumber"
+                                    value={newDentist.ContactNumber}
+                                    onChange={handleChange}
+                                    className="w-full p-2 border rounded"
+                                    placeholder="Enter contact number"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-bold mb-2">Address</label>
+                                <input
+                                    type="text"
+                                    name="Address"
+                                    value={newDentist.Address}
+                                    onChange={handleChange}
+                                    className="w-full p-2 border rounded"
+                                    placeholder="Enter address"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-bold mb-2">Gender</label>
+                                <input
+                                    type="text"
+                                    name="Gender"
+                                    value={newDentist.Gender}
+                                    onChange={handleChange}
+                                    className="w-full p-2 border rounded"
+                                    placeholder="Enter gender"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-bold mb-2">License Number</label>
+                                <input
+                                    type="text"
+                                    name="LicenseNo"
+                                    value={newDentist.LicenseNo}
+                                    onChange={handleChange}
+                                    className="w-full p-2 border rounded"
+                                    placeholder="Enter license number"
+                                    required
+                                />
+                            </div>
                         </div>
-                        <div className="mb-4">
-                            <label className="block text-sm font-bold mb-2">Last Name</label>
-                            <input
-                                type="text"
-                                name="LastName"
-                                value={newDentist.LastName}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                                placeholder="Enter last name"
-                                required
-                            />
+                        <div className='mt-4 flex justify-between'>
+
+                            <button
+                                className="bg-green-500 py-2 px-4 rounded-lg hover:bg-green-600  text-white"
+                                onClick={handleCreateDentist}
+                            >
+                                Create Dentist
+                            </button>
+
+                            <button
+                                className="py-2 px-4 bg-red-500 rounded-lg hover:bg-red-400 text-white"
+                                onClick={handleCloseAddModal}
+                            >
+                                Cancell
+                            </button>
                         </div>
-                        <div className="mb-4">
-                            <label className="block text-sm font-bold mb-2">Middle Name</label>
-                            <input
-                                type="text"
-                                name="MiddleName"
-                                value={newDentist.MiddleName}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                                placeholder="Enter middle name"
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-sm font-bold mb-2">Contact Number</label>
-                            <input
-                                type="tel"
-                                name="ContactNumber"
-                                value={newDentist.ContactNumber}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                                placeholder="Enter contact number"
-                                required
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-sm font-bold mb-2">Address</label>
-                            <input
-                                type="text"
-                                name="Address"
-                                value={newDentist.Address}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                                placeholder="Enter address"
-                                required
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-sm font-bold mb-2">Gender</label>
-                            <input
-                                type="text"
-                                name="Gender"
-                                value={newDentist.Gender}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                                placeholder="Enter gender"
-                                required
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-sm font-bold mb-2">License Number</label>
-                            <input
-                                type="text"
-                                name="LicenseNo"
-                                value={newDentist.LicenseNo}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                                placeholder="Enter license number"
-                                required
-                            />
-                        </div>
-                        <button
-                            className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600"
-                            onClick={handleCreateDentist}
-                        >
-                            Create Dentist
-                        </button>
+
+
                     </div>
                 </div>
             )}
+
         </div>
     );
 }

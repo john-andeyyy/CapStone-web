@@ -1,38 +1,40 @@
 import React from 'react';
-import { ToastContainer, toast, Bounce } from 'react-toastify';
+import { ToastContainer, toast, Bounce, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+// ToastNotification component for displaying toast messages
 // ToastNotification component for displaying toast messages
 const ToastNotification = () => {
     return (
         <ToastContainer
-            position="top-right"
-            autoClose={5000} // Toast will auto-close after 5 seconds
+            position="top-center"
+            autoClose={5000}
             hideProgressBar={false}
             newestOnTop={false}
-            limit={5}
+            limit={2}
             closeOnClick
             rtl={false}
             pauseOnFocusLoss
             draggable
-            pauseOnHover={false} // Ensure pauseOnHover is false for all toasts
+            pauseOnHover={false}
+            transition={Slide} // Correctly use Slide
         />
     );
 };
 
-// Function to trigger different types of toast notifications
+
 export const showToast = (type, message) => {
-    console.log(message);
     const commonOptions = {
-        position: "top-right",
+        // position: "top-right",
+        position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: true,
-        pauseOnHover: false, 
+        pauseOnHover: false,
         draggable: true,
         progress: undefined,
         theme: "light",
-        transition: Bounce,
+        transition: Slide, // Use Slide directly
     };
 
     switch (type) {
@@ -49,7 +51,7 @@ export const showToast = (type, message) => {
             toast.warning(message, commonOptions);
             break;
         default:
-            toast(message, commonOptions); // Default notification
+            toast(message, commonOptions);
             break;
     }
 };

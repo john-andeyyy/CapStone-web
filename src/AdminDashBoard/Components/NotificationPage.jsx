@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { showToast } from '../Components/ToastNotification';
 
 export default function NotificationPage() {
     const [notifications, setNotifications] = useState([]);
@@ -101,6 +102,8 @@ export default function NotificationPage() {
             setSelectedPatient(null);
             setModalType(null);
             fetchNotifications();
+            showToast('success', 'Successfully send!');
+
         } catch (error) {
             setError('Error sending notification');
             console.error('Error sending notification:', error);
@@ -131,6 +134,8 @@ export default function NotificationPage() {
             );
             setNotifications(updatedNotifications.reverse());
             setEditedNotification({ id: null, title: '', message: '' });
+            showToast('success', 'Saved Changes!');
+
             setModalType(null);
             setError('');
         } catch (error) {
@@ -308,22 +313,22 @@ export default function NotificationPage() {
                                 </div>
                             )}
                             <div className="flex justify-end space-x-3">
-    
+
                                 <button
                                     onClick={sendNotification}
                                     className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
                                 >
                                     Send Notification
                                 </button>
-    
+
                                 <button
                                     onClick={closeModal}
                                     className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
                                 >
                                     Cancel
                                 </button>
-                                
-</div>
+
+                            </div>
                         </div>
                     </div>
                 </div>

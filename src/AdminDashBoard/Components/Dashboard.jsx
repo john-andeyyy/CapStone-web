@@ -15,7 +15,7 @@ export default function Dashboard() {
             <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
             <div className="text-gray-600 mb-8">{formattedDate}</div>
 
-            <h1>graphs</h1>
+            {/* <h1 className='Title-Color'>graphs</h1> */}
             {/* <div className="mb-8">
                 <h2 className="text-xl font-semibold mb-4">Appointment Requests History</h2>
                 <div className="space-y-4">

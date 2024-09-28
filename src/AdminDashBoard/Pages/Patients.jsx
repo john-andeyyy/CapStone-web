@@ -3,6 +3,7 @@ import Modal from '../Components/Modal';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+
 import { fetchPatients } from '../Fetchs/patient/patient_account'
 
 export default function Patients_List() {

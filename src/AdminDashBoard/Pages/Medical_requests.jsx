@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Modal from '../Components/Modal';
 import axios from 'axios';
+import { showToast } from '../Components/ToastNotification';
 
 export default function MedicalRequests() {
   const BASEURL = import.meta.env.VITE_BASEURL;
@@ -14,27 +15,30 @@ export default function MedicalRequests() {
   const [statusFilter, setStatusFilter] = useState('Pending');
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
-  const [detailModalOpen, setDetailModalOpen] = useState(false); 
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
 
-  useEffect(() => {
-    const getAppointments = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(`${BASEURL}/Appointments/appointments/filter`, {
-          withCredentials: true
-        });
+  const getAppointments = async () => {
+    console.log('getAppointments start')
 
-        if (response.status === 200) {
-          setRequests(response.data);
-        }
-      } catch (error) {
-        console.error('Error fetching appointments:', error);
-      } finally {
-        setLoading(false);
+    setLoading(true);
+    try {
+      const response = await axios.get(`${BASEURL}/Appointments/appointments/filter`, {
+        withCredentials: true
+      });
+      console.log( 'getAppointments done')
+      if (response.status === 200) {
+
+        setRequests(response.data);
       }
-    };
-
+    } catch (error) {
+      console.error('Error fetching appointments:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
     getAppointments();
+
   }, []);
 
   const filteredRequests = requests.filter((request) => {
@@ -71,6 +75,8 @@ export default function MedicalRequests() {
           },
           withCredentials: true
         });
+        showToast('success', 'Request has been Rejected!');
+
         setRequests(requests.filter((request) => request.id !== selectedRequest.id));
         setDeleteConfirmation(false);
         setSelectedRequest(null);
@@ -91,6 +97,7 @@ export default function MedicalRequests() {
         },
         withCredentials: true
       });
+      showToast('success', 'Request has been Archive!');
 
       setRequests(requests.map((request) =>
         request.id === selectedRequest.id ? { ...request, medcertiStatus: 'Archive' } : request
@@ -100,12 +107,12 @@ export default function MedicalRequests() {
     } catch (error) {
       console.error('Error archiving request:', error);
     } finally {
-      setActionLoading(false); // Stop action loading
+      setActionLoading(false);
     }
   };
 
   const handleAcceptRequest = async () => {
-    setActionLoading(true); // Start action loading
+    setActionLoading(true); 
     try {
       await axios.get(`${BASEURL}/SendDentalCertificate/${selectedRequest.id}`, {
         headers: {
@@ -113,6 +120,8 @@ export default function MedicalRequests() {
         },
         withCredentials: true
       });
+      showToast('success', 'Request has been Accepted!');
+
       setRequests(requests.map((request) =>
         request.id === selectedRequest.id ? { ...request, medcertiStatus: 'Accepted' } : request
       ));
@@ -121,7 +130,7 @@ export default function MedicalRequests() {
     } catch (error) {
       console.error('Error accepting request:', error);
     } finally {
-      setActionLoading(false); // Stop action loading
+      setActionLoading(false); 
     }
   };
 
@@ -177,7 +186,7 @@ export default function MedicalRequests() {
               <div className="flex-1 font-bold">Date</div>
               <div className="flex-1 font-bold hidden md:block">Procedure</div>
               <div className="flex-1 font-bold hidden md:block">Status</div>
-                {statusFilter === 'Pending' || statusFilter === 'Archive' && (
+              {statusFilter === 'Pending' || statusFilter === 'Archive' && (
                 <div className="flex-1 font-bold text-center">Actions</div>
               )}
             </div>
@@ -187,8 +196,8 @@ export default function MedicalRequests() {
               filteredRequests.map((request) => (
                 <div
                   key={request.id}
-                  className="flex justify-between border-b p-2 px-4 cursor-pointer hover:bg-base-300" 
-                  onClick={() => openDetailModal(request)} 
+                  className="flex justify-between border-b p-2 px-4 cursor-pointer hover:bg-base-300"
+                  onClick={() => openDetailModal(request)}
                 >
                   <div className="flex-1">{request.patient.FirstName} {request.patient.LastName}</div>
                   <div className="flex-1">{new Date(request.date).toLocaleDateString()}</div>

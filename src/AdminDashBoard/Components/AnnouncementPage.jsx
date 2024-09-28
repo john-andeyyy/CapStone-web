@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Modal from '../Components/Modal'; // Import your Modal component
-
+import { showToast } from '../Components/ToastNotification';
 export default function AnnouncementPage() {
     const Baseurl = import.meta.env.VITE_BASEURL;
 
@@ -44,7 +44,7 @@ export default function AnnouncementPage() {
         e.preventDefault();
         axios.post(`${Baseurl}/Notification/all`, formData, { withCredentials: true })
             .then(response => {
-                alert('Announcement sent!');
+                showToast('success', 'Announcement send Successfully');
                 setFormData({
                     isSendEmail: false,
                     Title: 'Announcement!!!',
