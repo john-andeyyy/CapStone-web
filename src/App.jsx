@@ -125,7 +125,7 @@ function App() {
       {isLogin && !isExpired ? (
         <div className="flex">
           <Sidebar />
-          <div className="flex-1 ml-0 md:ml-60">
+          <div className="flex-1 ml-0 md:ml-32">
             <AdminRoutes />
           </div>
         </div>

@@ -118,49 +118,59 @@ export default function Appointments() {
                     </button>
                 </div>
                 <div className="space-y-4">
-                    {filteredAppointments.map(appointment => (
-                        <div key={appointment.id} className="p-4 bg-base-200 rounded flex justify-between items-center">
-                            <div>
-                                <div className="font-semibold">
-                                    {appointment.start && !isNaN(new Date(appointment.start)) ? (
-                                        <>
-                                            {new Date(appointment.start).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })} -
-                                            {new Date(appointment.end).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}
-                                            {new Date(appointment.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-                                        </>
-                                    ) : (
-                                        <span className="text-red-500">Invalid Date</span>
-                                    )}
-                                </div>
 
-                                <div className="text-gray-600">
-                                    {appointment.patient.FirstName} {appointment.patient.LastName}
-                                </div>
-
-                                <div>
-                                    {appointment.procedures.length > 1
-                                        ? `${appointment.procedures[0].name}...`
-                                        : appointment.procedures[0].name}
-                                </div>
-                                <div className="text-gray-600">
-                                    <p>
-                                        <strong>Status: </strong>
-                                        <span className={getStatusColor(appointment.status)}>
-                                            {appointment.status}
-                                        </span>
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="flex space-x-2 items-center">
-                                <Link
-                                    to={`/appointment/${appointment.id}`}
-                                    className="p-2 bg-green-500 text-white rounded"
-                                >
-                                    View Details
-                                </Link>
-                            </div>
+                    {filteredAppointments == 0 ? (
+                        <div className=" text-center">
+                            <h1>No {selectedStatus} appointment</h1>
                         </div>
-                    ))}
+                    ) : (
+                        <div className=" overflow-auto max-h-screen">
+                            {filteredAppointments.map(appointment => (
+                                <div key={appointment.id} className="p-4 bg-base-200 rounded flex justify-between items-center">
+                                    <div>
+                                        <div className="font-semibold">
+                                            {appointment.start && !isNaN(new Date(appointment.start)) ? (
+                                                <>
+                                                    {new Date(appointment.start).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })} -
+                                                    {new Date(appointment.end).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}
+                                                    {new Date(appointment.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                                </>
+                                            ) : (
+                                                <span className="text-red-500">Invalid Date</span>
+                                            )}
+                                        </div>
+
+                                        <div className="text-gray-600">
+                                            {appointment.patient.FirstName} {appointment.patient.LastName}
+                                        </div>
+
+                                        <div>
+                                            {appointment.procedures.length > 1
+                                                ? `${appointment.procedures[0].name}...`
+                                                : appointment.procedures[0].name}
+                                        </div>
+                                        <div className="text-gray-600">
+                                            <p>
+                                                <strong>Status: </strong>
+                                                <span className={getStatusColor(appointment.status)}>
+                                                    {appointment.status}
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex space-x-2 items-center">
+                                        <Link
+                                            to={`/appointment/${appointment.id}`}
+                                            className="p-2 bg-green-500 text-white rounded"
+                                        >
+                                            View Details
+                                        </Link>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
                 </div>
             </div>
         </div>

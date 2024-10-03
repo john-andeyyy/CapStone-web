@@ -1,45 +1,34 @@
 import React from 'react';
-import { FaCheck, FaTimes } from 'react-icons/fa';
+import Dashboard_Announcement from './Dashboard components/Dashboard_Announcement';
+import Dashboard_Calendar from './Dashboard components/Dashboard_Calendar';
 
 export default function Dashboard() {
     const currentDate = new Date();
-    const formattedDate = currentDate.toLocaleDateString('en-US', {
-        weekday: 'long',
+    const formattedDate = currentDate.toLocaleDateString('en-GB', {
         year: 'numeric',
         month: 'long',
-        day: 'numeric'
+        day: 'numeric',
+        weekday: 'long',
     });
 
+
     return (
-        <div>
-            <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
-            <div className="text-gray-600 mb-8">{formattedDate}</div>
+        <div className="p-4">
+            <h1 className="text-3xl font-bold">Dashboard</h1>
+            <div className="text-gray-600">{formattedDate}</div>
 
-            {/* <h1 className='Title-Color'>graphs</h1> */}
-            {/* <div className="mb-8">
-                <h2 className="text-xl font-semibold mb-4">Appointment Requests History</h2>
-                <div className="space-y-4">
-
-                    <div className="p-4 bg-base-200 rounded flex justify-between items-center">
-                        <div>
-                            <div className="font-semibold">3:30pm - 4:00pm May 12, 2024</div>
-                            <div className="text-gray-600">Alice Wonderland</div>
-                            <div>Check up and cleaning</div>
-                        </div>
-                        <div className="flex space-x-2">
-                            <button className="p-2 bg-green-500 text-white rounded">
-                                <FaCheck />
-                            </button>
-                            <button className="p-2 bg-red-500 text-white rounded">
-                                <FaTimes />
-                            </button>
-                        </div>
-                    </div>
-
+            {/* Responsive Container for Left and Right Columns */}
+            <div className="flex flex-col lg:flex-row gap-3 h-full pt-5">
+                {/* Left Column (Full width on small screens, half on larger screens) */}
+                <div className="w-full lg:w-1/2 p-4 pt-0">
+                    <Dashboard_Announcement />
                 </div>
-            </div> */}
 
-
+                {/* Right Column (Full width on small screens, half on larger screens) */}
+                <div className="w-full lg:w-1/2 p-4 pt-0 border border-primary rounded-lg">
+                    <Dashboard_Calendar />
+                </div>
+            </div>
         </div>
     );
 }

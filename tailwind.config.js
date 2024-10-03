@@ -17,7 +17,7 @@ module.exports = {
           "info": "#3ABFF8",           // Info color
           "success": "#22c55e",        // Success color (green)
           "warning": "#FBBF24",        // Warning color
-          "error": "#F87272",          // Error color
+          "error": "#DC2626",          // Error color
 
           
           ".Title-Color": {
@@ -31,15 +31,15 @@ module.exports = {
         dark: {
           "primary": "#191E24",        // Custom primary color for dark mode
           "secondary": "#6B7280",      // Custom secondary color for dark mode
-          "accent": "#6B7280",         // Accent color for dark mode
+          "accent": "#3d4451",         // Accent color for dark mode
           "neutral": "#3d4451",        // Neutral color
           "base-100": "#1D232A",       // Base background color (dark mode)
 
           "info": "#3ABFF8",           // Info color for dark mode
           "success": "#22c55e",        // Success color (same as light mode)
           "warning": "#FBBF24",        // Warning color for dark mode
-          "error": "#F87272",          // Error color for dark mode
-
+          "error": "#DC2626",          // Error color for dark mode
+          
           ".Title-Color": {
             "color": "#22c55e",
             "border-color": "#1EA1F1",

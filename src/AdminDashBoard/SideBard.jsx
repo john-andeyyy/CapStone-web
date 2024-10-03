@@ -3,13 +3,15 @@ import { FaHome, FaCalendarAlt, FaUser, FaFileAlt, FaUserPlus, FaPlus, FaSignOut
 import { useNavigate } from 'react-router-dom';
 import { get_profile } from './Fetchs/Admin/admin_profile';
 import ThemeController from '../Guest/GuestComponents/ThemeController';
+import Daisyui_modal from './Components/Daisyui_modal';
 
 export default function Sidebar() {
     const [isOpen, setIsOpen] = useState(false);
     const [activeItem, setActiveItem] = useState('');
     const [profilePic, setProfilePic] = useState('../../public/default-avatar.jpg');
     const [name, setName] = useState('name');
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State for dropdown
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
     const navigate = useNavigate();
 
     const fetchProfile = async () => {
@@ -24,21 +26,19 @@ export default function Sidebar() {
 
     useEffect(() => {
         fetchProfile();
+        console.log('get data from the side bar fetching');
     }, []);
 
     const handleNavigate = (path, item) => {
         setActiveItem(item);
         navigate(path);
 
-        // Keep the dropdown open for appointments and calendar
         if (item !== 'appointmentList' && item !== 'calendar') {
             setIsDropdownOpen(false);
         }
 
-        // Close the sidebar if in mobile view
         if (isOpen) setIsOpen(false);
     };
-
 
     const handleImageClick = () => {
         setActiveItem('');
@@ -47,7 +47,13 @@ export default function Sidebar() {
     };
 
     const toggleDropdown = () => {
-        setIsDropdownOpen(!isDropdownOpen); // Toggle the dropdown open/close
+        setIsDropdownOpen(!isDropdownOpen);
+    };
+
+    const handleLogout = () => {
+        localStorage.clear();
+        navigate('/');
+        window.location.reload();
     };
 
     return (
@@ -62,14 +68,7 @@ export default function Sidebar() {
             <div className={`fixed z-20 h-screen w-60 bg-primary p-4 flex flex-col justify-between transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
                 <div>
                     <div className="flex justify-between items-center mb-8">
-                        <button
-                            className=""
-                            onClick={() => {
-                                localStorage.clear();
-                                navigate('/');
-                                window.location.reload();
-                            }}
-                        >
+                        <button className="" onClick={() => setIsModalOpen(true)}>
                             <span className="material-symbols-outlined text-red-500">
                                 logout
                             </span>
@@ -101,7 +100,6 @@ export default function Sidebar() {
                                 <span>General</span>
                             </li>
 
-                            {/* Appointments Dropdown */}
                             <li className="relative">
                                 <div
                                     className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'appointments' ? 'bg-secondary text-gray-800' : 'hover:bg-secondary'}`}
@@ -173,11 +171,7 @@ export default function Sidebar() {
                 <div className="py-6">
                     <button
                         className="w-full py-2 bg-red-500 text-white rounded flex items-center justify-center"
-                        onClick={() => {
-                            localStorage.clear();
-                            navigate('/');
-                            window.location.reload();
-                        }}
+                        onClick={() => setIsModalOpen(true)}
                     >
                         <FaSignOutAlt className="mr-2" />
                         <span className="">Log out</span>
@@ -185,6 +179,27 @@ export default function Sidebar() {
                 </div>
 
             </div>
+
+            {/* Modal for logout confirmation */}
+            <Daisyui_modal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}>
+                <h2 className="text-xl font-semibold mb-4 text-center">Confirm Logout</h2>
+                <p className="text-center">Are you sure you want to log out?</p>
+                <div className="flex justify-between mt-6">
+                    <button
+                        className="py-2 px-4 bg-red-500 text-white rounded hover:bg-red-600 transition duration-200"
+                        onClick={handleLogout}
+                    >
+                        Yes, Logout
+                    </button>
+                    <button
+                        className="py-2 px-4 border border-gray-300 rounded bg-warning transition duration-200"
+                        onClick={() => setIsModalOpen(false)}
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </Daisyui_modal>
+
         </>
     );
 }

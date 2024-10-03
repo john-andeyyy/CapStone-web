@@ -27,7 +27,9 @@ export default function AppointmentDetails() {
                 `${import.meta.env.VITE_BASEURL}/Appointments/view/Patient/appointment/${id}`,
                 { withCredentials: true }
             );
+            
             const data = response.data;
+            console.log(data)
             setAppointment(data);
             setOriginalAppointment({
                 Before: data.BeforeImage || '',
@@ -181,6 +183,7 @@ export default function AppointmentDetails() {
                 <p><strong>Patient Name:</strong> {appointment.patient?.FirstName || 'N/A'} {appointment.patient?.LastName || 'N/A'}</p>
                 <p><strong>Start:</strong> {new Date(appointment.Start).toLocaleTimeString('en-US')}</p>
                 <p><strong>End:</strong> {new Date(appointment.End).toLocaleTimeString('en-US')}</p>
+                <strong>Dentist:</strong> {`${appointment.Dentist.FirstName} ${appointment.Dentist.MiddleName ? `${appointment.Dentist.MiddleName} ` : ''}${appointment.Dentist.LastName}`}
 
                 {/* Display procedures */}
                 <p><strong>Procedures:</strong></p>

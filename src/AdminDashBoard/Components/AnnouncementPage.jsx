@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Modal from '../Components/Modal'; // Import your Modal component
 import { showToast } from '../Components/ToastNotification';
+
 export default function AnnouncementPage() {
     const Baseurl = import.meta.env.VITE_BASEURL;
 
@@ -12,13 +13,14 @@ export default function AnnouncementPage() {
         Message: ''
     });
     const [showModal, setShowModal] = useState(false);
-    const [expandedAnnouncement, setExpandedAnnouncement] = useState({});
+    const [expandedAnnouncement, setExpandedAnnouncement] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [selectedAnnouncement, setSelectedAnnouncement] = useState(null); // State to hold the selected announcement for viewing
 
     const FetchAnnouncement = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${Baseurl}/Notification/admin/getAllNotif`, { withCredentials: true });
+            const response = await axios.get(`${Baseurl}/Notification/admin/announcement`, { withCredentials: true });
             const filtered = response.data.filter(notif => notif.isAnnouncement === true);
             setAnnouncements(filtered.reverse());
         } catch (error) {
@@ -44,7 +46,7 @@ export default function AnnouncementPage() {
         e.preventDefault();
         axios.post(`${Baseurl}/Notification/all`, formData, { withCredentials: true })
             .then(response => {
-                showToast('success', 'Announcement send Successfully');
+                showToast('success', 'Announcement sent successfully');
                 setFormData({
                     isSendEmail: false,
                     Title: 'Announcement!!!',
@@ -56,18 +58,23 @@ export default function AnnouncementPage() {
             .catch(error => console.error('Error sending announcement:', error));
     };
 
-    const toggleExpand = (id) => {
-        setExpandedAnnouncement(prevState => ({
-            ...prevState,
-            [id]: !prevState[id]
-        }));
+    const openAnnouncementModal = (announcement) => {
+        setSelectedAnnouncement(announcement);
+        setShowModal(true); // Show the modal with announcement details
     };
 
-    const truncateText = (text, maxLength) => {
-        if (text.length > maxLength) {
-            return text.slice(0, maxLength) + '...';
-        }
-        return text;
+    const closeAnnouncementModal = () => {
+        setSelectedAnnouncement(null);
+        setShowModal(false); // Hide the modal
+    };
+
+    const truncateMessage = (message, maxLength) => {
+        if (message.length <= maxLength) return message;
+        return message.slice(0, maxLength) + '...';
+    };
+
+    const toggleAnnouncementExpand = (announcementId) => {
+        setExpandedAnnouncement(prevId => (prevId === announcementId ? null : announcementId));
     };
 
     return (
@@ -79,70 +86,81 @@ export default function AnnouncementPage() {
                 Send New Announcement
             </button>
 
-            <Modal isOpen={showModal}>
-                <h3 className="font-bold text-lg">Send Announcement!</h3>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="mb-4">
-                        <label className="block mb-2 font-semibold">Title:</label>
-                        <input
-                            type="text"
-                            name="Title"
-                            value={formData.Title}
-                            onChange={handleChange}
-                            required
-                            className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-green-500 focus:outline-none"
-                            placeholder="Enter announcement title"
-                        />
-                    </div>
-
-                    <div className="mb-4">
-                        <label className="block mb-2 font-semibold">Message:</label>
-                        <textarea
-                            name="Message"
-                            value={formData.Message}
-                            onChange={handleChange}
-                            required
-                            className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-green-500 focus:outline-none"
-                            placeholder="Enter announcement message"
-                        ></textarea>
-                    </div>
-                    <div className="mb-4">
-                        <label className="flex items-center">
-                            <input
-                                type="checkbox"
-                                name="isSendEmail"
-                                checked={formData.isSendEmail}
-                                onChange={handleChange}
-                                className="mr-2"
-                            />
-                            Send Email
-                        </label>
-                    </div>
-
-                    <div className="flex justify-end space-x-3">
+            <Modal isOpen={showModal} onClose={closeAnnouncementModal}>
+                {selectedAnnouncement ? (
+                    <>
+                        <h3 className="font-bold text-lg">{selectedAnnouncement.Title}</h3>
+                        <p className="mt-2">{selectedAnnouncement.Message}</p>
+                        <p className="mt-4 text-sm text-gray-500">
+                            Created At: {new Date(selectedAnnouncement.createdAt).toLocaleDateString()}
+                        </p>
                         <button
-                            type="submit"
-                            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                        >
-                            Send Announcement
-                        </button>
-
-                        <button
-                            type="button"
-                            onClick={() => {
-                                setShowModal(false);
-                                setFormData({
-                                    isSendEmail: false,
-                                    Title: '',
-                                    Message: ''
-                                });
-                            }}
-                            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                            onClick={closeAnnouncementModal}
+                            className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
                         >
                             Close
                         </button>
-                    </div>
-                </form>
+                    </>
+                ) : (
+                    <>
+                        <h3 className="font-bold text-lg">Send Announcement!</h3>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div className="mb-4">
+                                <label className="block mb-2 font-semibold">Title:</label>
+                                <input
+                                    type="text"
+                                    name="Title"
+                                    value={formData.Title}
+                                    onChange={handleChange}
+                                    required
+                                    className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-green-500 focus:outline-none"
+                                    placeholder="Enter announcement title"
+                                />
+                            </div>
+
+                            <div className="mb-4">
+                                <label className="block mb-2 font-semibold">Message:</label>
+                                <textarea
+                                    name="Message"
+                                    value={formData.Message}
+                                    onChange={handleChange}
+                                    required
+                                    className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-green-500 focus:outline-none"
+                                    placeholder="Enter announcement message"
+                                ></textarea>
+                            </div>
+                            <div className="mb-4">
+                                <label className="flex items-center">
+                                    <input
+                                        type="checkbox"
+                                        name="isSendEmail"
+                                        checked={formData.isSendEmail}
+                                        onChange={handleChange}
+                                        className="mr-2"
+                                    />
+                                    Send Email
+                                </label>
+                            </div>
+
+                            <div className="flex justify-end space-x-3">
+                                <button
+                                    type="submit"
+                                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                                >
+                                    Send Announcement
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={closeAnnouncementModal}
+                                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </form>
+                    </>
+                )}
             </Modal>
 
             <h2 className="text-xl font-semibold mt-8 mb-4">Announcements</h2>
@@ -151,57 +169,39 @@ export default function AnnouncementPage() {
                     <p className="text-gray-500">Loading announcements...</p>
                 </div>
             ) : (
-                <div className="overflow-x-auto">
-                    <table className="min-w-full bg-white border border-gray-200 table-fixed">
-                        <thead>
-                            <tr>
-                                <th className="px-4 py-2 border">Title</th>
-                                <th className="px-4 py-2 border">Message</th>
-                                <th className="px-4 py-2 border">Date Created</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {announcements.length > 0 ? (
-                                announcements.map(announcement => (
-                                    <tr key={announcement._id} className="hover:bg-gray-100">
-                                        <td className="px-2 py-2 border break-words">
-                                            {expandedAnnouncement[announcement._id]
-                                                ? announcement.Title
-                                                : truncateText(announcement.Title, 30)}
-                                            {announcement.Title.length > 30 && (
-                                                <button
-                                                    onClick={() => toggleExpand(announcement._id)}
-                                                    className="text-blue-500 ml-2"
-                                                >
-                                                    {expandedAnnouncement[announcement._id] ? 'Show less' : 'Read more'}
-                                                </button>
-                                            )}
-                                        </td>
-                                        <td className="px-4 py-2 border break-words">
-                                            {expandedAnnouncement[announcement._id]
-                                                ? announcement.Message
-                                                : truncateText(announcement.Message, 50)}
-                                            {announcement.Message.length > 50 && (
-                                                <button
-                                                    onClick={() => toggleExpand(announcement._id)}
-                                                    className="text-blue-500 ml-2"
-                                                >
-                                                    {expandedAnnouncement[announcement._id] ? 'Show less' : 'Read more'}
-                                                </button>
-                                            )}
-                                        </td>
-                                        <td className="px-4 py-2 border">
-                                            {new Date(announcement.createdAt).toLocaleDateString()}
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td className="px-4 py-2 border text-center" colSpan="3">No announcements available</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                <div className="space-y-4">
+                    {announcements.length > 0 ? (
+                        announcements.map(announcement => (
+                            <div
+                                key={announcement._id}
+                                className="border p-4 rounded-lg cursor-pointer"
+                                onClick={() => openAnnouncementModal(announcement)} // Open modal with announcement details
+                            >
+                                <h3 className="font-semibold">{announcement.Title}</h3>
+                                <p
+                                    className={`text-gray-600 overflow-hidden ${expandedAnnouncement === announcement._id ? 'h-auto' : 'h-16'}`}
+                                >
+                                    {expandedAnnouncement === announcement._id
+                                        ? announcement.Message
+                                        : truncateMessage(announcement.Message, 100)}
+                                    {announcement.Message.length > 100 && (
+                                        <span
+                                            onClick={(e) => {
+                                                e.stopPropagation(); // Prevent opening modal when clicking "See more"
+                                                toggleAnnouncementExpand(announcement._id);
+                                            }}
+                                            className="text-blue-500 cursor-pointer"
+                                        >
+                                            {expandedAnnouncement === announcement._id ? ' Hide' : ' See more'}
+                                        </span>
+                                    )}
+                                </p>
+                                <p className="text-sm text-gray-600">{new Date(announcement.createdAt).toLocaleDateString()}</p>
+                            </div>
+                        ))
+                    ) : (
+                        <p className="text-center">No announcements available</p>
+                    )}
                 </div>
             )}
         </div>

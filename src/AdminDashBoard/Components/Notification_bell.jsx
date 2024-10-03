@@ -1,26 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Make sure to install axios
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import ThemeController from '../../Guest/GuestComponents/ThemeController';
-const Notification_bell = () => {
-    const navigate = useNavigate()
+import NotificationModal from '../Components/Modal'; // Import the modal
 
+const Notification_bell = () => {
+    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const [notifications, setNotifications] = useState([]);
-    const [expanded, setExpanded] = useState({}); // Track expanded state for each notification
+    const [expanded, setExpanded] = useState({});
+    const [selectedNotification, setSelectedNotification] = useState(null); // To store the clicked notification
+    const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
 
     const fetchNotifications = async () => {
         try {
             const response = await axios.get(`${import.meta.env.VITE_BASEURL}/Notification/admin/getAllNotif`, {
-                withCredentials: true
+                withCredentials: true,
             });
-            setNotifications(response.data.reverse());
+            const adminNotifications = response.data.filter(notification => notification.AdminOnly === true);
+
+            setNotifications(adminNotifications.reverse());
         } catch (error) {
             console.error('Error fetching notifications:', error);
         }
     };
 
-    // Fetch notifications from the server
     useEffect(() => {
         fetchNotifications();
     }, []);
@@ -31,21 +35,28 @@ const Notification_bell = () => {
     };
 
     const toggleMessage = (id) => {
-        setExpanded(prev => ({ ...prev, [id]: !prev[id] })); // Toggle the expanded state for the specific notification
+        setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
     };
 
-    // Format date
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'short', day: 'numeric' };
         return new Date(dateString).toLocaleDateString(undefined, options);
+    };
+
+    const handleNotificationClick = (notification) => {
+        setSelectedNotification(notification); // Set the selected notification data
+        setIsModalOpen(true); // Show the modal
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false); // Close the modal
     };
 
     return (
         <div className="relative flex justify-end items-center bg-base-100">
             <div>
                 <ThemeController />
-
-            </div>            {/* Notification Button with Bell Icon */}
+            </div>
             <button className="btn btn-ghost btn-circle relative" onClick={toggleDropdown}>
                 <div className="indicator">
                     <svg
@@ -68,65 +79,58 @@ const Notification_bell = () => {
                 </div>
             </button>
 
-            {/* Notification Dropdown */}
             {isOpen && (
                 <div className="absolute top-full right-0 mt-2 w-80 bg-neutral shadow-lg rounded-lg z-10 overflow-hidden">
-                    <div className="p-3 text-lg font-semibold  border-b border-gray-200 flex justify-between">
+                    <div className="p-3 text-lg font-semibold border-b border-gray-200 flex justify-between">
                         <div>Notifications</div>
-                        <button className="" onClick={() => {
-                            navigate('/Annoucement_Notification')
-                            toggleDropdown()
-                        }}>
+                        <button
+                            onClick={() => {
+                                navigate('/Annoucement_Notification');
+                                toggleDropdown();
+                            }}
+                        >
                             view all
                         </button>
                     </div>
-                    <div className="max-h-60 overflow-y-auto">
+                    <div className="max-h-96 overflow-y-auto">
                         {notifications.length === 0 ? (
                             <div className="p-3 text-center text-gray-500">No new notifications</div>
                         ) : (
-                            <ul className="p-3">
+                            <ul className="p-3 pt-0">
                                 {notifications.map((notification) => (
                                     <li
                                         key={notification._id}
-                                        className="p-1 border-b border-gray-200 hover:bg-base-100"
+                                        className="p-1 border-b border-gray-200 hover:bg-base-100 cursor-pointer"
+                                        onClick={() => handleNotificationClick(notification)} // Handle click to show modal
                                     >
                                         <div className="flex justify-between items-center">
                                             <div className="flex flex-col">
+                                                {notification.isAnnouncement && (
+                                                    <span className="text-lg mt-1 font-semibold text-error">Announcement!!!</span>
+                                                )}
                                                 <strong className={`text-sm ${notification.toAll ? 'text-red-500' : ''}`}>
                                                     {notification.Title}
                                                 </strong>
-                                                {notification.toAll && (
-                                                    <span className="text-xs mt-1 font-semibold">Announcement!!!</span>
-                                                )}
                                             </div>
                                             <span className="text-xs text-gray-500">{formatDate(notification.createdAt)}</span>
                                         </div>
-                                        {notification.Message.length > 100 && ( // Show expand/collapse button if message is long
-                                            <button className="text-xs text-blue-500 mt-1" onClick={() => toggleMessage(notification._id)}>
+                                        {notification.Message.length > 100 && (
+                                            <button
+                                                className="text-xs text-blue-500 mt-1"
+                                                onClick={(e) => {
+                                                    e.stopPropagation(); // Prevent the parent click event
+                                                    toggleMessage(notification._id);
+                                                }}
+                                            >
                                                 {expanded[notification._id] ? 'Collapse' : 'Expand'}
                                             </button>
                                         )}
-                                        <div className={`mt-2 text-sm transition-all duration-300 ease-in-out ${expanded[notification._id] ? 'max-h-full' : 'max-h-12 overflow-hidden'}`}>
+                                        <div
+                                            className={`mt-2 text-sm transition-all duration-300 ease-in-out ${expanded[notification._id] ? 'max-h-full' : 'max-h-6 overflow-hidden'
+                                                }`}
+                                        >
                                             {notification.Message}
                                         </div>
-
-
-
-                                        {!notification.toAll && (
-                                            <ul className="mt-2 text-xs text-gray-600">
-                                                {notification.PatientStatus.length > 0 ? (
-                                                    notification.PatientStatus.map((status) => (
-                                                        status.patient ? (  // Check if patient exists
-                                                            <li key={status._id}>
-                                                                <p><span className='font-bold'>Patient: </span > {status.patient.FirstName} {status.patient.LastName} ({status.patient.MiddleName}) </p>
-                                                            </li>
-                                                        ) : null // Render nothing if patient is undefined
-                                                    ))
-                                                ) : (
-                                                    <li>No patients associated with this notification</li> // Fallback message if no patients
-                                                )}
-                                            </ul>
-                                        )}
                                     </li>
                                 ))}
                             </ul>
@@ -134,6 +138,35 @@ const Notification_bell = () => {
                     </div>
                 </div>
             )}
+
+            {/* Modal to show notification details */}
+            <NotificationModal isOpen={isModalOpen} onClose={closeModal}>
+                {selectedNotification && (
+                    <div className="p-4">
+                        {selectedNotification.isAnnouncement ? (
+                            <div>
+                                <h2 className="text-xl font-bold text-red-500">Announcement</h2><br />
+                                <p>{selectedNotification.Message}</p>
+                            </div>
+                        ) : (
+                            <div>
+                                <h2 className="text-xl font-bold">{selectedNotification.Title}</h2>
+                                <p>{selectedNotification.Message}</p>
+                                {selectedNotification.patients && (
+                                    <ul>
+                                        {selectedNotification.patients.map((patient) => (
+                                            <li key={patient._id}>{patient.name}</li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+                        )}
+                        <button className="btn mt-4" onClick={closeModal}>
+                            Close
+                        </button>
+                    </div>
+                )}
+            </NotificationModal>
         </div>
     );
 };
