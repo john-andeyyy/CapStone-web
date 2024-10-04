@@ -1,39 +1,81 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
+import axios from 'axios'; // Import axios
 
 export default function Footer() {
+    const [clinicDetails, setClinicDetails] = useState(null);
+    const BASEURL = import.meta.env.VITE_BASEURL;
+    const contactApiUrl = `${BASEURL}/Contactus/contactus`;
+
+    // Fetch clinic details from the API
+    useEffect(() => {
+        const fetchClinicDetails = async () => {
+            try {
+                const response = await axios.get(contactApiUrl); // Use axios to fetch data
+                // Assuming the response data is an array, set the first item as clinicDetails
+                if (response.data.length > 0) {
+                    setClinicDetails(response.data[0]); // Set the first clinic detail
+                }
+            } catch (error) {
+                console.error('Error fetching clinic details:', error);
+            }
+        };
+
+        fetchClinicDetails();
+    }, [contactApiUrl]); // Dependency array
+
+    if (!clinicDetails) {
+        return <div className="text-center">Loading...</div>; // Loading state
+    }
+
     return (
-        <div className="max-w-7xl mx-auto p-8 rounded-lg">
-
-            <div className="p-6 rounded-lg  flex flex-col sm:flex-row justify-between">
-                <div className="flex flex-col items-center sm:items-start">
-                    <div className="text-xl font-bold">LOGO</div>
-                    <div className="text-lg font-bold">ALEJANDRIA'S DENTAL CLINIC</div>
-                    
+        <footer className=" text-white max-w-7xl mx-auto p-8 rounded-lg">
+            <div className="flex flex-col sm:flex-row justify-between items-center">
+                {/* Logo and Clinic Name */}
+                <div className="flex flex-col items-center sm:items-start mb-4 sm:mb-0">
+                    {clinicDetails.logo ? (
+                        <img src={clinicDetails.logo} alt="Logo" className="h-16 w-auto mb-2" />
+                    ) : (
+                        <div className="text-xl font-bold mb-2">LOGO</div>
+                    )}
+                    <div className="text-lg font-bold">{clinicDetails.DentalName}</div>
                 </div>
 
-                <div className="mt-4 sm:mt-0 flex flex-col items-center">
-                    <div className="mt-4 text-center sm:text-left">
-                        <div className="font-bold">Stay in touch</div>
-                        <div>58 Peso St. Saint Michael,</div>
-                        <div>Brgy. Pandayan, Meycauayan</div>
-                        <div>City, Bulacan</div>
-                        <div className="mt-2">aalejandria907@gmail.com</div>
-                        <div>0956 056 8825</div>
-                    </div>
+                {/* Clinic Contact Information */}
+                <div className="mt-4 sm:mt-0 flex flex-col items-center sm:items-start">
+                    <div className="font-bold">Stay in touch</div>
+                    <div className="mt-1">Address: {clinicDetails.Address}</div>
+                    <div className="mt-1">Contact Number: {clinicDetails.ContactNumber}</div>
+                    <div className="mt-1">Email: {clinicDetails.Email}</div>
+                    <div className="mt-2 font-bold">Dentist Hours</div>
+                    <div className="mt-1">Weekdays: {clinicDetails.WeekdaysTime}</div>
+                    <div className="mt-1">Weekends: {clinicDetails.WeekendsTime}</div>
                 </div>
-                <div className="mt-4 sm:mt-0 flex flex-col items-center">
+
+                {/* Navigation Links */}
+                <div className="mt-4 sm:mt-0 flex flex-col items-center sm:items-start">
                     <div className="font-bold">Navigation</div>
-                    <a href="#about" className="hover:underline">About</a>
-                    <a href="#services" className="hover:underline">Services</a>
-                    <a href="#contact" className="hover:underline">Contact</a>
+                    <a href="#about" className="mt-1 hover:underline">About</a>
+                    <a href="#services" className="mt-1 hover:underline">Services</a>
+                    <a href="#contact" className="mt-1 hover:underline">Contact</a>
                 </div>
 
-                <div className="mt-4 sm:mt-0 flex flex-col items-center">
+                {/* Social Media Links */}
+                <div className="mt-4 sm:mt-0 flex flex-col items-center sm:items-start">
                     <div className="font-bold">Social Media</div>
-                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:underline">Alejandria Dental Clinic</a>
+                    {clinicDetails.Facebooklink ? (
+                        <a
+                            href={clinicDetails.Facebooklink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-1 hover:underline"
+                        >
+                            Facebook: Alejandria Dental Clinic
+                        </a>
+                    ) : (
+                        <div className="mt-1">No Facebook link available</div>
+                    )}
                 </div>
             </div>
-
-        </div>
-    )
+        </footer>
+    );
 }

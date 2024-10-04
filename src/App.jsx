@@ -29,11 +29,12 @@ import ToastNotification from './AdminDashBoard/Components/ToastNotification';
 
 
 import CalendarComponent from './try/Calendar';
+import AllServices from './Guest/GuestPages/AllServices';
+import The_DeanTeam from './Guest/GuestComponents/The_DeanTeam';
 
 function AdminRoutes() {
   const location = useLocation();
   const isProfilePage = location.pathname === "/ProfilePage";
-
   const [isExpired, setIsExpired] = useState(false);
   // Function to check if the time has expired
   function checkExpiration() {
@@ -121,7 +122,7 @@ function App() {
       <div className="hidden">
         <ThemeController />
       </div>
-        <ToastNotification/>
+      <ToastNotification />
       {isLogin && !isExpired ? (
         <div className="flex">
           <Sidebar />
@@ -138,8 +139,9 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/CreateAccount" element={<CreateAccount />} />
             <Route path="/AdminLogin" element={<AdminLogin />} />
-              <Route path="/admindashboard" element={<Dashboard />} />
-
+            <Route path="/admindashboard" element={<Dashboard />} />
+            <Route path="/AllServices" element={<AllServices />} />
+              <Route path="/The_DeanTeam" element={<The_DeanTeam />} />
           </Routes>
           <Footer />
         </>

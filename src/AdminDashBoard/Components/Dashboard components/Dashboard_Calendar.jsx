@@ -44,26 +44,47 @@ export default function Dashboard_Calendar() {
     const renderDayView = () => {
         const dayEvents = getEventsForDay(selectedDate);
         return (
+
             <div className="day-view-container p-4 rounded-lg">
+                <div className="flex justify-start">
+                    <button className="px-4 py-2" onClick={() => setView('month')}>
+                        Back to Month View
+                    </button>
+                </div>
+
                 <h3 className="text-lg font-bold mb-4">Schedule for {selectedDate?.toDateString()}</h3>
                 <div className="time-slots overflow-auto max-h-32">
                     {dayEvents.length > 0 ? (
-                        dayEvents.map((event, index) => (
-                            <div key={index} className="time-slot p-2 bg-secondary mb-1 rounded">
-                                <span className="event-title font-bold">{event.title}</span><br />
-                                <span className="event-time">
-                                    {event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })} -
-                                    {event.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
-                                </span>
-                            </div>
-                        ))
+                        <table className="table-auto w-full">
+                            <thead>
+                                <tr>
+                                    <th className="p-2 text-left">no.</th>
+                                    <th className="p-2 text-left">Event Title</th>
+                                    <th className="p-2 text-left">Event Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {dayEvents
+                                    .sort((a, b) => a.start - b.start) // Sort events by start time
+                                    .map((event, index) => (
+                                        <tr key={index} className="bg-secondary mb-1 rounded">
+                                            <td>{index + 1}</td>
+                                            <td className="p-2 font-bold">{event.title}</td>
+                                            <td className="p-2">
+                                                {event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })} -
+                                                {event.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
+                                            </td>
+                                        </tr>
+                                    ))}
+                            </tbody>
+                        </table>
                     ) : (
                         <p>No approved events for today.</p>
                     )}
+
+
                 </div>
-                <button className="mt-4 px-4 py-2 bg-secondary rounded" onClick={() => setView('month')}>
-                    Back to Month View
-                </button>
+
             </div>
         );
     };
@@ -136,7 +157,7 @@ export default function Dashboard_Calendar() {
     return (
         <div className="p-4 rounded-lg text-center max-w-lg mx-auto bg-neutral shadow-lg">
             <h1 className="font-bold text-3xl  text-green-500 mb-4">Calendar</h1>
-            
+
             <div className="">
                 <button className=" rounded-lg" onClick={goToToday}>
                     Today

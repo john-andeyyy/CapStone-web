@@ -26,19 +26,28 @@ export default function GuestNavBar() {
                 <div className={`flex-none ${isMenuOpen ? 'block' : 'hidden'} lg:flex lg:items-center lg:w-auto w-full`}>
                     <ul className="menu menu-horizontal px-1 font-semibold space-x-3 lg:space-x-3 flex flex-col lg:flex-row">
                         <li className="mb-2 md:mb-0">
-                            <button className="btn btn-ghost text-green-500" onClick={()=> navigate('/')}>HOME</button>
+                            <button className="btn btn-ghost text-green-500" onClick={() => navigate('/')}>HOME</button>
                         </li>
                         <li className="mb-2 md:mb-0">
-                            <button className="btn btn-ghost">SERVICES</button>
+                            <button className="btn btn-ghost" onClick={() => { navigate('/AllServices') }}>SERVICES</button>
                         </li>
                         <li className="mb-2 md:mb-0">
                             <button className="btn btn-ghost">CONTACT</button>
                         </li>
                         <li className="mb-2 md:mb-0">
-                            <button className="btn btn-outline btn-success" onClick={() => {
-                                navigate('/CreateAccount')
-                                toggleMenu
-                            }}>SIGN UP</button>
+                            <button className="btn btn-ghost">TIPS</button>
+                        </li>
+                        <li className="mb-2 md:mb-0">
+                            <button className="btn btn-ghost"
+                                onClick={() => { navigate('The_DeanTeam') }}
+                            >The DenTeam </button>
+                        </li>
+                        <li className="mb-2 md:mb-0">
+                            <button className="btn btn-outline btn-success"
+                                onClick={() => {
+                                    navigate('/CreateAccount')
+                                    toggleMenu
+                                }}>SIGN UP</button>
                         </li>
                         <li className="mb-2 md:mb-0">
                             <button className="btn btn-success text-white hover:text-black" onClick={() => navigate('/AdminLogin')}>LOGIN</button>
