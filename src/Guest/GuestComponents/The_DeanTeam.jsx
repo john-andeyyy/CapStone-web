@@ -20,6 +20,7 @@ export default function TheDeanTeam() {
     }, []);
 
     const getProfileImage = (profilePicture) => {
+        
         // Check if the profile picture is available
         if (profilePicture) {
             return `data:image/jpeg;base64,${profilePicture}`; // Adjust to image format (jpeg/png)

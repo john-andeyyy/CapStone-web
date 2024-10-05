@@ -1,15 +1,18 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { showToast } from '../../AdminDashBoard/Components/ToastNotification';
+import AddGroupMember from './AddGroupMember'
 export default function Grouplist() {
     const BASEURL = import.meta.env.VITE_BASEURL;
     const [members, setMembers] = useState([]);
     const [searchTerm, setSearchTerm] = useState('')
-    const [isTableView, setIsTableView] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isViewModalOpen, setisViewModalOpen] = useState(false);
+    const [IsAddGroupView, setIsAddGroupView] = useState(false);
+    const [viewMode, setViewMode] = useState('card'); // Default view is 'card'
+
     const [selectedMemberId, setSelectedMemberId] = useState(null);
     const [selectedMemberData, setselectedMemberData] = useState('');
-    const [isViewModalOpen, setisViewModalOpen] = useState(false);
     const [isDeleteModalOpen, setisDeleteModalOpen] = useState(false);
     const [formData, setFormData] = useState({
         FirstName: '',
@@ -49,7 +52,7 @@ export default function Grouplist() {
         return () => {
             isMounted = false; // cleanup function sets isMounted to false
         };
-    }, []);
+    }, [IsAddGroupView]);
 
     const getProfileImage = (profilePicture) => {
         if (profilePicture) {
@@ -135,6 +138,10 @@ export default function Grouplist() {
             });
     }
 
+    const addtolist = (new_members) => {
+        setMembers(new_members)
+
+    }
     return (
         <div>
             <h1 className='text-2xl font-bold text-green-500 p-10'>The DenTeam Members:</h1>
@@ -151,41 +158,49 @@ export default function Grouplist() {
             </div>
 
             {/* Toggle buttons for views */}
-            <div className="max-w-7xl mx-auto p-8 flex space-x-4">
+            <div className="flex space-x-4 mb-8">
                 <button
-                    onClick={() => setIsTableView(false)}
-                    className={`px-4 py-2 rounded-md ${!isTableView ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-800'}`}
+                    onClick={() => setViewMode('card')}
+                    className={`px-4 py-2 rounded-md ${viewMode === 'card' ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-800'}`}
                 >
                     Card View
                 </button>
                 <button
-                    onClick={() => setIsTableView(true)}
-                    className={`px-4 py-2 rounded-md ${isTableView ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-800'}`}
+                    onClick={() => setViewMode('table')}
+                    className={`px-4 py-2 rounded-md ${viewMode === 'table' ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-800'}`}
                 >
                     Table View
                 </button>
+                <button
+                    onClick={() => setIsAddGroupView(true)}
+                    className={`px-4 py-2 rounded-md ${IsAddGroupView ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-800'}`}
+                >
+                    Add Group View
+                </button>
             </div>
 
+
+
             {/* Render members based on the selected view */}
-            {isTableView ? (
-                <div className="overflow-auto max-h-72"> {/* Set your desired max height */}
+            {viewMode === 'table' && (
+                <div className="overflow-x-auto max-h-72"> {/* Set your desired max height */}
                     <table className="min-w-full border border-gray-300">
-                        <thead className="bg-secondary ">
+                        <thead className="bg-secondary">
                             <tr>
-                                <th className="p-2 border-b sticky top-0 bg-secondary  z-10">Name</th>
-                                <th className="p-2 border-b sticky top-0 bg-secondary  z-10">Role</th>
-                                <th className="p-2 border-b sticky top-0 bg-secondary  z-10">Contact Number</th>
-                                <th className="p-2 border-b sticky top-0 bg-secondary  z-10">Actions</th>
+                                <th className="p-2 border-b  bg-secondary z-10">Name</th>
+                                <th className="p-2 border-b  bg-secondary z-10">Role</th>
+                                <th className="p-2 border-b  bg-secondary z-10">Contact Number</th>
+                                <th className="p-2 border-b  bg-secondary z-10">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filteredMembers.length > 0 ? (
                                 filteredMembers.map(member => (
                                     <tr key={member._id} className="hover:bg-secondary">
-                                        <td className="p-2 border-b">{`${member.FirstName} ${member.LastName}`}</td>
-                                        <td className="p-2 border-b">{member.Role}</td>
-                                        <td className="p-2 border-b">{member.ContactNumber}</td>
-                                        <td className="p-2 border-b space-x-5 text-center">
+                                        <td className="p-2 border-b" data-label="Name">{`${member.FirstName} ${member.LastName}`}</td>
+                                        <td className="p-2 border-b" data-label="Role">{member.Role}</td>
+                                        <td className="p-2 border-b" data-label="Contact Number">{member.ContactNumber}</td>
+                                        <td className="p-2 border-b text-center" data-label="Actions">
                                             <button
                                                 onClick={() => {
                                                     setisViewModalOpen(true);
@@ -226,7 +241,10 @@ export default function Grouplist() {
                 </div>
 
 
-            ) : (
+
+            )}
+
+            {viewMode === 'card' && (
                 <div className="max-w-7xl mx-auto p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {filteredMembers.length > 0 ? (
                         filteredMembers.map(member => (
@@ -251,6 +269,19 @@ export default function Grouplist() {
                     ) : (
                         <p className="col-span-full text-center">No members found.</p>
                     )}
+                </div>
+            )}
+
+
+
+            {IsAddGroupView && (
+                <div>
+                    <AddGroupMember
+                        isOpen={IsAddGroupView}
+                        onClose={() => setIsAddGroupView(false)}
+                        memberlist={members}
+                        addtolist={addtolist}
+                    />
                 </div>
             )}
 

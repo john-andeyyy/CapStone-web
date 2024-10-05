@@ -34,6 +34,7 @@ import The_DeanTeam from './Guest/GuestComponents/The_DeanTeam';
 import OurService from './Guest/GuestComponents/OurService';
 import AddGroupMember from './Landing-infopage/GroupMembers/AddGroupMember';
 import Grouplist from './Landing-infopage/GroupMembers/Grouplist';
+import DentistSchedule from './AdminDashBoard/Components/Dentist/DentistsSchedule';
 
 function AdminRoutes() {
   const location = useLocation();
@@ -89,6 +90,8 @@ function AdminRoutes() {
         <Route path="/Annoucement_Notification" element={<Annoucement_Notification />} />
         <Route path="/admindashboard" element={<Dashboard />} />
         <Route path="/CalendarComponent" element={<CalendarComponent />} />
+        <Route path="/DentistSchedule/:id" element={<DentistSchedule />} />
+
 
         {/* //! components only! */}
         <Route path="/NotificationPage" element={<NotificationPage />} />
