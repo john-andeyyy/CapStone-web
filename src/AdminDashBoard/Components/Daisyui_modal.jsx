@@ -11,9 +11,9 @@ const Daisyui_modal = ({ children, isModalOpen, setIsModalOpen }) => {
 
     return (
         <>
-            <button className="btn" onClick={openModal}>
+            {/* <button className="btn" onClick={openModal}>
                 Open Modal
-            </button>
+            </button> */}
             {isModalOpen && (
                 <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle " open>
                     <div className="modal-box bg-accent">

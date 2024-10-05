@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
+
 export default function TheDeanTeam() {
     const [members, setMembers] = useState([]);
     const BASEURL = import.meta.env.VITE_BASEURL;
@@ -31,21 +32,26 @@ export default function TheDeanTeam() {
         <div className="max-w-7xl mx-auto p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {members.length > 0 ? (
                 members.map(member => (
-                    <div key={member._id} className="card card-compact bg-base-100 shadow-xl">
+                    <div key={member._id} className="card card-compact bg-secondary shadow-xl">
                         <figure>
                             <img
                                 src={getProfileImage(member.ProfilePicture)} // Handle base64 image
                                 alt={`${member.FirstName} ${member.LastName}`}
-                                className="object-cover h-48 " // Ensures the image covers the card
+                                className="object-cover h-48 pt-5 " // Ensures the image covers the card
                             />
                         </figure>
                         <div className="card-body">
                             <h1 className="card-title">{`${member.FirstName} ${member.LastName}`}</h1>
                             <h4>Role: {member.Role}</h4>
                             <p>Contact Number: {member.ContactNumber}</p>
-                            <a href={member.Facebooklink} target="_blank" rel="noopener noreferrer" className="text-blue-500">
-                                Facebook Profile
-                            </a>
+                            <div className='flex space-x-5'>
+                                <a href={member.Facebooklink} target="_blank" rel="noopener noreferrer" className="text-blue-500">
+                                    Facebook Profile
+                                </a>
+                                <a href={member.Email} target="_blank" rel="noopener noreferrer" className="text-blue-500">
+                                    Email
+                                </a>
+                            </div>
                         </div>
                     </div>
                 ))

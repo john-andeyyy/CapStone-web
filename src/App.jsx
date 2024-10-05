@@ -31,6 +31,9 @@ import ToastNotification from './AdminDashBoard/Components/ToastNotification';
 import CalendarComponent from './try/Calendar';
 import AllServices from './Guest/GuestPages/AllServices';
 import The_DeanTeam from './Guest/GuestComponents/The_DeanTeam';
+import OurService from './Guest/GuestComponents/OurService';
+import AddGroupMember from './Landing-infopage/GroupMembers/AddGroupMember';
+import Grouplist from './Landing-infopage/GroupMembers/Grouplist';
 
 function AdminRoutes() {
   const location = useLocation();
@@ -84,14 +87,21 @@ function AdminRoutes() {
         <Route path="/appointment/:id" element={<AppointmentDetail />} />
         <Route path="/Dentist" element={<Dentist />} />
         <Route path="/Annoucement_Notification" element={<Annoucement_Notification />} />
-
         <Route path="/admindashboard" element={<Dashboard />} />
-
         <Route path="/CalendarComponent" element={<CalendarComponent />} />
 
         {/* //! components only! */}
         <Route path="/NotificationPage" element={<NotificationPage />} />
         <Route path="/AnnouncementPage" element={<AnnouncementPage />} />
+
+
+        {/*//! edit of the info page and landing Pages */}
+        <Route path="/AddGroupMember" element={<AddGroupMember/>} />
+        <Route path="/Grouplist" element={<Grouplist />} />
+
+
+
+
       </Routes>
     </div>
   );
@@ -124,12 +134,13 @@ function App() {
       </div>
       <ToastNotification />
       {isLogin && !isExpired ? (
-        <div className="flex">
+        <div className="flex flex-col md:flex-row">
           <Sidebar />
-          <div className="flex-1 ml-0 md:ml-32">
+          <div className="flex-1 ml-0 md:ml-42 lg:ml-60">
             <AdminRoutes />
           </div>
         </div>
+
       ) : (
         <>
           <div className="sticky top-0 z-10">
@@ -141,7 +152,8 @@ function App() {
             <Route path="/AdminLogin" element={<AdminLogin />} />
             <Route path="/admindashboard" element={<Dashboard />} />
             <Route path="/AllServices" element={<AllServices />} />
-              <Route path="/The_DeanTeam" element={<The_DeanTeam />} />
+            <Route path="/The_DeanTeam" element={<The_DeanTeam />} />
+
           </Routes>
           <Footer />
         </>
