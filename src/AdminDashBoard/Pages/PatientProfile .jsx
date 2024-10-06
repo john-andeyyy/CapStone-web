@@ -88,6 +88,12 @@ const PatientProfile = () => {
 
     return (
         <div className="container mx-auto p-4">
+            <button
+                onClick={() => navigate(-1)}
+                className="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75"
+            >
+                Go Back
+            </button>
             <h1 className="text-2xl font-semibold py-4 lg:py-0">Patient Profile</h1>
             <div className="flex flex-col lg:flex-row justify-between items-center mb-4">
                 <img

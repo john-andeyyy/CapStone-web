@@ -30,7 +30,6 @@ export default function Sidebar() {
 
     useEffect(() => {
         fetchProfile();
-        console.log('get data from the side bar fetching');
     }, []);
 
     const handleNavigate = (path, item) => {
@@ -147,7 +146,7 @@ export default function Sidebar() {
                                 )}
                             </li>
 
-                            
+
 
                             <li
                                 className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'patients' ? 'bg-secondary text-gray-800' : 'hover:bg-secondary'}`}
@@ -163,6 +162,7 @@ export default function Sidebar() {
                             >
                                 <FaFileAlt className="mr-3" />
                                 <span>Medical Requests</span>
+                                <h1 className='font-bold text-green-600'>  DONE!!</h1>
                             </li>
 
                             <li
@@ -171,6 +171,8 @@ export default function Sidebar() {
                             >
                                 <FaPlus className="mr-3" />
                                 <span>Add Procedure</span>
+                                <h1 className='font-bold text-green-500'>  DONE!!</h1>
+
                             </li>
 
                             <li
@@ -179,6 +181,8 @@ export default function Sidebar() {
                             >
                                 <FaPlus className="mr-3" />
                                 <span>Dentist</span>
+                                <h1 className='font-bold text-green-500'> icons nalang</h1>
+
                             </li>
 
 
@@ -203,6 +207,7 @@ export default function Sidebar() {
                                                 event_available
                                             </span>
                                             Group Member
+                                            <h1 className='font-bold text-green-500'>  DONE!!</h1>
                                         </li>
                                     </ul>
                                 )}
@@ -221,9 +226,9 @@ export default function Sidebar() {
                     </button>
                     {/* <ThemeController /> */}
                 </div>
-                
+
             </div>
-            
+
 
             <Daisyui_modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
         </>

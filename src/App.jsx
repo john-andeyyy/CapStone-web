@@ -35,6 +35,7 @@ import OurService from './Guest/GuestComponents/OurService';
 import AddGroupMember from './Landing-infopage/GroupMembers/AddGroupMember';
 import Grouplist from './Landing-infopage/GroupMembers/Grouplist';
 import DentistSchedule from './AdminDashBoard/Components/Dentist/DentistsSchedule';
+import Total_procedures from './AdminDashBoard/Pages/ReportPages/Pages/Total_procedures';
 
 function AdminRoutes() {
   const location = useLocation();
@@ -92,6 +93,8 @@ function AdminRoutes() {
         <Route path="/CalendarComponent" element={<CalendarComponent />} />
         <Route path="/DentistSchedule/:id" element={<DentistSchedule />} />
 
+        {/* //! REPORTS */}
+        <Route path="/Total_procedures" element={< Total_procedures />} />
 
         {/* //! components only! */}
         <Route path="/NotificationPage" element={<NotificationPage />} />
@@ -99,7 +102,7 @@ function AdminRoutes() {
 
 
         {/*//! edit of the info page and landing Pages */}
-        <Route path="/AddGroupMember" element={<AddGroupMember/>} />
+        <Route path="/AddGroupMember" element={<AddGroupMember />} />
         <Route path="/Grouplist" element={<Grouplist />} />
 
 

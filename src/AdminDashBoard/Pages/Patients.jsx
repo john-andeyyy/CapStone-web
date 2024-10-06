@@ -1,77 +1,48 @@
 import React, { useState, useEffect } from 'react';
-import Modal from '../Components/Modal';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
-
-import { fetchPatients } from '../Fetchs/patient/patient_account'
+import { fetchPatients } from '../Fetchs/patient/patient_account';
 
 export default function Patients_List() {
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false); // Loading state
-    const [addPatient, setAddPatient] = useState(false);
-    const [editPatient, setEditPatient] = useState(false);
-    const [deleteConfirmation, setDeleteConfirmation] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [patientsInfo, setPatientsInfo] = useState([]);
-
-    const [selectedPatient, setSelectedPatient] = useState(null);
-    const [newPatient, setNewPatient] = useState({ id: '', name: '', lastVisit: '' });
     const [searchQuery, setSearchQuery] = useState('');
+    const [sortAscending, setSortAscending] = useState(true); // Sorting state
 
     const fetch_patient = async () => {
+        setLoading(true);
         const response = await fetchPatients();
-        console.log(response)
+        console.log(response);
         setPatientsInfo(response);
         sessionStorage.setItem('patientsData', JSON.stringify(response));
+        setLoading(false);
     };
 
     useEffect(() => {
         const cachedData = sessionStorage.getItem('patientsData');
-
-        fetch_patient();
-
         if (cachedData) {
             setPatientsInfo(JSON.parse(cachedData));
+            setLoading(false);
         } else {
             fetch_patient();
         }
     }, []);
 
-    const openModalAddPatient = () => {
-        setNewPatient({ id: '', name: '', lastVisit: '' });
-        setAddPatient(true);
-    };
-
-    const openModalEditPatient = (patient) => {
-        setSelectedPatient(patient);
-        setNewPatient({ ...patient, name: `${patient.FirstName} ${patient.LastName}` });
-        setEditPatient(true);
-    };
-
-    const openModalDeleteConfirmation = (patient) => {
-        setSelectedPatient(patient);
-        setDeleteConfirmation(true);
-    };
-
-    const handleAddPatient = () => {
-        setPatientsInfo([...patientsInfo, newPatient]);
-        setAddPatient(false);
-    };
-
-    const handleEditPatient = () => {
-        setPatientsInfo(patientsInfo.map(patient =>
-            patient.id === newPatient.id ? newPatient : patient
-        ));
-        setEditPatient(false);
-    };
-
-    const handleDeletePatient = () => {
-        setPatientsInfo(patientsInfo.filter(patient => patient.id !== selectedPatient.id));
-        setDeleteConfirmation(false);
-    };
-
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);
+    };
+
+    const handleSort = () => {
+        const sortedPatients = [...patientsInfo].sort((a, b) => {
+            const lastNameA = a.LastName.toLowerCase();
+            const lastNameB = b.LastName.toLowerCase();
+            return sortAscending
+                ? lastNameA.localeCompare(lastNameB)
+                : lastNameB.localeCompare(lastNameA);
+        });
+        setPatientsInfo(sortedPatients);
+        setSortAscending(!sortAscending); // Toggle sorting direction
     };
 
     const filteredPatients = patientsInfo.filter((patient) => {
@@ -90,10 +61,8 @@ export default function Patients_List() {
                     <div className='flex flex-col lg:flex-row justify-between items-center'>
                         <div className='flex justify-between items-center'>
                             <h1 className='text-2xl font-semibold pb-2'>Patients List</h1>
-                            <button onClick={() => fetch_patient()} className='p-2'>
-                                <span className="material-symbols-outlined">
-                                    refresh
-                                </span>
+                            <button onClick={fetch_patient} className='p-2'>
+                                <span className="material-symbols-outlined">refresh</span>
                             </button>
                         </div>
 
@@ -111,23 +80,52 @@ export default function Patients_List() {
                         </div>
                     </div>
 
-                    <div className='mt-4 overflow-auto max-h-70'>
-                        <div className='flex w-full text-xl text-white font-semibold border-b pb-2 bg-primary p-3 rounded-lg'>
-                            <div className='flex-1'>Patient Name</div>
-                            <div className='flex-1 hidden lg:block'>Last Visit <span className='text-red-600'>(Unavailable)</span></div>
-                            <div className='flex-1 text-center'>Actions</div>
-                        </div>
-                        {filteredPatients.map((patient) => (
-                            <div key={patient.id} className='flex w-full items-center border-b py-2'>
-                                <div className='flex-1'>{`${patient.FirstName} ${patient.LastName}`}</div>
-                                <div className='flex-1 hidden lg:block'>{patient.lastVisit}</div>
-                                <div className='flex-1 flex gap-2 justify-center'>
-                                    <button className='text-blue-500' onClick={() => navigate(`/PatientProfile/${patient.id}`)}>
-                                        <span className="material-symbols-outlined">visibility</span>
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
+                    <div className='mt-4 overflow-auto max-h-[510px]'>
+                        <table className='w-full text-left border-collapse'>
+                            <thead className='bg-primary text-white sticky top-0 z-10'>
+                                <tr>
+                                    <th className='p-3'>
+                                        Last Name
+                                        <button onClick={handleSort} className='ml-2'>
+                                            <span className="material-symbols-outlined">
+                                                {sortAscending ? 'arrow_upward' : 'arrow_downward'}
+                                            </span>
+                                        </button>
+                                    </th>
+                                    <th className='p-3'>First Name</th>
+                                    <th className='p-3'>Last Visit</th>
+                                    <th className='p-3 text-center'>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredPatients.length > 0 ? (
+                                    filteredPatients.map((patient) => (
+                                        <tr key={patient.id} className='border-b'>
+                                            <td className='p-3'>{patient.LastName}</td>
+                                            <td className='p-3'>{patient.FirstName}</td>
+                                            <td className='p-3'>
+                                                {patient.LatestAppointment
+                                                    ? new Date(patient.LatestAppointment.date).toLocaleDateString('en-US', {
+                                                        year: 'numeric',
+                                                        month: 'long',
+                                                        day: 'numeric',
+                                                    })
+                                                    : <span className='text-red-600'>Unavailable</span>}
+                                            </td>
+                                            <td className='p-3 text-center'>
+                                                <button className='text-blue-500' onClick={() => navigate(`/PatientProfile/${patient.id}`)}>
+                                                    <span className="material-symbols-outlined">visibility</span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="4" className='p-4 text-center'>No patients found.</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
                     </div>
                 </>
             )}

@@ -30,7 +30,6 @@ const navigate = useNavigate()
             const response = await axios.get(`${BASEURL}/dentist/dentistlist`, {
                 withCredentials: true
             });
-            console.log(response.data)
             setDentists(response.data);
             setError('');
         } catch (error) {
