@@ -338,7 +338,7 @@ export default function Add_Procedure() {
       <Modal isOpen={viewProcedureModalOpen} close={() => setViewProcedureModalOpen(false)}>
 
         <h3 className="font-bold text-lg text-center">View Procedure</h3>
-        <div className="flex flex-col text-white">
+        <div className="flex flex-col ">
           <div className="label">
             <span className="label-text">Procedure Name</span>
           </div>
@@ -369,7 +369,7 @@ export default function Add_Procedure() {
           <div className="label">
             <span className="label-text">Description</span>
           </div>
-          <input
+          <textarea
             type="text"
             value={newProcedure.Description}
             readOnly

@@ -16,7 +16,7 @@ export default function TotalProcedures() {
     useEffect(() => {
         const fetchApprovedAppointments = async () => {
             try {
-                const response = await axios.get(`${BASEURL}/Appointments/appointments/filter/ApprovedOnly`);
+                const response = await axios.get(`${BASEURL}/Appointments/appointments/filter/CompletedOnly`);
                 const appointments = response.data;
 
                 const report = {};

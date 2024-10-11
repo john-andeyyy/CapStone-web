@@ -65,7 +65,7 @@ export default function Sidebar() {
     };
 
     return (
-        <>
+        <div className=' text-white'>
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="lg:hidden fixed top-4 left-4 z-50 text-primary"
@@ -179,7 +179,9 @@ export default function Sidebar() {
                                 className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'Dentist' ? 'bg-secondary text-gray-800' : 'hover:bg-secondary'}`}
                                 onClick={() => handleNavigate('/Dentist', 'Dentist')}
                             >
-                                <FaPlus className="mr-3" />
+                                <span className="material-symbols-outlined mr-2">
+                                    edit
+                                </span>
                                 <span>Dentist</span>
                                 <h1 className='font-bold text-green-500'> icons nalang</h1>
 
@@ -193,7 +195,7 @@ export default function Sidebar() {
                                     onClick={toggleLandingPageDropdown}
                                 >
                                     <FaCalendarAlt className="mr-3" />
-                                    <span>Edit</span>
+                                    <span>Edit of in info pages</span>
                                     {isLandingPageDropdownOpen ? <FaChevronUp className="ml-auto" /> : <FaChevronDown className="ml-auto" />}
                                 </div>
 
@@ -231,6 +233,6 @@ export default function Sidebar() {
 
 
             <Daisyui_modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-        </>
+        </div>
     );
 }

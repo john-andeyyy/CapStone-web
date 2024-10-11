@@ -59,7 +59,7 @@ export default function AddGroupMemberModal({ isOpen, onClose, memberlist, addto
       });
 
       if (response.status === 200) {
-        showToast('info', 'Member added successfully!');
+        showToast('success', 'Member added successfully!');
 
         addtolist([...memberlist, response.data]);
         setFormData({

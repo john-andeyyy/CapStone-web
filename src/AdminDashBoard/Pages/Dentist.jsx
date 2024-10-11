@@ -2,14 +2,18 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import DentistEdit from '../Components/Dentist/Dentist_edit';
 import { Link, useNavigate } from 'react-router-dom';
+import { showToast } from '../../AdminDashBoard/Components/ToastNotification';
+
 export default function Dentist() {
     const BASEURL = import.meta.env.VITE_BASEURL;
-const navigate = useNavigate()
+    const navigate = useNavigate();
     const [dentists, setDentists] = useState([]);
     const [selectedDentist, setSelectedDentist] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [showAddModal, setShowAddModal] = useState(false);
     const [previewImage, setPreviewImage] = useState(null);
+    const [filterText, setFilterText] = useState('');
+    const [availabilityFilter, setAvailabilityFilter] = useState('available');
 
     const [newDentist, setNewDentist] = useState({
         FirstName: '',
@@ -84,10 +88,9 @@ const navigate = useNavigate()
                 }
             });
 
-            // Assuming the API returns the new dentist data in response.data
             if (response.status === 201) {
                 setDentists([...dentists, response.data]);
-                alert('Dentist added successfully!');
+                showToast('success', 'Dentist added successfully!');
                 setShowAddModal(false);
                 // Reset state
                 setNewDentist({
@@ -111,7 +114,6 @@ const navigate = useNavigate()
             alert(errorMessage);
         }
     };
-
 
     const handleCloseAddModal = () => {
         setNewDentist({
@@ -139,42 +141,29 @@ const navigate = useNavigate()
             setNewDentist({ ...newDentist, [e.target.name]: e.target.value });
         }
     };
-    const getProfileImage = (profilePicture) => {
-        if (profilePicture) {
-            // Convert the buffer to a base64 string
-            const base64String = profilePicture.toString('base64');
-            return `data:image/jpeg;base64,${base64String}`; // Adjust to image format (jpeg/png)
-        } else {
-            return "https://via.placeholder.com/150"; // Fallback if no image
-        }
-    };
 
-    const [isEditmodal, setisEditmodal] = useState(false)
+
+    const [isEditmodal, setisEditmodal] = useState(false);
 
     const handle_availability = (userid) => {
         const currentstatus = userid.isAvailable;
         const newStatus = !currentstatus;
 
-        // Prepare the payload for the PUT request
         const payload = {
             Status: newStatus,
         };
 
-        // Ensure the endpoint name is correct
         axios.put(`${BASEURL}/dentist/Dentistdata/tongleavailable/${userid._id}`, payload, {
             withCredentials: true
         })
             .then((response) => {
                 if (response.status === 200) {
-
-
-                    const updatedDentist = dentists.find(dentist => dentist._id == userid._id)
+                    const updatedDentist = dentists.find(dentist => dentist._id === userid._id);
                     if (updatedDentist) {
                         updatedDentist.isAvailable = newStatus;
                     }
                     setDentists([...dentists]);
-
-                    alert('Availability updated successfully!');
+                    showToast('success', 'Availability updated successfully!');
                 } else {
                     console.warn('Unexpected response status:', response.status);
                 }
@@ -185,25 +174,80 @@ const navigate = useNavigate()
             });
     };
 
-    
+    const updateDentistData = (updatedDentist) => {
+        setDentists((prevDentists) =>
+            prevDentists.map((dentist) =>
+                dentist._id === updatedDentist._id ? updatedDentist : dentist
+            )
+        );
+    };
+    const filteredDentists = dentists
+        .filter((dentist) => {
+            // Filter by name
+            const matchesName = `${dentist.FirstName} ${dentist.LastName}`.toLowerCase().includes(filterText.toLowerCase());
 
+            // Filter by availability
+            const matchesAvailability =
+                availabilityFilter === 'all' ||
+                (availabilityFilter === 'available' && dentist.isAvailable) ||
+                (availabilityFilter === 'unavailable' && !dentist.isAvailable);
+
+            return matchesName && matchesAvailability;
+        })
+        .sort((a, b) => {
+            const nameA = `${a.FirstName} ${a.LastName}`.toLowerCase();
+            const nameB = `${b.FirstName} ${b.LastName}`.toLowerCase();
+            return nameA.localeCompare(nameB); // Compare the names alphabetically (A to Z)
+        });
+
+
+    const getProfileImage = (profilePicture) => {
+        if (profilePicture) {
+            // Convert the buffer to a base64 string
+            const base64String = profilePicture.toString('base64');
+            return `data:image/jpeg;base64,${base64String}`; // Adjust to image format (jpeg/png)
+        } else {
+            return "https://via.placeholder.com/150"; // Fallback if no image
+        }
+    };
     return (
         <div className="container mx-auto p-4">
             <h1 className="text-3xl font-bold mb-4 text-center">Dentist List</h1>
             {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-            <div className="flex justify-between mb-4 text-white">
-                <button
-                    className="bg-primary py-2 px-4 rounded-lg hover:bg-primary"
-                    onClick={handleAddDentist}
-                >
+           
+            <div className="flex justify-between mb-4 ">
+                <button className="bg-primary py-2 px-4 rounded-lg hover:bg-secondary text-white" onClick={handleAddDentist}>
                     Add Dentist
                 </button>
+
+                <div className="flex space-x-4">
+                    {/* Filter by name */}
+                    <input
+                        type="text"
+                        placeholder="Filter by name"
+                        value={filterText}
+                        onChange={(e) => setFilterText(e.target.value)}
+                        className="p-2 rounded-lg border "
+                    />
+
+                    {/* Filter by availability */}
+                    <select
+                        value={availabilityFilter}
+                        onChange={(e) => setAvailabilityFilter(e.target.value)}
+                        className="p-2 rounded-lg border"
+                    >
+                        <option value="all">All</option>
+                        <option value="available">Available</option>
+                        <option value="unavailable">Unavailable</option>
+                    </select>
+                </div>
             </div>
 
-            <div className="overflow-x-auto">
-                <table className="min-w-full text-left">
+
+            <div className="w-full overflow-auto  rounded-3xl">
+                <table className="min-w-full text-left ">
                     <thead>
-                        <tr className="text-sm text-white bg-primary">
+                        <tr className="text-sm text-white bg-primary ">
                             <th className="py-3 px-5">Name</th>
                             <th className="py-3 px-5">Available</th>
                             <th className="py-3 px-5 text-center">Actions</th>
@@ -216,30 +260,34 @@ const navigate = useNavigate()
                                     <span className="loading loading-spinner loading-lg"></span>
                                 </td>
                             </tr>
-                        ) : dentists.length > 0 ? (
-                            dentists.map((dentist) => (
+                        ) : filteredDentists.length > 0 ? (
+                            filteredDentists.map((dentist) => (
                                 <tr key={dentist._id} className="hover:bg-secondary border-b">
                                     <td className="py-3 px-5">{`${dentist.FirstName} ${dentist.LastName}`}</td>
                                     <td className="py-3 px-5">{dentist.isAvailable ? 'Yes' : 'No'}</td>
                                     <td className="py-3 px-5 space-x-3 text-center">
                                         <button onClick={() => handleRowClick(dentist)} className="text-green-500">View</button>
-                                        <button className="text-blue-500"
+                                        <button
+                                            className="text-blue-500"
                                             onClick={() => {
-                                                setisEditmodal(true)
-                                                setSelectedDentist(dentist)
-                                            }}
-                                        >Edit</button>
-
-                                        <button className="text-red-500"
-                                            onClick={() => {
-                                                handle_availability(dentist)
+                                                setisEditmodal(true);
+                                                setSelectedDentist(dentist);
                                             }}
                                         >
-                                            {dentist.isAvailable ? 'To unavailable' : 'to available'}
+                                            Edit
                                         </button>
-                                        <button className="text-green-500"
+                                        <button
+                                            className="text-red-500"
                                             onClick={() => {
-                                                navigate(`/DentistSchedule/${dentist._id}`)
+                                                handle_availability(dentist);
+                                            }}
+                                        >
+                                            {dentist.isAvailable ? 'To unavailable' : 'To available'}
+                                        </button>
+                                        <button
+                                            className="text-green-500"
+                                            onClick={() => {
+                                                navigate(`/DentistSchedule/${dentist._id}`);
                                             }}
                                         >
                                             Schedule
@@ -256,179 +304,134 @@ const navigate = useNavigate()
                 </table>
             </div>
 
+
             {isEditmodal && (
                 <DentistEdit
                     isOpen={isEditmodal}
-                    close={() => setisEditmodal(false)}
-                    selectedDentist={selectedDentist}
+                    onClose={() => setisEditmodal(false)}
+                    dentistData={selectedDentist}
+                    updateDentistData={updateDentistData}
                 />
             )}
 
-            {showModal && selectedDentist && (
-                <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
-                    <div className="p-6 bg-accent rounded-lg shadow-lg relative w-11/12 max-w-md">
-                        <button
-                            className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
-                            onClick={handleCloseModal}
-                        >
-                            &times;
-                        </button>
-
-                        <div className="flex flex-col items-center">
-                            <img
-                                src={getProfileImage(selectedDentist.ProfilePicture)} // Replace with the actual path to the dentist's image
-                                alt={`${selectedDentist.FirstName} ${selectedDentist.LastName}`}
-                                className="w-24 h-24 rounded-full mb-4 object-cover border-2 border-gray-300"
-                            />
-                            <h2 className="text-xl font-bold mb-4">{`${selectedDentist.FirstName} ${selectedDentist.LastName}`}</h2>
-                        </div>
-
-                        <p><strong>Contact Number:</strong> {selectedDentist.ContactNumber}</p>
-                        <p><strong>License Number:</strong> {selectedDentist.LicenseNo}</p>
-                        <p><strong>Address:</strong> {selectedDentist.Address}</p>
-                        <p><strong>Gender:</strong> {selectedDentist.Gender}</p>
-                        <p><strong>Available:</strong> {selectedDentist.isAvailable ? 'Yes' : 'No'}</p>
-                    </div>
-                </div>
-
-            )}
-
-            {showAddModal && (
-                <div className="fixed inset-0 flex justify-center items-center ">
-                    <div className="p-6 bg-accent rounded-lg shadow-lg relative w-11/12 max-w-3xl">
-                        <h2 className="text-xl font-bold mb-4 text-center">Add New Dentist</h2>
-                        <div className="flex justify-center">
-                            {previewImage && (
-                                <div className="mt-2">
+            {showModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-secondary rounded-lg p-6 w-11/12 max-w-lg">
+                        <h2 className="text-2xl mb-4">Dentist Details</h2>
+                        {selectedDentist && (
+                            <div className="flex">
+                                {/* Column 1: Image */}
+                                <div className="w-1/3 flex items-center justify-center">
                                     <img
-                                        src={previewImage}
-                                        alt="Selected Profile"
-                                        className="h-32 w-h-32 "
+                                        src={getProfileImage(selectedDentist.ProfilePicture)}
+                                        alt="Dentist"
+                                        className="w-40 h-36 rounded-full mb-4"
                                     />
                                 </div>
-                            )}
-                        </div>
-                        <form onSubmit={handleCreateDentist} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="mb-4">
-                                <label className="block text-sm font-bold mb-2">First Name</label>
-                                <input
-                                    type="text"
-                                    name="FirstName"
-                                    value={newDentist.FirstName}
-                                    onChange={handleChange}
-                                    className="w-full p-2 border rounded bg-white text-black "
-                                    placeholder="Enter first name"
-                                    required
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label className="block text-sm font-bold mb-2">Last Name</label>
-                                <input
-                                    type="text"
-                                    name="LastName"
-                                    value={newDentist.LastName}
-                                    onChange={handleChange}
-                                    className="w-full p-2 border rounded bg-white text-black "
-                                    placeholder="Enter last name"
-                                    required
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label className="block text-sm font-bold mb-2">Middle Name</label>
-                                <input
-                                    type="text"
-                                    name="MiddleName"
-                                    value={newDentist.MiddleName}
-                                    onChange={handleChange}
-                                    className="w-full p-2 border rounded bg-white text-black"
-                                    placeholder="Enter middle name"
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label className="block text-sm font-bold mb-2">Contact Number</label>
-                                <input
-                                    type="text"
-                                    name="ContactNumber"
-                                    value={newDentist.ContactNumber}
-                                    onChange={handleChange}
-                                    className="w-full p-2 border rounded bg-white text-black"
-                                    placeholder="Enter contact number"
-                                    required
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label className="block text-sm font-bold mb-2">Address</label>
-                                <input
-                                    type="text"
-                                    name="Address"
-                                    value={newDentist.Address}
-                                    onChange={handleChange}
-                                    className="w-full p-2 border rounded bg-white text-black"
-                                    placeholder="Enter address"
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label className="block text-sm font-bold mb-2">License Number</label>
-                                <input
-                                    type="text"
-                                    name="LicenseNo"
-                                    value={newDentist.LicenseNo}
-                                    onChange={handleChange}
-                                    className="w-full p-2 border rounded bg-white text-black"
-                                    placeholder="Enter license number"
-                                    required
-                                />
-                            </div>
 
-                            <div className="mb-4">
-                                <label className="block text-sm font-bold mb-2">Gender</label>
-                                <select
-                                    name="Gender"
-                                    value={newDentist.Gender}
-                                    onChange={handleChange}
-                                    className="w-full p-2 border rounded bg-white text-black"
-                                    required
-                                >
-                                    <option value="">Select gender</option>
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                    <option value="Non-binary">Non-binary</option>
-                                    <option value="Genderqueer">Genderqueer</option>
-                                    <option value="Transgender">Transgender</option>
-                                    <option value="Genderfluid">Genderfluid</option>
-                                    <option value="Agender">Agender</option>
-                                    <option value="Two-spirit">Two-spirit</option>
-                                    <option value="Other">Other</option>
-                                    <option value="Prefer not to say">Prefer not to say</option>
-                                </select>
+                                {/* Column 2: Details */}
+                                <div className="w-2/3 pl-4">
+                                    <p><strong>Name:</strong> {`${selectedDentist.FirstName} ${selectedDentist.LastName}`}</p>
+                                    <p><strong>Contact Number:</strong> {selectedDentist.ContactNumber}</p>
+                                    <p><strong>License No:</strong> {selectedDentist.LicenseNo}</p>
+                                    <p><strong>Address:</strong> {selectedDentist.Address}</p>
+                                    <p><strong>Gender:</strong> {selectedDentist.Gender}</p>
+                                    <p><strong>Available:</strong> {selectedDentist.isAvailable ? 'Yes' : 'No'}</p>
+                                </div>
                             </div>
-
-                            <div className="mb-4">
-                                <label className="block text-sm font-bold mb-2">Profile Picture</label>
-                                <input
-                                    type="file"
-                                    name="ProfilePicture"
-                                    onChange={handleChange}
-                                    className="w-full p-2 border rounded bg-white text-black"
-                                    accept="image/*"
-                                />
-                            </div>
-                            <div className="col-span-2 flex justify-center">
-                                <button
-                                    type="submit"
-                                    className="bg-primary text-white px-6 py-2 rounded-lg"
-                                >
-                                    Add Dentist
-                                </button>
-                            </div>
-                        </form>
-                        <button
-                            className="absolute top-2 right-2 hover:text-gray-700"
-                            onClick={handleCloseAddModal}
-                        >
-                            &times;
+                        )}
+                        <button onClick={handleCloseModal} className="mt-4 bg-red-500 text-white py-2 px-4 rounded">
+                            Close
                         </button>
                     </div>
+                </div>
+            )}
+
+
+            {showAddModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <form className="bg-white rounded-lg p-6 w-11/12 max-w-lg" onSubmit={handleCreateDentist}>
+                        <h2 className="text-2xl mb-4">Add Dentist</h2>
+                        <input
+                            type="text"
+                            name="FirstName"
+                            placeholder="First Name"
+                            value={newDentist.FirstName}
+                            onChange={handleChange}
+                            required
+                            className="w-full mb-4 p-2 border border-gray-300 rounded"
+                        />
+                        <input
+                            type="text"
+                            name="LastName"
+                            placeholder="Last Name"
+                            value={newDentist.LastName}
+                            onChange={handleChange}
+                            required
+                            className="w-full mb-4 p-2 border border-gray-300 rounded"
+                        />
+                        <input
+                            type="text"
+                            name="MiddleName"
+                            placeholder="Middle Name"
+                            value={newDentist.MiddleName}
+                            onChange={handleChange}
+                            className="w-full mb-4 p-2 border border-gray-300 rounded"
+                        />
+                        <input
+                            type="text"
+                            name="ContactNumber"
+                            placeholder="Contact Number"
+                            value={newDentist.ContactNumber}
+                            onChange={handleChange}
+                            required
+                            className="w-full mb-4 p-2 border border-gray-300 rounded"
+                        />
+                        <input
+                            type="text"
+                            name="Address"
+                            placeholder="Address"
+                            value={newDentist.Address}
+                            onChange={handleChange}
+                            className="w-full mb-4 p-2 border border-gray-300 rounded"
+                        />
+                        <select
+                            name="Gender"
+                            value={newDentist.Gender}
+                            onChange={handleChange}
+                            className="w-full mb-4 p-2 border border-gray-300 rounded"
+                        >
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                        <input
+                            type="text"
+                            name="LicenseNo"
+                            placeholder="License No"
+                            value={newDentist.LicenseNo}
+                            onChange={handleChange}
+                            required
+                            className="w-full mb-4 p-2 border border-gray-300 rounded"
+                        />
+                        <input
+                            type="file"
+                            name="ProfilePicture"
+                            accept="image/*"
+                            onChange={handleChange}
+                            className="mb-4"
+                        />
+                        {previewImage && (
+                            <img src={previewImage} alt="Profile Preview" className="w-32 h-32 rounded mb-4" />
+                        )}
+                        <button
+                            type="submit"
+                            className="w-full bg-primary text-white py-2 rounded hover:bg-blue-700"
+                        >
+                            Add Dentist
+                        </button>
+                        <button onClick={handleCloseAddModal} className="mt-4 w-full bg-red-500 text-white py-2 rounded">Close</button>
+                    </form>
                 </div>
             )}
         </div>

@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { showToast } from '../../../AdminDashBoard/Components/ToastNotification';
+export default function DentistEdit({ isOpen, close, selectedDentist, setDentists }) {
+    const BASEURL = import.meta.env.VITE_BASEURL;
 
-export default function DentistEdit({ isOpen, close, selectedDentist }) {
     const [dentistData, setDentistData] = useState({
         FirstName: '',
         LastName: '',
@@ -10,67 +12,10 @@ export default function DentistEdit({ isOpen, close, selectedDentist }) {
         Address: '',
         Gender: '',
         LicenseNo: '',
-        ProfilePicture: null, // For file input
+        ProfilePicture: null,
     });
 
-    // Ref for the file input
     const fileInputRef = useRef(null);
-
-    // Populate form with selected dentist data when component is opened
-    useEffect(() => {
-        if (isOpen && selectedDentist) {
-            setDentistData({
-                FirstName: selectedDentist.FirstName || '',
-                LastName: selectedDentist.LastName || '',
-                MiddleName: selectedDentist.MiddleName || '',
-                ContactNumber: selectedDentist.ContactNumber || '',
-                Address: selectedDentist.Address || '',
-                Gender: selectedDentist.Gender || '',
-                LicenseNo: selectedDentist.LicenseNo || '',
-                ProfilePicture: null, // Resetting file input
-            });
-        }
-    }, [isOpen, selectedDentist]);
-
-    // Handle input change
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setDentistData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
-
-    // Handle file change
-    const handleFileChange = (e) => {
-        setDentistData((prevData) => ({
-            ...prevData,
-            ProfilePicture: e.target.files[0], // Get the selected file
-        }));
-    };
-
-    // Handle form submission
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const formData = new FormData();
-        Object.entries(dentistData).forEach(([key, value]) => {
-            formData.append(key, value);
-        });
-
-        try {
-            await axios.put(`{{local}}/dentist/Dentistdata/update/${selectedDentist.id}`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data', // Important for file uploads
-                },
-            });
-            close(); // Close the modal after successful submission
-        } catch (error) {
-            console.error("Error updating dentist data:", error);
-        }
-    };
-
-    if (!isOpen) return null; // Don't render anything if not open
-
     // Function to get the profile image
     const getProfileImage = (profilePicture) => {
         if (profilePicture) {
@@ -89,7 +34,70 @@ export default function DentistEdit({ isOpen, close, selectedDentist }) {
         setProfileImage(getProfileImage(selectedDentist.ProfilePicture));
     }, [selectedDentist]);
 
-    // Function to trigger file input click
+    useEffect(() => {
+        if (isOpen && selectedDentist) {
+            setDentistData({
+                FirstName: selectedDentist.FirstName || '',
+                LastName: selectedDentist.LastName || '',
+                MiddleName: selectedDentist.MiddleName || '',
+                ContactNumber: selectedDentist.ContactNumber || '',
+                Address: selectedDentist.Address || '',
+                Gender: selectedDentist.Gender || '',
+                LicenseNo: selectedDentist.LicenseNo || '',
+                ProfilePicture: null,
+            });
+            // setProfileImage(selectedDentist.ProfilePicture ? `` : "https://via.placeholder.com/150");
+        }
+    }, [isOpen, selectedDentist]);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setDentistData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        setDentistData((prevData) => ({
+            ...prevData,
+            ProfilePicture: file,
+        }));
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setProfileImage(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        Object.entries(dentistData).forEach(([key, value]) => {
+            formData.append(key, value);
+        });
+
+        try {
+            const response = await axios.put(`${BASEURL}/dentist/Dentistdata/update/${selectedDentist._id}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+                withCredentials: true,
+            });
+            setDentists(response.data);
+            showToast('success', 'Edit successful!');
+
+            close();
+        } catch (error) {
+            console.error("Error updating dentist data:", error);
+        }
+    };
+
+    if (!isOpen) return null;
+
     const handleEditNewClick = () => {
         fileInputRef.current.click();
     };
@@ -100,7 +108,7 @@ export default function DentistEdit({ isOpen, close, selectedDentist }) {
                 <h2 className="text-lg font-semibold mb-4">Edit Dentist Information</h2>
                 <div className="mb-4 flex justify-center items-center">
                     <img
-                        src={profileImage || "https://via.placeholder.com/150"}
+                        src={profileImage}
                         alt="Profile"
                         className="w-32 h-32 rounded-full mb-4"
                     />
@@ -116,8 +124,8 @@ export default function DentistEdit({ isOpen, close, selectedDentist }) {
                         name="ProfilePicture"
                         accept="image/*"
                         onChange={handleFileChange}
-                        ref={fileInputRef} // Attach ref to file input
-                        className="hidden" // Hide the file input
+                        ref={fileInputRef}
+                        className="hidden"
                     />
                 </div>
                 <form onSubmit={handleSubmit}>
@@ -157,7 +165,6 @@ export default function DentistEdit({ isOpen, close, selectedDentist }) {
                                 className="border border-gray-300 rounded-md p-2 w-full"
                             />
                         </div>
-
                         <div>
                             <label className="block mb-1">Contact Number</label>
                             <input
@@ -181,14 +188,12 @@ export default function DentistEdit({ isOpen, close, selectedDentist }) {
                                 className="border border-gray-300 rounded-md p-2 mb-4 w-full"
                             />
                         </div>
-
-                        <div >
+                        <div>
                             <label className="block mb-1">Gender</label>
                             <select
                                 name="Gender"
                                 value={dentistData.Gender}
                                 onChange={handleChange}
-                                placeholder="Gender"
                                 className="border border-gray-300 rounded-md p-2 mb-4 w-full"
                                 required
                             >
@@ -217,7 +222,6 @@ export default function DentistEdit({ isOpen, close, selectedDentist }) {
                             />
                         </div>
                     </div>
-
                     <div className="flex justify-between">
                         <button type="submit" className="bg-blue-500 text-white rounded-md px-4 py-2">Update</button>
                         <button type="button" onClick={close} className="bg-gray-300 text-black rounded-md px-4 py-2">Cancel</button>

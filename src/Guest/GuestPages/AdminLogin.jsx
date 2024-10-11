@@ -34,7 +34,7 @@ export default function AdminLogin() {
                 const currentTime = new Date().getTime();
                 localStorage.setItem('lastActiveTime', currentTime);
 
-                showToast('info', 'Login successful!');
+                showToast('success', 'Login successful!');
 
                 setTimeout(() => {
                     navigate('/dashboard');

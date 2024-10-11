@@ -55,12 +55,21 @@ export default function Grouplist() {
     }, [IsAddGroupView]);
 
     const getProfileImage = (profilePicture) => {
-        if (profilePicture) {
-            return `data:image/jpeg;base64,${profilePicture}`;
-        } else {
-            return "https://via.placeholder.com/150";
+        if (profilePicture instanceof File) {
+            return URL.createObjectURL(profilePicture); // If the image is a new file, create an object URL
         }
+        return profilePicture
+            ? `data:image/jpeg;base64,${profilePicture}`
+            : "https://via.placeholder.com/150";
     };
+
+    // const getProfileImage = (profilePicture) => {
+    //     if (profilePicture) {
+    //         return `data:image/jpeg;base64,${profilePicture}`;
+    //     } else {
+    //         return "https://via.placeholder.com/150";
+    //     }
+    // };
 
     // Filtered members based on search term
     const filteredMembers = members.filter(member =>
@@ -68,22 +77,23 @@ export default function Grouplist() {
     );
 
     // Function to handle edit click
-    const handleEditClick = (id) => {
-        setSelectedMemberId(id);
-        setIsModalOpen(true);
-
+    // Function to handle edit click
+    const handleEditClick = (member) => {
+        setSelectedMemberId(member._id);
+        // setSelectedMemberData(member);  // Ensure selectedMemberData is set to the clicked member's data
         setFormData({
-            FirstName: selectedMemberData.FirstName,
-            LastName: selectedMemberData.LastName,
-            MiddleName: selectedMemberData.MiddleName || '',
-            ContactNumber: selectedMemberData.ContactNumber,
-            Facebooklink: selectedMemberData.Facebooklink || '',
-            ProfilePicture: selectedMemberData.ProfilePicture || null,
-            Role: selectedMemberData.Role,
-            Email: selectedMemberData.Email,
+            FirstName: member.FirstName,
+            LastName: member.LastName,
+            MiddleName: member.MiddleName || '', // Handle missing middle name
+            ContactNumber: member.ContactNumber,
+            Facebooklink: member.Facebooklink || '',
+            ProfilePicture: member.ProfilePicture || null, // Handle missing profile picture
+            Role: member.Role,
+            Email: member.Email,
         });
-
+        setIsModalOpen(true); // Open the modal
     };
+
 
     // Handle form changes
     const handleInputChange = (e) => {
@@ -92,8 +102,16 @@ export default function Grouplist() {
     };
 
     // Handle image upload
+    // Handle image upload and preview
     const handleImageChange = (e) => {
-        setFormData({ ...formData, ProfilePicture: e.target.files[0] });
+        const file = e.target.files[0];
+        setFormData({ ...formData, ProfilePicture: file });
+
+        // Generate image preview URL
+        if (file) {
+            const previewUrl = URL.createObjectURL(file);
+            setselectedMemberData({ ...selectedMemberData, ProfilePicture: previewUrl });
+        }
     };
 
     // Handle form submission for updating member data
@@ -111,7 +129,7 @@ export default function Grouplist() {
             }
         })
             .then(response => {
-                showToast('info', 'Member updated successfully!');
+                showToast('success', 'Member updated successfully!');
 
                 setIsModalOpen(false); // Close the modal
                 // Optionally refetch the member list to show the updated data
@@ -127,7 +145,7 @@ export default function Grouplist() {
         axios.delete(`${BASEURL}/members/group-members/${userid}`)
             .then(() => {
                 setMembers(prevMembers => prevMembers.filter(mem => mem._id !== userid));
-                showToast('info', 'Member Delete successfully!');
+                warning('success', 'Member Delete successfully!');
 
             })
             .catch((error) => {
@@ -185,22 +203,22 @@ export default function Grouplist() {
             {viewMode === 'table' && (
                 <div className="overflow-x-auto max-h-72"> {/* Set your desired max height */}
                     <table className="min-w-full border border-gray-300">
-                        <thead className="bg-secondary">
+                        <thead className="bg-secondary text-left">
                             <tr>
                                 <th className="p-2 border-b  bg-secondary z-10">Name</th>
                                 <th className="p-2 border-b  bg-secondary z-10">Role</th>
                                 <th className="p-2 border-b  bg-secondary z-10">Contact Number</th>
-                                <th className="p-2 border-b  bg-secondary z-10">Actions</th>
+                                <th className="p-2 border-b  bg-secondary z-10 text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filteredMembers.length > 0 ? (
                                 filteredMembers.map(member => (
                                     <tr key={member._id} className="hover:bg-secondary">
-                                        <td className="p-2 border-b" data-label="Name">{`${member.FirstName} ${member.LastName}`}</td>
+                                        <td className=" border-b pl-10 " data-label="Name">{`${member.FirstName} ${member.LastName}`}</td>
                                         <td className="p-2 border-b" data-label="Role">{member.Role}</td>
                                         <td className="p-2 border-b" data-label="Contact Number">{member.ContactNumber}</td>
-                                        <td className="p-2 border-b text-center" data-label="Actions">
+                                        <td className="p-2 border-b text-center space-x-3" data-label="Actions">
                                             <button
                                                 onClick={() => {
                                                     setisViewModalOpen(true);
@@ -212,7 +230,7 @@ export default function Grouplist() {
                                             </button>
                                             <button
                                                 onClick={() => {
-                                                    handleEditClick(member._id);
+                                                    handleEditClick(member);
                                                     setselectedMemberData(member);
                                                 }}
                                                 className="text-blue-500"
@@ -250,7 +268,7 @@ export default function Grouplist() {
                         filteredMembers.map(member => (
                             <div key={member._id} className="card card-compact bg-secondary shadow-xl">
                                 <div className='text-right pt-3 pr-3'>
-                                    <button onClick={() => handleEditClick(member._id)} className="text-blue-500">Edit</button>
+                                    <button onClick={() => handleEditClick(member)} className="text-blue-500">Edit</button>
                                 </div>
                                 <figure>
                                     <img
@@ -287,83 +305,125 @@ export default function Grouplist() {
 
             {/* Edit Modal */}
             {isModalOpen && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-primary p-8 rounded-md shadow-lg max-w-lg w-full">
-                        <h2 className="text-xl font-bold mb-4">Edit Member</h2>
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
+                    <div className="bg-secondary p-8 rounded-lg shadow-2xl max-w-4xl w-full">
+                        <h2 className="text-3xl font-bold mb-6 text-green-">Edit Member</h2>
+                        <div className="mb-4 flex justify-center">
+                            <img
+                                src={getProfileImage(formData.ProfilePicture)}
+                                alt={`${selectedMemberData.FirstName} ${selectedMemberData.LastName}`}
+                                className="w-40 h-full object-cover rounded-md"
+                            />
+                        </div>
                         <form onSubmit={handleFormSubmit}>
-                            <input
-                                type="text"
-                                name="FirstName"
-                                value={formData.FirstName}
-                                onChange={handleInputChange}
-                                className="mb-2 p-2 border border-gray-300 rounded-md w-full"
-                                placeholder="First Name"
-                            />
-                            <input
-                                type="text"
-                                name="LastName"
-                                value={formData.LastName}
-                                onChange={handleInputChange}
-                                className="mb-2 p-2 border border-gray-300 rounded-md w-full"
-                                placeholder="Last Name"
-                            />
-                            <input
-                                type="text"
-                                name="MiddleName"
-                                value={formData.MiddleName}
-                                onChange={handleInputChange}
-                                className="mb-2 p-2 border border-gray-300 rounded-md w-full"
-                                placeholder="Middle Name"
-                            />
-                            <input
-                                type="text"
-                                name="ContactNumber"
-                                value={formData.ContactNumber}
-                                onChange={handleInputChange}
-                                className="mb-2 p-2 border border-gray-300 rounded-md w-full"
-                                placeholder="Contact Number"
-                            />
-                            <input
-                                type="text"
-                                name="Facebooklink"
-                                value={formData.Facebooklink}
-                                onChange={handleInputChange}
-                                className="mb-2 p-2 border border-gray-300 rounded-md w-full"
-                                placeholder="Facebook Link"
-                            />
-                            <input
-                                type="file"
-                                name="ProfilePicture"
-                                onChange={handleImageChange}
-                                className="mb-2 p-2 border border-gray-300 rounded-md w-full"
-                            />
-                            <input
-                                type="text"
-                                name="Role"
-                                value={formData.Role}
-                                onChange={handleInputChange}
-                                className="mb-2 p-2 border border-gray-300 rounded-md w-full"
-                                placeholder="Role"
-                            />
-                            <input
-                                type="email"
-                                name="Email"
-                                value={formData.Email}
-                                onChange={handleInputChange}
-                                className="mb-2 p-2 border border-gray-300 rounded-md w-full"
-                                placeholder="Email"
-                            />
-                            <div className="flex justify-end space-x-2">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-lg text-white font-semibold mb-1">First Name:</label>
+                                    <input
+                                        type="text"
+                                        name="FirstName"
+                                        value={formData.FirstName}
+                                        onChange={handleInputChange}
+                                        className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-400 outline-none transition duration-200"
+                                        placeholder="Enter first name"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-lg text-white font-semibold mb-1">Last Name:</label>
+                                    <input
+                                        type="text"
+                                        name="LastName"
+                                        value={formData.LastName}
+                                        onChange={handleInputChange}
+                                        className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-400 outline-none transition duration-200"
+                                        placeholder="Enter last name"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-lg text-white font-semibold mb-1">Middle Name:</label>
+                                    <input
+                                        type="text"
+                                        name="MiddleName"
+                                        value={formData.MiddleName}
+                                        onChange={handleInputChange}
+                                        className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-400 outline-none transition duration-200"
+                                        placeholder="Enter middle name"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-lg text-white font-semibold mb-1">Contact Number:</label>
+                                    <input
+                                        type="text"
+                                        name="ContactNumber"
+                                        value={formData.ContactNumber}
+                                        onChange={handleInputChange}
+                                        className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-400 outline-none transition duration-200"
+                                        placeholder="Enter contact number"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-lg text-white font-semibold mb-1">Facebook Link:</label>
+                                    <input
+                                        type="text"
+                                        name="Facebooklink"
+                                        value={formData.Facebooklink}
+                                        onChange={handleInputChange}
+                                        className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-400 outline-none transition duration-200"
+                                        placeholder="Enter Facebook link"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-lg text-white font-semibold mb-1">Profile Picture:</label>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        name="ProfilePicture"
+                                        onChange={handleImageChange}
+                                        className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-400 outline-none transition duration-200"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-lg text-white font-semibold mb-1">Role:</label>
+                                    <input
+                                        type="text"
+                                        name="Role"
+                                        value={formData.Role}
+                                        onChange={handleInputChange}
+                                        className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-400 outline-none transition duration-200"
+                                        placeholder="Enter role"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-lg text-white font-semibold mb-1">Email:</label>
+                                    <input
+                                        type="email"
+                                        name="Email"
+                                        value={formData.Email}
+                                        onChange={handleInputChange}
+                                        className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-400 outline-none transition duration-200"
+                                        placeholder="Enter email"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex justify-end space-x-4 mt-6">
                                 <button
                                     type="button"
-                                    className="px-4 py-2 bg-red-500 rounded-md"
+                                    className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-300 ease-in-out"
                                     onClick={() => setIsModalOpen(false)}
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-4 py-2 bg-green-500 text-white rounded-md"
+                                    className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-300 ease-in-out"
                                 >
                                     Save
                                 </button>
@@ -372,6 +432,8 @@ export default function Grouplist() {
                     </div>
                 </div>
             )}
+
+
 
 
             {/* //! DELETE */}
@@ -408,15 +470,14 @@ export default function Grouplist() {
                     <div className="bg-secondary p-8 rounded-md shadow-lg max-w-lg w-full">
                         <h2 className="text-xl font-bold mb-4">Member Details</h2>
                         {/* Display profile picture if it exists */}
-                        {selectedMemberData.ProfilePicture && (
-                            <div className="mb-4 flex justify-center">
-                                <img
-                                    src={getProfileImage(selectedMemberData.ProfilePicture)}
-                                    alt={`${selectedMemberData.FirstName} ${selectedMemberData.LastName}`}
-                                    className="w-40 h-full object-cover rounded-md"
-                                />
-                            </div>
-                        )}
+                        <div className="mb-4 flex justify-center">
+                            <img
+                                src={getProfileImage(selectedMemberData.ProfilePicture)}
+                                alt={`${selectedMemberData.FirstName} ${selectedMemberData.LastName}`}
+                                className="w-40 h-full object-cover rounded-md"
+                            />
+                        </div>
+
                         <div className="mb-2">
                             <strong>First Name:</strong> {selectedMemberData.FirstName}
                         </div>

@@ -36,6 +36,8 @@ import AddGroupMember from './Landing-infopage/GroupMembers/AddGroupMember';
 import Grouplist from './Landing-infopage/GroupMembers/Grouplist';
 import DentistSchedule from './AdminDashBoard/Components/Dentist/DentistsSchedule';
 import Total_procedures from './AdminDashBoard/Pages/ReportPages/Pages/Total_procedures';
+import Report_Monthly_patient from './AdminDashBoard/Pages/ReportPages/Pages/Report_Monthly_patient';
+import ShowChart from './try/ShowChart';
 
 function AdminRoutes() {
   const location = useLocation();
@@ -95,6 +97,7 @@ function AdminRoutes() {
 
         {/* //! REPORTS */}
         <Route path="/Total_procedures" element={< Total_procedures />} />
+        <Route path="/Report_Monthly_patient" element={< Report_Monthly_patient />} />
 
         {/* //! components only! */}
         <Route path="/NotificationPage" element={<NotificationPage />} />
@@ -105,6 +108,10 @@ function AdminRoutes() {
         <Route path="/AddGroupMember" element={<AddGroupMember />} />
         <Route path="/Grouplist" element={<Grouplist />} />
 
+
+        {/* //! palyground */}
+
+        <Route path="/Chart" element={<ShowChart />} />
 
 
 
@@ -139,6 +146,7 @@ function App() {
         <ThemeController />
       </div>
       <ToastNotification />
+      
       {isLogin && !isExpired ? (
         <div className="flex flex-col md:flex-row">
           <Sidebar />
