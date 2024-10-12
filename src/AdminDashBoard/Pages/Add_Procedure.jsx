@@ -11,6 +11,7 @@ export default function Add_Procedure() {
   const [deleteConfirmationModalOpen, setDeleteConfirmationModalOpen] = useState(false);
   const [procedureToEdit, setProcedureToEdit] = useState(null);
   const [procedureToDelete, setProcedureToDelete] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const [procedureList, setProcedureList] = useState([]);
 
@@ -73,52 +74,29 @@ export default function Add_Procedure() {
     }
   };
 
-  const handleEditSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.put(`${BASEURL}/Procedure/update/${newProcedure._id}`, {
-        Procedure_name: newProcedure.Procedure_name,
-        Duration: newProcedure.Duration,
-        Price: newProcedure.Price,
-        Description: newProcedure.Description
-      }, {
-        withCredentials: true,
-      });
 
-      if (response.status === 200) {
-        showToast('success', 'Procedure updated successfully!');
-        // alert(response.data.message || 'Procedure updated successfully!');
-        setProcedureList((prev) =>
-          prev.map((procedure) =>
-            procedure._id === newProcedure._id ? newProcedure : procedure
-          )
-        );
-      }
-      setEditProcedureModalOpen(false);
-      setProcedureToEdit(null);
-    } catch (error) {
-      console.error('Error updating procedure:', error);
-      showToast('error', error.response?.data?.message || 'An error occurred.');
-    }
-  };
 
   const handleAddSubmit = async (e) => {
     e.preventDefault();
+    const formData = new FormData();
+    formData.append('Procedure_name', newProcedure.Procedure_name);
+    formData.append('Duration', newProcedure.Duration);
+    formData.append('Price', newProcedure.Price);
+    formData.append('Description', newProcedure.Description);
+    if (newProcedure.Image) {
+      formData.append('Image', newProcedure.Image);
+    }
 
     try {
-      const response = await axios.post(`${BASEURL}/Procedure/add`, {
-        Procedure_name: newProcedure.Procedure_name,
-        Duration: newProcedure.Duration,
-        Price: newProcedure.Price,
-        Description: newProcedure.Description
-      }, {
-        withCredentials: true
+      const response = await axios.post(`${BASEURL}/Procedure/add`, formData, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
 
       if (response.status === 200) {
         showToast('success', response.data.message || 'Procedure added successfully!');
-
-        // alert(response.data.message || 'Procedure added successfully!');
         setProcedureList([...procedureList, response.data.procedure]);
       } else {
         showToast('error', response.data.message || 'Something went wrong.');
@@ -129,6 +107,43 @@ export default function Add_Procedure() {
 
     setAddPatientModalOpen(false);
   };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('Procedure_name', newProcedure.Procedure_name);
+    formData.append('Duration', newProcedure.Duration);
+    formData.append('Price', newProcedure.Price);
+    formData.append('Description', newProcedure.Description);
+    if (newProcedure.Image) {
+      formData.append('Image', newProcedure.Image);
+    }
+
+    try {
+      const response = await axios.put(`${BASEURL}/Procedure/update/${newProcedure._id}`, formData, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.status === 200) {
+        showToast('success', 'Procedure updated successfully!');
+        setProcedureList((prev) =>
+          prev.map((procedure) =>
+            procedure._id === newProcedure._id ? newProcedure : procedure
+          )
+        );
+      }
+      setEditProcedureModalOpen(false);
+      setProcedureToEdit(null);
+    } catch (error) {
+      showToast('error', error.response?.data?.message || 'An error occurred.');
+    }
+  };
+
+
+
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
@@ -150,6 +165,17 @@ export default function Add_Procedure() {
   const filteredProcedures = procedureList.filter((procedure) =>
     procedure.Procedure_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const getProfileImage = (profilePicture) => {
+
+    // Check if the profile picture is available
+    if (profilePicture) {
+      return `data:image/jpeg;base64,${profilePicture}`; // Adjust to image format (jpeg/png)
+    } else {
+      return "https://via.placeholder.com/150"; // Fallback if no image
+    }
+  };
+
 
   return (
     <div className='container mx-auto text-sm lg:text-md'>
@@ -179,7 +205,7 @@ export default function Add_Procedure() {
         <div className='flex-1 text-center'>Actions</div>
       </div>
 
-      <div className='mt-4 text-lg overflow-auto max-h-80'>
+      <div className='mt-4 text-lg overflow-auto max-h-[28rem]'>
         {filteredProcedures.map((procedure) => (
           <div key={procedure._id} className='flex w-full items-center border-b py-2'>
             <div className='flex-1'>{procedure.Procedure_name}</div>
@@ -255,12 +281,39 @@ export default function Add_Procedure() {
             className="border p-2 mb-2"
             required
           />
+
+          <input
+            type="file"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              setNewProcedure({ ...newProcedure, Image: file });
+              if (file) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                  setImagePreview(reader.result);
+                };
+                reader.readAsDataURL(file);
+              } else {
+                setImagePreview(null); // Clear the preview if no file is selected
+              }
+            }}
+            className="border p-2 mb-2"
+          />
+
+          {imagePreview && (
+            <img src={imagePreview} alt="Image Preview" className="mt-2 border rounded" style={{ width: '100%', maxHeight: '200px', objectFit: 'contain' }} />
+          )}
+
+
           <div className="modal-action">
             <button className="btn btn-primary bg-green-400 hover:bg-green-400 text-white">Add Procedure</button>
             <button
               type="button"
               className="btn btn-ghost"
-              onClick={() => setAddPatientModalOpen(false)}
+              onClick={() => {
+                setAddPatientModalOpen(false)
+                setImagePreview(null)
+              }}
             >
               Cancel
             </button>
@@ -273,9 +326,32 @@ export default function Add_Procedure() {
         <div className='text-white'>
           <h3 className="font-bold text-lg text-center ">Edit Procedure</h3>
           <form onSubmit={handleEditSubmit} className="flex flex-col">
+
+            <input
+              type="file"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                setNewProcedure({ ...newProcedure, Image: file });
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    setImagePreview(reader.result);
+                  };
+                  reader.readAsDataURL(file);
+                } else {
+                  setImagePreview(null);
+                }
+              }}
+              className="border p-2 mb-2"
+            />
+            {imagePreview && (
+              <img src={imagePreview} alt="Image Preview" className="mt-2 border rounded" style={{ width: '100%', maxHeight: '200px', objectFit: 'contain' }} />
+            )}
+
             <div className="label">
               <span className="label-text">Procedure Name</span>
             </div>
+
             <input
               type="text"
               placeholder="Procedure Name"
@@ -325,7 +401,10 @@ export default function Add_Procedure() {
               <button
                 type="button"
                 className="btn btn-error text-white"
-                onClick={() => setEditProcedureModalOpen(false)}
+                onClick={() => {
+                  setEditProcedureModalOpen(false)
+                  setImagePreview(null)
+                }}
               >
                 Cancel
               </button>
@@ -334,10 +413,20 @@ export default function Add_Procedure() {
         </div>
       </Modal>
 
+
+
       {/* View Modal */}
       <Modal isOpen={viewProcedureModalOpen} close={() => setViewProcedureModalOpen(false)}>
 
         <h3 className="font-bold text-lg text-center">View Procedure</h3>
+        <div className='flex justify-center'>
+          <figure>
+            <img
+              src={getProfileImage(newProcedure.Image)}
+              className="object-cover h-36 p-1 "
+            />
+          </figure>
+        </div>
         <div className="flex flex-col ">
           <div className="label">
             <span className="label-text">Procedure Name</span>

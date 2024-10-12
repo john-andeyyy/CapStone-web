@@ -196,10 +196,7 @@ export default function MedicalRequests() {
                 <div
                   key={request.id}
                   className="flex justify-between border-b p-2 px-4 cursor-pointer hover:bg-base-300"
-                  onClick={()=>{
-                    navigate(`/appointment/${request.id}`);
 
-                  }}
                 >
                   {/* Patient's Name */}
                   <div className="flex-1">{request.patient.FirstName} {request.patient.LastName}</div>
@@ -212,12 +209,19 @@ export default function MedicalRequests() {
                     {request.medcertiStatus}
                   </div>
 
-                  
+
                   {/* Action Buttons */}
-                  
+
                   {statusFilter !== 'Approved' && statusFilter !== 'All' && (
-                    <div className="flex-1 text-center">
+                    <div className=" text-center">
                       {/* Approve Button */}
+                      <button className="text-blue-500 mx-2" onClick={() => {
+                        navigate(`/appointment/${request.id}`);
+
+                      }}>
+                        <span className="material-symbols-outlined">visibility</span>
+                      </button>
+
                       {request.medcertiStatus !== 'Approved' && (
                         <button className="text-green-500 mx-2" onClick={() => {
                           setSelectedRequest(request);

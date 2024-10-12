@@ -36,8 +36,9 @@ import AddGroupMember from './Landing-infopage/GroupMembers/AddGroupMember';
 import Grouplist from './Landing-infopage/GroupMembers/Grouplist';
 import DentistSchedule from './AdminDashBoard/Components/Dentist/DentistsSchedule';
 import Total_procedures from './AdminDashBoard/Pages/ReportPages/Pages/Total_procedures';
-import Report_Monthly_patient from './AdminDashBoard/Pages/ReportPages/Pages/Report_Monthly_patient';
+import Report_Monthly_Appointment from './AdminDashBoard/Pages/ReportPages/Pages/Report_Monthly_Appointment';
 import ShowChart from './try/ShowChart';
+import Patient_Visits from './AdminDashBoard/Pages/ReportPages/Pages/Patient_Visits';
 
 function AdminRoutes() {
   const location = useLocation();
@@ -97,7 +98,8 @@ function AdminRoutes() {
 
         {/* //! REPORTS */}
         <Route path="/Total_procedures" element={< Total_procedures />} />
-        <Route path="/Report_Monthly_patient" element={< Report_Monthly_patient />} />
+        <Route path="/Report_Monthly_Appointment" element={< Report_Monthly_Appointment />} />
+        <Route path="/Patient_Visits" element={< Patient_Visits />} />
 
         {/* //! components only! */}
         <Route path="/NotificationPage" element={<NotificationPage />} />

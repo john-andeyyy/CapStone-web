@@ -31,7 +31,7 @@ export default function AppointmentDetails() {
                 `${import.meta.env.VITE_BASEURL}/Appointments/view/Patient/appointment/${id}`,
                 { withCredentials: true }
             );
-            
+
             const data = response.data;
             console.log(data)
             setAppointment(data);
@@ -112,7 +112,7 @@ export default function AppointmentDetails() {
                 setPreviewImages({ Before: null, After: null, Xray: null });
                 showToast('success', 'Update Successfully');
 
-                getdata(); 
+                getdata();
             })
             .catch(error => {
                 // Log the error to understand what went wrong
@@ -197,7 +197,7 @@ export default function AppointmentDetails() {
                 <strong>Dentist:</strong> {`${appointment.Dentist.FirstName} ${appointment.Dentist.MiddleName ? `${appointment.Dentist.MiddleName} ` : ''}${appointment.Dentist.LastName}`}
 
                 {/* Display procedures */}
-                <p><strong>Procedures:</strong></p>
+                <p><strong>Procedures:</strong></p> <h1 className='text-3xl text-red-600'>dapat nakakapag add ako ng Procedures:</h1>
                 <ul className="list-disc list-inside">
                     {appointment.procedures && appointment.procedures.length > 0 ? (
                         appointment.procedures.map((procedure) => (
@@ -268,7 +268,7 @@ export default function AppointmentDetails() {
                 }</p>
                 <p><strong>Request to Cancel:</strong> {appointment.RequestToCancel ? 'Yes' : 'No'}</p>
                 <p><strong>Request for Medical Certificate:</strong> {appointment.medcertiStatus}</p>
-                <h1>add here a button to send the medical cerificacte to the user email</h1>
+                <h1 className='text-3xl text-red-600' >add here a button to send the medical cerificacte to the user email</h1>
 
                 {/* Image upload and preview section */}
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>

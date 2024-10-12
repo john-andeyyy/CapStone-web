@@ -7,15 +7,39 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const BarChart = ({ chartData }) => {
+    const primaryColor = '#6B7280'; // Use the same value as 
+
     const options = {
         responsive: true,
         plugins: {
             legend: {
                 position: 'top',
+                labels: {
+                    color: primaryColor, 
+                },
             },
             title: {
                 display: true,
                 text: 'Appointments Report',
+                color: primaryColor, 
+            },
+        },
+        scales: {
+            x: {
+                ticks: {
+                    color: primaryColor, 
+                    font: {
+                        weight: 'bold',
+                    },
+                },
+            },
+            y: {
+                ticks: {
+                    color: primaryColor, 
+                    font: {
+                        weight: 'bold', 
+                    },
+                },
             },
         },
     };

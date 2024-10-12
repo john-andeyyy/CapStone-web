@@ -42,13 +42,15 @@ export default function GuestNavBar() {
                                 onClick={() => { navigate('The_DeanTeam') }}
                             >The DenTeam </button>
                         </li>
+{/*                         
                         <li className="mb-2 md:mb-0">
                             <button className="btn btn-outline btn-success"
                                 onClick={() => {
                                     navigate('/CreateAccount')
                                     toggleMenu
                                 }}>SIGN UP</button>
-                        </li>
+                        </li> */}
+
                         <li className="mb-2 md:mb-0">
                             <button className="btn btn-success text-white hover:text-black" onClick={() => navigate('/AdminLogin')}>LOGIN</button>
                         </li>

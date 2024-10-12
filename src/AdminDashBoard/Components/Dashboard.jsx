@@ -58,8 +58,12 @@ export default function Dashboard() {
                                 </button>
                             </form>
                             <h3 className="font-bold text-lg">Hello!</h3>
-                            <button className="py-4" onClick={() => navigate('/Total_procedures')}> Report of Procedures</button>
-                        </div>
+                            <button
+                                className="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors duration-300"
+                                onClick={() => navigate('/Total_procedures')}
+                            >
+                                Report of Procedures
+                            </button>                        </div>
                     </dialog>
                 </div>
             )}

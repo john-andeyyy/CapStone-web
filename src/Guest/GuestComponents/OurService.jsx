@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 
 export default function OurService() {
     const [procedures, setProcedures] = useState([]);
-    const proceduresApiUrl = 'http://localhost:3000/Procedure/showwithimage';
+    const BASEURL = import.meta.env.VITE_BASEURL;
+
+    const proceduresApiUrl = `${BASEURL}/Procedure/showwithimage`;
 
     useEffect(() => {
         const fetchProcedures = async () => {

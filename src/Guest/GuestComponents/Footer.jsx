@@ -28,7 +28,7 @@ export default function Footer() {
     }
 
     return (
-        <footer className=" text-white max-w-7xl mx-auto p-8 rounded-lg">
+        <footer className="  max-w-7xl mx-auto p-8 rounded-lg">
             <div className="flex flex-col sm:flex-row justify-between items-center">
                 {/* Logo and Clinic Name */}
                 <div className="flex flex-col items-center sm:items-start mb-4 sm:mb-0">
