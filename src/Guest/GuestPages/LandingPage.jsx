@@ -52,7 +52,7 @@ export default function LandingPage() {
     const otherLandingPages = heroData.filter(page => !page.isHero);
 
     return (
-        <div className="bg-base-200">
+        <div className="bg-base-200 pt-8">
             {/* 1st Hero Section */}
             <section className="hero min-h-screen w-full">
                 <div className="hero-content flex-col lg:flex-row-reverse items-center justify-between w-full">

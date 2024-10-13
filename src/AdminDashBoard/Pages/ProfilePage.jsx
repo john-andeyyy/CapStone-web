@@ -2,10 +2,15 @@ import React, { useEffect, useState } from 'react';
 import ThemeController from '../../Guest/GuestComponents/ThemeController';
 import { get_profile, update_profile } from '../Fetchs/Admin/admin_profile';
 import axios from 'axios';
+import { showToast } from '../../AdminDashBoard/Components/ToastNotification';
 
 const BASEURL = import.meta.env.VITE_BASEURL;
 
 const ProfilePage = () => {
+    const [showEmailModal, setShowEmailModal] = useState(false);
+    const [newEmail, setNewEmail] = useState('');
+    const [loading, setLoading] = useState(false);
+
     const [profile, setProfile] = useState({
         Email: '',
         FirstName: '',
@@ -17,11 +22,11 @@ const ProfilePage = () => {
         ProfilePicturePreview: null
     });
 
-    const [isEditable, setIsEditable] = useState(false); // State to toggle edit mode
-    const [showPasswordForm, setShowPasswordForm] = useState(false); // State to toggle password change form
+    const [isEditable, setIsEditable] = useState(false);
     const [passwords, setPasswords] = useState({
         currentPassword: '',
         newPassword: '',
+        confirmNewPassword: '',
     });
     const [message, setMessage] = useState('');
 
@@ -35,6 +40,33 @@ const ProfilePage = () => {
         fetchProfile();
     }, []);
 
+    const handleEmailChange = async (e) => {
+        e.preventDefault();
+        setLoading(true); 
+        try {
+            const response = await axios.put(
+                `${BASEURL}/Admin/auth/request-email-change`,
+                { newEmail },
+                { withCredentials: true }
+            );
+
+            if (response.status === 200) {
+                showToast('success', response.data.message);
+                setShowEmailModal(false);
+            } else {
+                alert(response.data.message);
+            }
+        } catch (error) {
+            if (error.response && error.response.data && error.response.data.message) {
+                alert(`Error: ${error.response.data.message}`);
+                setMessage(error.response.data.message)
+            } else {
+                alert('Failed to send email change request');
+            }
+        } finally {
+            setLoading(false); 
+        }
+    };
     const handleChange = (e) => {
         const { name, value } = e.target;
         setProfile((prevProfile) => ({
@@ -50,11 +82,11 @@ const ProfilePage = () => {
             reader.onload = () => {
                 setProfile((prevProfile) => ({
                     ...prevProfile,
-                    ProfilePicturePreview: reader.result, // For previewing the image
-                    ProfilePicture: file, // Store the file for uploading
+                    ProfilePicturePreview: reader.result,
+                    ProfilePicture: file,
                 }));
             };
-            reader.readAsDataURL(file); // Read the file as a data URL
+            reader.readAsDataURL(file);
         }
     };
 
@@ -84,25 +116,29 @@ const ProfilePage = () => {
     };
 
     const handleEditToggle = () => {
-        setIsEditable((prevEditable) => !prevEditable); // Toggle edit mode
+        setIsEditable((prevEditable) => !prevEditable);
     };
 
-    // Handle password change request
     const handlePasswordChange = async () => {
-        try {
-            const response = await axios.put(`${BASEURL}/Admin/auth/Updatepass`,
-                {
-                    currentPassword: passwords.currentPassword,
-                    newPassword: passwords.newPassword,
-                },
-                {
-                    withCredentials: true
-                });
+        if (passwords.newPassword !== passwords.confirmNewPassword) {
+            // alert("New passwords do not match.");
+            setMessage('New passwords do not match.')
+            return;
+        }
 
-            // Alert and display message based on status code
+        try {
+            const response = await axios.put(`${BASEURL}/Admin/auth/Updatepass`, {
+                currentPassword: passwords.currentPassword,
+                newPassword: passwords.newPassword,
+            }, {
+                withCredentials: true
+            });
+
             if (response.status === 200) {
                 alert('Password changed successfully');
                 setMessage('Password changed successfully');
+                setPasswords({ currentPassword: '', newPassword: '', confirmNewPassword: '' });
+                document.getElementById('password-modal').close(); // Close modal on success
             } else if (response.status === 401) {
                 alert('Current password is incorrect');
                 setMessage('Current password is incorrect');
@@ -113,7 +149,6 @@ const ProfilePage = () => {
 
         } catch (error) {
             if (error.response) {
-                // Handle specific error responses from server
                 alert(`Error: ${error.response.data.message}`);
                 setMessage(error.response.data.message);
             } else {
@@ -124,8 +159,6 @@ const ProfilePage = () => {
         }
     };
 
-
-
     const handlePasswordInputChange = (e) => {
         const { name, value } = e.target;
         setPasswords((prevPasswords) => ({
@@ -134,12 +167,8 @@ const ProfilePage = () => {
         }));
     };
 
-    const togglePasswordForm = () => {
-        setShowPasswordForm((prevShow) => !prevShow);
-    };
-
     return (
-        <div className="min-h-screen flex justify-center items-center  p-6">
+        <div className="min-h-screen flex justify-center items-center p-6">
             <div className="bg-secondary p-8 rounded-lg shadow-lg w-full max-w-4xl">
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-3xl font-bold">Profile Page</h1>
@@ -214,7 +243,13 @@ const ProfilePage = () => {
                             </div>
 
                             <div className="form-group">
-                                <label className="block text-white">Email:</label>
+                                <label className="block text-white">
+                                    Email:
+                                    <span className="ml-4 text-blue-400 hover:underline cursor-pointer"
+                                        onClick={() => setShowEmailModal(true)} // Open modal on click
+                                    >change</span>
+                                </label>
+
                                 <input
                                     type="email"
                                     name="Email"
@@ -269,55 +304,123 @@ const ProfilePage = () => {
                 <div className="flex justify-end mt-6">
                     <button
                         className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                        onClick={togglePasswordForm}
+                        onClick={() => document.getElementById('password-modal').showModal()}
                     >
-                        {showPasswordForm ? 'Hide Password Change' : 'Change Password'}
+                        Change Password
                     </button>
                 </div>
 
-                {/* Password Change Form */}
-                {showPasswordForm && (
-                    <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
-                        <h2 className="text-lg font-semibold mb-4">Change Password</h2>
-                        <div className="space-y-4">
-                            <div>
-                                <label className="block text-gray-700">Current Password:</label>
+                {/* Password Change Modal */}
+                <dialog id="password-modal" className="modal bg-black bg-opacity-75">
+                    <div className="modal-content bg-secondary p-10">
+                        <h2 className="text-xl mb-4">Change Password</h2>
+                        <form
+                            onSubmit={(e) => {
+                                e.preventDefault(); // Prevent the default form submission
+                                handlePasswordChange(); // Call the password change function
+                            }}
+                        >
+                            <div className="flex flex-col">
+                                <label className="text-white">Current Password:</label>
                                 <input
                                     type="password"
                                     name="currentPassword"
                                     value={passwords.currentPassword}
                                     onChange={handlePasswordInputChange}
-                                    className="mt-1 p-2 w-full border rounded-md"
+                                    className="mt-1 p-2 border rounded-md"
                                     required
                                 />
-                            </div>
-                            <div>
-                                <label className="block text-gray-700">New Password:</label>
+
+                                <label className="text-white">New Password:</label>
                                 <input
                                     type="password"
                                     name="newPassword"
                                     value={passwords.newPassword}
                                     onChange={handlePasswordInputChange}
-                                    className="mt-1 p-2 w-full border rounded-md"
+                                    className="mt-1 p-2 border rounded-md"
+                                    required
+                                />
+
+                                <label className="text-white">Confirm New Password:</label>
+                                <input
+                                    type="password"
+                                    name="confirmNewPassword"
+                                    value={passwords.confirmNewPassword}
+                                    onChange={handlePasswordInputChange}
+                                    className="mt-1 p-2 border rounded-md"
                                     required
                                 />
                             </div>
-                        </div>
-                        <div className="flex justify-end mt-4">
-                            <button
-                                className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
-                                onClick={handlePasswordChange}
-                            >
-                                Update Password
-                            </button>
-                        </div>
-                        {message && <p className="mt-4 text-red-500">{message}</p>}
+
+                            {message && <p className="text-red-500 mt-2">{message}</p>}
+
+                            <div className="flex justify-end mt-4">
+                                <button
+                                    type="submit" // Ensure this button submits the form
+                                    className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+                                >
+                                    Submit
+                                </button>
+                                <button
+                                    type="button" // Prevents form submission when closing the modal
+                                    className="ml-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+                                    onClick={() => {
+                                        document.getElementById('password-modal').close()
+                                        setPasswords({
+                                            currentPassword: '',
+                                            newPassword: '',
+                                            confirmNewPassword: '',
+                                        });
+
+                                    }}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
                     </div>
+                </dialog>
+
+                {showEmailModal && (
+                    <dialog id="email-change-modal" className="modal bg-black bg-opacity-75" open>
+                        <div className="modal-content bg-secondary p-10 rounded-lg shadow-lg max-w-lg w-full"> {/* Adjusted width */}
+                            <h2 className="text-xl font-semibold text-green-500">Change Email</h2>
+                            {message && <p className="text-red-500 mt-2">{message}</p>}
+
+                            <form onSubmit={handleEmailChange} className="flex flex-col">
+                                <label className="text-white mb-2">New Email:</label>
+                                <input
+                                    type="email"
+                                    name="newEmail"
+                                    value={newEmail}
+                                    onChange={(e) => setNewEmail(e.target.value)}
+                                    className="mt-1 p-2 border rounded-md"
+                                    required
+                                    disabled={loading}
+                                />
+                                <div className="flex justify-end mt-4">
+                                    <button
+                                        type="submit"
+                                        className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+                                        disabled={loading}
+                                    >
+                                        {loading ? 'Submitting...' : 'Submit'}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="ml-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+                                        onClick={() => setShowEmailModal(false)}
+                                        disabled={loading}
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </dialog>
                 )}
 
-                <div className="mt-6">
-                    <ThemeController />
-                </div>
+
             </div>
         </div>
     );

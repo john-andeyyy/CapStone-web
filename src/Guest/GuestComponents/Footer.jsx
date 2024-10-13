@@ -26,42 +26,50 @@ export default function Footer() {
     if (!clinicDetails) {
         return <div className="text-center">Loading...</div>; // Loading state
     }
+    const getProfileImage = (profilePicture) => {
 
+        // Check if the profile picture is available
+        if (profilePicture) {
+            return `data:image/jpeg;base64,${profilePicture}`; // Adjust to image format (jpeg/png)
+        } else {
+            return "https://via.placeholder.com/150"; // Fallback if no image
+        }
+    };
     return (
         <footer className="  max-w-7xl mx-auto p-8 rounded-lg">
             <div className="flex flex-col sm:flex-row justify-between items-center">
                 {/* Logo and Clinic Name */}
                 <div className="flex flex-col items-center sm:items-start mb-4 sm:mb-0">
                     {clinicDetails.logo ? (
-                        <img src={clinicDetails.logo} alt="Logo" className="h-16 w-auto mb-2" />
+                        <img src={getProfileImage(clinicDetails.logo)} alt="Logo" className="h-32 w-auto mb-2" />
                     ) : (
                         <div className="text-xl font-bold mb-2">LOGO</div>
                     )}
-                    <div className="text-lg font-bold">{clinicDetails.DentalName}</div>
+                    <div className="text-lg font-bold text-green-500 capitalize">{clinicDetails.DentalName}</div>
                 </div>
 
                 {/* Clinic Contact Information */}
                 <div className="mt-4 sm:mt-0 flex flex-col items-center sm:items-start">
-                    <div className="font-bold">Stay in touch</div>
+                    <div className="font-bold text-green-500">Stay in touch</div>
                     <div className="mt-1">Address: {clinicDetails.Address}</div>
                     <div className="mt-1">Contact Number: {clinicDetails.ContactNumber}</div>
                     <div className="mt-1">Email: {clinicDetails.Email}</div>
-                    <div className="mt-2 font-bold">Dentist Hours</div>
+                    <div className="mt-2 font-bold text-green-500">Dentist Hours</div>
                     <div className="mt-1">Weekdays: {clinicDetails.WeekdaysTime}</div>
                     <div className="mt-1">Weekends: {clinicDetails.WeekendsTime}</div>
                 </div>
 
                 {/* Navigation Links */}
-                <div className="mt-4 sm:mt-0 flex flex-col items-center sm:items-start">
+                {/* <div className="mt-4 sm:mt-0 flex flex-col items-center sm:items-start">
                     <div className="font-bold">Navigation</div>
                     <a href="#about" className="mt-1 hover:underline">About</a>
                     <a href="#services" className="mt-1 hover:underline">Services</a>
                     <a href="#contact" className="mt-1 hover:underline">Contact</a>
-                </div>
+                </div> */}
 
                 {/* Social Media Links */}
                 <div className="mt-4 sm:mt-0 flex flex-col items-center sm:items-start">
-                    <div className="font-bold">Social Media</div>
+                    <div className="font-bold text-green-500">Social Media</div>
                     {clinicDetails.Facebooklink ? (
                         <a
                             href={clinicDetails.Facebooklink}
