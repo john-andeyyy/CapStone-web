@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { showToast } from '../../AdminDashBoard/Components/ToastNotification';
-// showToast('info', 'Login successful!');
+
 export default function AdminLogin() {
     const [Username, setUsername] = useState('admin');
-    const [Password, setPassword] = useState('admin');
+    const [Password, setPassword] = useState('Admin');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -14,7 +14,6 @@ export default function AdminLogin() {
         event.preventDefault();
 
         const database = import.meta.env.VITE_BASEURL;
-        console.log(database);
 
         setLoading(true);
         setError('');
@@ -53,50 +52,49 @@ export default function AdminLogin() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen ">
-            <div className="w-full max-w-sm bg-secondary rounded-lg shadow-md p-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4 text-center">Login Admin</h2>
-                {error && <h1 className="text-center font-bold py-4 text-xl text-red-600">{error}</h1>}
+        <div className="flex items-center justify-center min-h-screen ">
+            <div className="w-full max-w-sm bg-white rounded-lg shadow-lg p-6">
+                <h2 className="text-2xl font-bold text-green-700 mb-4 text-center">Admin Login</h2>
+                {error && <h1 className="text-center font-bold py-2 text-lg text-red-600">{error}</h1>}
                 <form className="flex flex-col" onSubmit={handleSubmit}>
-
-                    <label className="form-control w-full max-w-xs">
-                        <div className="label">
-                            <span className="label-text">Username/Email:</span>
-                        </div>
+                    <label className="form-control w-full mb-4">
+                        <span className="label-text text-green-600">Username/Email:</span>
                         <input
-                            className="bg-gray-100 text-gray-900 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
-                            placeholder="Username"
+                            className="bg-gray-100 text-gray-900 border border-gray-300 rounded-md p-2 mt-1 focus:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500 transition ease-in-out duration-150"
+                            placeholder="Enter your username or email"
                             type="text"
                             value={Username}
                             onChange={(e) => setUsername(e.target.value)}
                             required
                             disabled={loading}
+                            
                         />
                     </label>
-                    <label className="form-control w-full max-w-xs">
-                        <div className="label">
-                            <span className="label-text">Password:</span>
-                        </div>
+                    <label className="form-control w-full mb-4">
+                        <span className="label-text text-green-600">Password:</span>
                         <input
-                            className="bg-gray-100 text-gray-900 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
-                            placeholder="Password"
+                            className="bg-gray-100 text-gray-900 border border-gray-300 rounded-md p-2 mt-1 focus:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500 transition ease-in-out duration-150"
+                            placeholder="Enter your password"
                             type="password"
                             value={Password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
                             disabled={loading}
                         />
-
                     </label>
-
                     <button
-                        className="bg-blue-500 text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-blue-700 transition ease-in-out duration-150"
+                        className={`bg-green-600 text-white font-bold py-2 rounded-md mt-4 hover:bg-green-700 transition ease-in-out duration-150 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                         type="submit"
                         disabled={loading}
                     >
                         {loading ? 'Logging in...' : 'Login'}
                     </button>
                 </form>
+                <div className="mt-4 text-center">
+                    <Link to={`/Forget_pass`} className="text-green-600 hover:text-green-700 transition duration-150">
+                        Forget Password?
+                    </Link>
+                </div>
             </div>
         </div>
     );

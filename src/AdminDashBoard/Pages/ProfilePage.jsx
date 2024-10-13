@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ThemeController from '../../Guest/GuestComponents/ThemeController';
 import { get_profile, update_profile } from '../Fetchs/Admin/admin_profile';
 import axios from 'axios';
+
 const BASEURL = import.meta.env.VITE_BASEURL;
 
 const ProfilePage = () => {
@@ -17,6 +18,12 @@ const ProfilePage = () => {
     });
 
     const [isEditable, setIsEditable] = useState(false); // State to toggle edit mode
+    const [showPasswordForm, setShowPasswordForm] = useState(false); // State to toggle password change form
+    const [passwords, setPasswords] = useState({
+        currentPassword: '',
+        newPassword: '',
+    });
+    const [message, setMessage] = useState('');
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -78,6 +85,57 @@ const ProfilePage = () => {
 
     const handleEditToggle = () => {
         setIsEditable((prevEditable) => !prevEditable); // Toggle edit mode
+    };
+
+    // Handle password change request
+    const handlePasswordChange = async () => {
+        try {
+            const response = await axios.put(`${BASEURL}/Admin/auth/Updatepass`,
+                {
+                    currentPassword: passwords.currentPassword,
+                    newPassword: passwords.newPassword,
+                },
+                {
+                    withCredentials: true
+                });
+
+            // Alert and display message based on status code
+            if (response.status === 200) {
+                alert('Password changed successfully');
+                setMessage('Password changed successfully');
+            } else if (response.status === 401) {
+                alert('Current password is incorrect');
+                setMessage('Current password is incorrect');
+            } else {
+                alert('Something went wrong, please try again');
+                setMessage('Something went wrong, please try again');
+            }
+
+        } catch (error) {
+            if (error.response) {
+                // Handle specific error responses from server
+                alert(`Error: ${error.response.data.message}`);
+                setMessage(error.response.data.message);
+            } else {
+                alert('Failed to change password');
+                setMessage('Failed to change password');
+            }
+            console.error(error);
+        }
+    };
+
+
+
+    const handlePasswordInputChange = (e) => {
+        const { name, value } = e.target;
+        setPasswords((prevPasswords) => ({
+            ...prevPasswords,
+            [name]: value,
+        }));
+    };
+
+    const togglePasswordForm = () => {
+        setShowPasswordForm((prevShow) => !prevShow);
     };
 
     return (
@@ -204,6 +262,56 @@ const ProfilePage = () => {
                         >
                             Update Profile
                         </button>
+                    </div>
+                )}
+
+                {/* Button to toggle password form */}
+                <div className="flex justify-end mt-6">
+                    <button
+                        className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                        onClick={togglePasswordForm}
+                    >
+                        {showPasswordForm ? 'Hide Password Change' : 'Change Password'}
+                    </button>
+                </div>
+
+                {/* Password Change Form */}
+                {showPasswordForm && (
+                    <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
+                        <h2 className="text-lg font-semibold mb-4">Change Password</h2>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-gray-700">Current Password:</label>
+                                <input
+                                    type="password"
+                                    name="currentPassword"
+                                    value={passwords.currentPassword}
+                                    onChange={handlePasswordInputChange}
+                                    className="mt-1 p-2 w-full border rounded-md"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-gray-700">New Password:</label>
+                                <input
+                                    type="password"
+                                    name="newPassword"
+                                    value={passwords.newPassword}
+                                    onChange={handlePasswordInputChange}
+                                    className="mt-1 p-2 w-full border rounded-md"
+                                    required
+                                />
+                            </div>
+                        </div>
+                        <div className="flex justify-end mt-4">
+                            <button
+                                className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+                                onClick={handlePasswordChange}
+                            >
+                                Update Password
+                            </button>
+                        </div>
+                        {message && <p className="mt-4 text-red-500">{message}</p>}
                     </div>
                 )}
 

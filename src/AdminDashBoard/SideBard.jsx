@@ -175,13 +175,16 @@ export default function Sidebar() {
                                 <span>Dentist</span>
                             </li>
 
+
+
                             {/* Landing Page Dropdown */}
-                            <li className="relative">
+                            {/* <li className="relative">
                                 <div className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'landing-page' ? 'bg-secondary text-gray-800' : 'hover:bg-secondary'}`} onClick={toggleLandingPageDropdown}>
                                     <span className="material-symbols-outlined mr-2">home</span>
                                     <span>Landing Page</span>
                                     {isLandingPageDropdownOpen ? <FaChevronUp className="ml-auto" /> : <FaChevronDown className="ml-auto" />}
                                 </div>
+
 
                                 {isLandingPageDropdownOpen && (
                                     <ul className="ml-8 mt-2 space-y-1">
@@ -190,21 +193,31 @@ export default function Sidebar() {
                                             onClick={() => handleNavigate('/Grouplist', 'Grouplist')}
                                         >
                                             <span className="material-symbols-outlined mr-2">
-                                                event_available
+                                                person
                                             </span>
                                             Group Member
-                                            <h1 className='font-bold text-green-500'>  DONE!!</h1>
+                                        </li>
+                                        <li
+                                            className={`p-2 rounded cursor-pointer flex items-center ${activeItem === 'Contactus_edit' ? 'bg-secondary text-gray-800' : 'hover:bg-secondary'}`}
+                                            onClick={() => handleNavigate('/Contactus_edit', 'Contactus_edit')}
+                                        >
+                                            <span className="material-symbols-outlined mr-2">
+                                                contacts
+                                            </span>
+                                            Contact us Edit
                                         </li>
 
                                     </ul>
                                 )}
-                            </li>
+                            </li> */}
+
+                            
                         </ul>
                     </div>
                 </div>
-                <div className="flex justify-between items-center">
-                    <ThemeController />
-                    <button onClick={handleLogout} className="flex items-center p-2 rounded hover:bg-secondary">
+                <div className="">
+                    {/* <ThemeController /> */}
+                    <button onClick={handleLogout} className="0">
                         <FaSignOutAlt className="mr-2" />
                         Logout
                     </button>

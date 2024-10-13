@@ -72,9 +72,9 @@ export default function LandingPage() {
                             {heroLandingPage?.Title || "Alejandria's Dental"}
                         </h1>
                         <p className="py-6">{heroLandingPage?.description || ''}</p>
-                        <button className="btn btn-primary uppercase font-semibold text-white bg-green-400 border-none">
+                        {/* <button className="btn btn-primary uppercase font-semibold text-white bg-green-400 border-none">
                             Learn more -{'>'}
-                        </button>
+                        </button> */}
                     </div>
                 </div>
             </section>
