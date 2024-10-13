@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Dashboard_Announcement from './Dashboard components/Dashboard_Announcement';
 import Dashboard_Calendar from './Dashboard components/Dashboard_Calendar';
 import { useNavigate } from 'react-router-dom';
+import DashboardTips from './Dashboard components/DashboardTips';
 
 export default function Dashboard() {
     const navigate = useNavigate();
@@ -16,13 +17,13 @@ export default function Dashboard() {
 
     const handleNavigate = (path) => {
         navigate(path);
-        setIsOpen(false); // Close modal after navigating
+        setIsOpen(false); 
     };
 
     return (
         <div className="p-4">
             <header>
-                <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
+                <h1 className="text-3xl font-bold ">Dashboard</h1>
                 <div className="text-gray-600">{formattedDate}</div>
             </header>
 
@@ -32,28 +33,39 @@ export default function Dashboard() {
                 <div className="w-full p-4 border border-primary rounded-lg">
                     <Dashboard_Announcement />
                 </div>
-                <div className="w-full p-4 border border-primary rounded-lg">
+                <div className="w-full  p-4 border border-primary rounded-lg">
                     <Dashboard_Calendar />
                 </div>
 
                 {/* Second Row */}
                 <div className="w-full p-4 border border-primary rounded-lg flex flex-col">
-                    {/* Placeholder for future component */}
+                    <DashboardTips />
                 </div>
-                <div className="w-full p-4 border border-primary rounded-lg flex justify-around">
+
+                <div className="p-4 border border-primary rounded-lg flex flex-col justify-center items-center space-y-4">
                     <button
                         onClick={() => navigate('/Total_procedures')}
-                        className='bg-secondary p-3 rounded-xl text-xl font-semibold text-white transition duration-300 hover:bg-green-600'
+                        className='bg-secondary w-full h-12 rounded-xl text-xl font-semibold text-white transition duration-300 hover:bg-green-600 flex items-center justify-center space-x-2'
                     >
-                        Report Overview
+                        <span className="material-symbols-outlined">
+                            summarize
+                        </span>
+                        <span>Report Overview</span>
                     </button>
+
                     <button
                         onClick={() => setIsOpen(true)}
-                        className='bg-secondary p-3 rounded-xl text-xl font-semibold text-white transition duration-300 hover:bg-green-600'
+                        className='bg-secondary w-full h-12 rounded-xl text-xl font-semibold text-white transition duration-300 hover:bg-green-600 flex items-center justify-center space-x-2'
                     >
+                        <span className="material-symbols-outlined">
+                            edit
+                        </span>
                         Edit BlogPage
                     </button>
                 </div>
+
+
+
             </div>
 
             {/* Modal for Editing BlogPage */}

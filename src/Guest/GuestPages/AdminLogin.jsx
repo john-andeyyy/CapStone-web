@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { showToast } from '../../AdminDashBoard/Components/ToastNotification';
+// showToast('success', 'Login successful!');
 
 export default function AdminLogin() {
     const [Username, setUsername] = useState('admin');
-    const [Password, setPassword] = useState('Admin');
+    const [Password, setPassword] = useState('admin');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();

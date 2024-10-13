@@ -9,7 +9,9 @@ const BASEURL = import.meta.env.VITE_BASEURL;
 const ProfilePage = () => {
     const [showEmailModal, setShowEmailModal] = useState(false);
     const [newEmail, setNewEmail] = useState('');
+    const [currentpassword, setcurrentpassword] = useState('');
     const [loading, setLoading] = useState(false);
+
 
     const [profile, setProfile] = useState({
         Email: '',
@@ -42,11 +44,14 @@ const ProfilePage = () => {
 
     const handleEmailChange = async (e) => {
         e.preventDefault();
-        setLoading(true); 
+        setLoading(true);
         try {
             const response = await axios.put(
                 `${BASEURL}/Admin/auth/request-email-change`,
-                { newEmail },
+                {
+                    newEmail,
+                    currentpassword
+                },
                 { withCredentials: true }
             );
 
@@ -64,7 +69,7 @@ const ProfilePage = () => {
                 alert('Failed to send email change request');
             }
         } finally {
-            setLoading(false); 
+            setLoading(false);
         }
     };
     const handleChange = (e) => {
@@ -383,11 +388,21 @@ const ProfilePage = () => {
 
                 {showEmailModal && (
                     <dialog id="email-change-modal" className="modal bg-black bg-opacity-75" open>
-                        <div className="modal-content bg-secondary p-10 rounded-lg shadow-lg max-w-lg w-full"> {/* Adjusted width */}
+                        <div className="modal-content bg-secondary p-10 rounded-lg shadow-lg max-w-lg w-full">
                             <h2 className="text-xl font-semibold text-green-500">Change Email</h2>
-                            {message && <p className="text-red-500 mt-2">{message}</p>}
+                            {message && <h1 className="text-error text-xl font-bold mt-2 text-center">{message}</h1>}
 
                             <form onSubmit={handleEmailChange} className="flex flex-col">
+                                <label className="text-white mb-2">Enter your password:</label>
+                                <input
+                                    type="password"
+                                    name="currentpassword"
+                                    value={currentpassword}
+                                    onChange={(e) => setcurrentpassword(e.target.value)} // Use setcurrentpassword to update state
+                                    className="mt-1 p-2 border rounded-md"
+                                    required
+                                    disabled={loading}
+                                />
                                 <label className="text-white mb-2">New Email:</label>
                                 <input
                                     type="email"
@@ -409,13 +424,21 @@ const ProfilePage = () => {
                                     <button
                                         type="button"
                                         className="ml-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-                                        onClick={() => setShowEmailModal(false)}
+                                        onClick={() => {
+                                            setShowEmailModal(false)
+                                            setcurrentpassword('')
+                                            setNewEmail('')
+                                            setMessage('')
+                                        }
+                                        }
+
                                         disabled={loading}
                                     >
                                         Cancel
                                     </button>
                                 </div>
                             </form>
+
                         </div>
                     </dialog>
                 )}

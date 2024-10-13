@@ -44,23 +44,22 @@ export default function Dashboard_Calendar() {
     const renderDayView = () => {
         const dayEvents = getEventsForDay(selectedDate);
         return (
-
-            <div className="day-view-container p-4 rounded-lg">
+            <div className="day-view-container p-2 rounded-lg">
                 <div className="flex justify-start">
-                    <button className="px-4 py-2" onClick={() => setView('month')}>
+                    <button className="px-2 py-1 text-sm" onClick={() => setView('month')}>
                         Back to Month View
                     </button>
                 </div>
 
-                <h3 className="text-lg font-bold mb-4">Schedule for {selectedDate?.toDateString()}</h3>
+                <h3 className="text-lg font-bold mb-2">Schedule for {selectedDate?.toDateString()}</h3>
                 <div className="time-slots overflow-auto max-h-32">
                     {dayEvents.length > 0 ? (
                         <table className="table-auto w-full">
                             <thead>
                                 <tr>
-                                    <th className="p-2 text-left">no.</th>
-                                    <th className="p-2 text-left">Event Title</th>
-                                    <th className="p-2 text-left">Event Time</th>
+                                    <th className="p-1 text-left text-sm">No.</th>
+                                    <th className="p-1 text-left text-sm">Event Title</th>
+                                    <th className="p-1 text-left text-sm">Event Time</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -68,9 +67,9 @@ export default function Dashboard_Calendar() {
                                     .sort((a, b) => a.start - b.start) // Sort events by start time
                                     .map((event, index) => (
                                         <tr key={index} className="bg-secondary mb-1 rounded">
-                                            <td>{index + 1}</td>
-                                            <td className="p-2 font-bold">{event.title}</td>
-                                            <td className="p-2">
+                                            <td className="text-sm">{index + 1}</td>
+                                            <td className="p-1 font-bold text-sm">{event.title}</td>
+                                            <td className="p-1 text-sm">
                                                 {event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })} -
                                                 {event.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
                                             </td>
@@ -81,10 +80,7 @@ export default function Dashboard_Calendar() {
                     ) : (
                         <p>No approved events for today.</p>
                     )}
-
-
                 </div>
-
             </div>
         );
     };
@@ -94,23 +90,23 @@ export default function Dashboard_Calendar() {
         const months = [...Array(12).keys()];
 
         return (
-            <div className="year-view-container p-4 rounded-lg text-center">
-                <h3 className="text-lg font-bold mb-4">Year {year}</h3>
-                <div className="flex justify-between mb-4">
-                    <button className="px-4 py-2 bg-secondary rounded" onClick={() => setDate(new Date(year - 1, date.getMonth(), 1))}>
+            <div className="year-view-container p-2 rounded-lg text-center">
+                <h3 className="text-lg font-bold mb-2">Year {year}</h3>
+                <div className="flex justify-between mb-2">
+                    <button className="px-2 py-1 bg-secondary rounded text-sm" onClick={() => setDate(new Date(year - 1, date.getMonth(), 1))}>
                         Previous Year
                     </button>
-                    <button className="px-4 py-2 bg-secondary rounded" onClick={() => setDate(new Date(year + 1, date.getMonth(), 1))}>
+                    <button className="px-2 py-1 bg-secondary rounded text-sm" onClick={() => setDate(new Date(year + 1, date.getMonth(), 1))}>
                         Next Year
                     </button>
                 </div>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 gap-2">
                     {months.map((monthIndex) => {
                         const monthDate = new Date(year, monthIndex, 1);
                         return (
                             <div
                                 key={monthIndex}
-                                className="month-tile p-2 bg-base-200 rounded-lg cursor-pointer"
+                                className="month-tile p-1 bg-base-200 rounded-lg cursor-pointer text-sm"
                                 onClick={() => {
                                     setDate(monthDate);
                                     setView('month');
@@ -121,7 +117,7 @@ export default function Dashboard_Calendar() {
                         );
                     })}
                 </div>
-                <button className="mt-4 px-4 py-2 bg-secondary rounded" onClick={() => setView('month')}>
+                <button className="mt-2 px-2 py-1 bg-secondary rounded text-sm" onClick={() => setView('month')}>
                     Back to Month View
                 </button>
             </div>
@@ -139,7 +135,7 @@ export default function Dashboard_Calendar() {
     };
 
     const navigationLabel = ({ date }) => (
-        <div>
+        <div className="text-sm">
             {date.toLocaleString('default', { month: 'long' })} {date.getFullYear()}
         </div>
     );
@@ -155,11 +151,11 @@ export default function Dashboard_Calendar() {
     };
 
     return (
-        <div className="p-4 rounded-lg text-center max-w-lg mx-auto bg-neutral shadow-lg">
-            <h1 className="font-bold text-3xl  text-green-500 mb-4">Calendar</h1>
+        <div className="p-2 rounded-lg text-center max-w-sm mx-auto bg-neutral shadow-lg">
+            {/* <h1 className="font-bold text-xl text-green-500 mb-2">Calendar</h1> Adjusted size */}
 
             <div className="">
-                <button className=" rounded-lg" onClick={goToToday}>
+                <button className="rounded-lg px-2 py-1" onClick={goToToday}>
                     Today
                 </button>
             </div>
@@ -179,7 +175,7 @@ export default function Dashboard_Calendar() {
             </div>
             {view === 'day' && selectedDate && renderDayView()}
             {view === 'year' && renderYearView()}
-            <p className='text-warning'>Approved appointment Only</p>
+            <p className='text-warning text-sm'>Approved appointments only</p>
         </div>
     );
 }

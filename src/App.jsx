@@ -42,6 +42,8 @@ import Patient_Visits from './AdminDashBoard/Pages/ReportPages/Pages/Patient_Vis
 import Contactus_Crud from './Landing-infopage/Contact_us/Contactus_Crud';
 import Hero_Crud from './Landing-infopage/LandingPage_Hero/Hero_Crud';
 import Forget_pass from './Guest/GuestPages/Forget_pass';
+import TipsList from './Landing-infopage/Tips/TipsList';
+import TipPage from './Guest/GuestComponents/TipPage';
 
 function AdminRoutes() {
   const location = useLocation();
@@ -114,6 +116,7 @@ function AdminRoutes() {
         <Route path="/Grouplist" element={<Grouplist />} />
         <Route path="/Contactus_edit" element={<Contactus_Crud />} />
         <Route path="/Hero_edit" element={<Hero_Crud />} />
+        <Route path="/TipsList" element={<TipsList />} />
 
 
         {/* //! palyground */}
@@ -153,7 +156,7 @@ function App() {
         <ThemeController />
       </div>
       <ToastNotification />
-      
+
       {isLogin && !isExpired ? (
         <div className="flex flex-col md:flex-row">
           <Sidebar />
@@ -166,7 +169,7 @@ function App() {
         <>
           <div className="sticky top-0 z-10">
             <GuestNavBar />
-              {alert(import.meta.env.VITE_BASEURL)}
+            {/* {alert(import.meta.env.VITE_BASEURL)} */}
           </div>
           <Routes>
             <Route path="/" element={<LandingPage />} />
@@ -175,7 +178,8 @@ function App() {
             <Route path="/admindashboard" element={<Dashboard />} />
             <Route path="/AllServices" element={<AllServices />} />
             <Route path="/The_DeanTeam" element={<The_DeanTeam />} />
-              <Route path="/Forget_pass" element={<Forget_pass />} />
+            <Route path="/Forget_pass" element={<Forget_pass />} />
+              <Route path="/TipPage" element={<TipPage />} />
 
           </Routes>
           <Footer />
