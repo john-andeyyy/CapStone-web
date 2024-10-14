@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { showToast } from '../Components/ToastNotification';
 import { useNavigate } from 'react-router-dom';
+import ProceduresTable from '../Components/AppointmentDetails/ProceduresTable';
 
 export default function AppointmentDetails() {
     const navigate = useNavigate();
@@ -10,6 +11,7 @@ export default function AppointmentDetails() {
     const { id } = useParams();
     const [appointment, setAppointment] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [editStatus, seteditStatus] = useState(false);
     const [isEditingNotes, setIsEditingNotes] = useState(false);
     const [editedAppointment, setEditedAppointment] = useState({});
     const [statusUpdate, setStatusUpdate] = useState('');
@@ -20,6 +22,10 @@ export default function AppointmentDetails() {
     const [showModal, setShowModal] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
     const [modalAction, setModalAction] = useState(null);
+
+    const [procedures, setProcedures] = useState([]);
+    const [newProcedure, setNewProcedure] = useState({ Procedure_name: '', Price: 0 });
+
 
     // To store original fetched values
     const [originalAppointment, setOriginalAppointment] = useState({});
@@ -33,7 +39,6 @@ export default function AppointmentDetails() {
             );
 
             const data = response.data;
-            console.log(data)
             setAppointment(data);
             setOriginalAppointment({
                 Before: data.BeforeImage || '',
@@ -56,6 +61,9 @@ export default function AppointmentDetails() {
             setLoading(false);
         }
     };
+
+    // Function to fetch all procedures
+
 
     useEffect(() => {
         getdata();
@@ -99,13 +107,13 @@ export default function AppointmentDetails() {
         formData.append('Status', statusUpdate || '');
         formData.append('Amount', editedAppointment.Amount || '');
 
-        // Make the API call
         axios.put(`${import.meta.env.VITE_BASEURL}/Appointments/appointmentUpdate/${id}`,
             formData,
             { headers: { 'Content-Type': 'multipart/form-data' }, withCredentials: true }
         )
             .then(response => {
                 setAppointment(response.data); // Assuming response contains the updated appointment data
+                seteditStatus(false)
                 setIsEditing(false);
                 setIsEditingNotes(false);
                 setFiles({ Before: null, After: null, Xray: null });
@@ -129,6 +137,7 @@ export default function AppointmentDetails() {
             setPreviewImages({ Before: null, After: null, Xray: null });
             setFiles({ Before: null, After: null, Xray: null });
             setIsEditing(false);
+            seteditStatus(false);
             setIsEditingNotes(false);
             setShowModal(false);
         });
@@ -159,6 +168,80 @@ export default function AppointmentDetails() {
 
     if (!appointment) return <div>No appointment data available.</div>;
 
+
+    // Add a new procedure to the list
+    const handleAdd = () => {
+        if (newProcedure.Procedure_name && newProcedure.Price > 0) {
+            setProcedures([...procedures, { ...newProcedure, _id: Date.now().toString() }]); // Temporary ID for new procedures
+            setNewProcedure({ Procedure_name: '', Price: 0 });
+        }
+    };
+
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setNewProcedure((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    // Function to handle adding a new procedure
+    const handleAddProcedure = async () => {
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_BASEURL}/procedures`, newProcedure);
+            setProcedures((prev) => [...prev, response.data]);
+            setNewProcedure({ name: '', price: '' }); // Clear input after adding
+        } catch (error) {
+            console.error('Error adding procedure:', error);
+        }
+    };
+
+    // Function to handle deleting a procedure
+    const handleDeleteProcedure = async (id) => {
+        try {
+            await axios.delete(`${import.meta.env.VITE_BASEURL}/procedures/${id}`);
+            setProcedures((prev) => prev.filter(proc => proc._id !== id));
+        } catch (error) {
+            console.error('Error deleting procedure:', error);
+        }
+    };
+
+
+
+    // Edit an existing procedure
+    const handleEdit = (index, field, value) => {
+        const updatedProcedures = [...procedures];
+        updatedProcedures[index][field] = value;
+        setProcedures(updatedProcedures);
+    };
+
+    // Delete procedure from the list
+    const handleDelete = (id) => {
+        const updatedProcedures = procedures.filter((proc) => proc._id !== id);
+        setProcedures(updatedProcedures);
+    };
+
+    // Save updated procedures to the server
+    const handleSave = () => {
+        const updatedProcedureData = procedures.map((proc) => ({
+            Procedure_name: proc.Procedure_name,
+            Price: proc.Price,
+            _id: proc._id.startsWith('temp_') ? undefined : proc._id // Send undefined for new procedures (no ID)
+        }));
+
+        axios.put(`${import.meta.env.VITE_BASEURL}/Appointments/appointmentUpdate/${appointment._id}`, {
+            procedures: updatedProcedureData,
+        },
+            { withCredentials: true }
+        )
+            .then((response) => {
+                setProcedures(response.data.procedures); // Assuming the server returns updated procedures
+                console.log("Procedures updated successfully");
+            })
+            .catch((err) => console.error(err));
+    };
+
     return (
         <div className="p-6 mx-auto">
             {/* max-w-5xl  */}
@@ -168,8 +251,55 @@ export default function AppointmentDetails() {
             >
                 Go Back
             </button>
+
             <div className='flex justify-between items-center mb-6'>
-                <h1 className="text-3xl font-bold">Appointment Details</h1>
+                <div>
+                    <h1 className="text-3xl font-bold py-4">Appointment Details</h1>
+                    <div className="flex items-center space-x-4">
+                        <p className="flex items-center space-x-2">
+                            <strong>Status:</strong>
+                            {!editStatus ? (
+                                <span
+                                    className={`${appointment.Status === 'Cancelled' ? 'text-red-500' : 'text-green-500'
+                                        }`}
+                                >
+                                    {appointment.Status}
+                                </span>
+                            ) : (
+                                <select
+                                    className="p-2 border border-gray-300 rounded-lg"
+                                    value={statusUpdate}
+                                    onChange={handleStatusChange}
+                                >
+                                    <option value="Pending">Pending</option>
+                                    <option value="Rejected">Rejected</option>
+                                    <option value="Approved">Approved</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Missed">Missed</option>
+                                    <option value="Cancelled">Cancelled</option>
+                                </select>
+                            )}
+                        </p>
+
+                        <button
+                            className={` ${editStatus ? 'bg-red-500 p-3' : 'bg-yellow-600 px-5 py-1'} text-white rounded-lg transition-colors duration-300 hover:${editStatus ? 'bg-gray-600' : 'bg-yellow-500'}`}
+                            onClick={() => (editStatus ? handleCancelEdit() : seteditStatus(true))}
+                        >
+                            {editStatus ? 'Cancel Edit' : 'Edit'}
+                        </button>
+
+                        {editStatus && (
+                            <button
+                                className="p-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
+                                onClick={handleUpdate}>
+                                Save Changes
+                            </button>
+                        )}
+                    </div>
+
+
+
+                </div>
                 <button
                     className={`p-3 w-32 ${isEditing ? 'bg-red-500' : 'bg-yellow-600'} text-white rounded-lg hover:${isEditing ? 'bg-gray-600' : 'bg-yellow-500'} transition`}
                     onClick={() => isEditing ? handleCancelEdit() : setIsEditing(true)}
@@ -196,35 +326,12 @@ export default function AppointmentDetails() {
                 <p><strong>End:</strong> {new Date(appointment.End).toLocaleTimeString('en-US')}</p>
                 <strong>Dentist:</strong> {`${appointment.Dentist.FirstName} ${appointment.Dentist.MiddleName ? `${appointment.Dentist.MiddleName} ` : ''}${appointment.Dentist.LastName}`}
 
-                {/* Display procedures */}
-                <p><strong>Procedures:</strong></p> <h1 className='text-3xl text-red-600'>dapat nakakapag add ako ng Procedures:</h1>
-                <ul className="list-disc list-inside">
-                    {appointment.procedures && appointment.procedures.length > 0 ? (
-                        appointment.procedures.map((procedure) => (
-                            <li key={procedure._id}>
-                                {procedure.Procedure_name} {`₱${procedure.Price}`}
-                            </li>
-                        ))
-                    ) : (
-                        <li>No procedures available</li>
-                    )}
-                </ul>
+                <ProceduresTable appointment={appointment} />
+
+
 
                 {/* Editable Amount */}
-                <p ><strong>Amount:</strong>
-                    {!isEditing ? (
-                        ` ₱${appointment.Amount || 'N/A'}`
-                    ) : (
-                        <input
-                            type="number"
-                            name="Amount"
-                            value={editedAppointment.Amount}
-                            onChange={handleEditChange}
-                            className="p-2 border border-gray-300 rounded-lg"
-                            placeholder="Enter Amount"
-                        />
-                    )}
-                </p>
+              
 
                 <p><strong>Notes:</strong> {appointment.notes || 'N/A'}</p>
 
@@ -244,31 +351,13 @@ export default function AppointmentDetails() {
                     </div>
                 )}
 
-                <p><strong>Status:</strong> {
-                    !isEditing ? (
-                        <>
-                            <span className={appointment.Status === 'Cancelled' ? 'text-red-500' : 'text-green-500'}>
-                                {appointment.Status}
-                            </span>
-                        </>
-                    ) : (
-                        <select
-                            className="p-2 border border-gray-300 rounded-lg"
-                            value={statusUpdate}
-                            onChange={handleStatusChange}
-                        >
-                            <option value="Pending">Pending</option>
-                            <option value="Rejected">Rejected</option>
-                            <option value="Approved">Approved</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Missed">Missed</option>
-                            <option value="Cancelled">Cancelled</option>
-                        </select>
-                    )
-                }</p>
+
                 <p><strong>Request to Cancel:</strong> {appointment.RequestToCancel ? 'Yes' : 'No'}</p>
                 <p><strong>Request for Medical Certificate:</strong> {appointment.medcertiStatus}</p>
+                <p><strong>Fully Paid Status:</strong> {appointment.isfullypaid ? 'Yes' : 'No'}</p>
+
                 <h1 className='text-3xl text-red-600' >add here a button to send the medical cerificacte to the user email</h1>
+                <h1 className='text-3xl text-red-600' >is fully paid?</h1>
 
                 {/* Image upload and preview section */}
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
@@ -347,7 +436,7 @@ export default function AppointmentDetails() {
             {/* Confirmation Modal */}
             {showModal && (
                 <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-60 z-50 flex justify-center items-center">
-                    <div className="bg-white p-6 rounded-lg shadow-lg w-80">
+                    <div className="bg-accent p-6 rounded-lg shadow-lg w-80">
                         <p className="mb-4">{modalMessage}</p>
                         <div className="flex justify-end space-x-4">
                             <button
@@ -357,7 +446,7 @@ export default function AppointmentDetails() {
                                 Yes
                             </button>
                             <button
-                                className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+                                className="px-4 py-2 text-black bg-gray-300 rounded-lg hover:bg-gray-400"
                                 onClick={handleModalCancel}
                             >
                                 No
