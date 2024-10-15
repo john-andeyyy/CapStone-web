@@ -7,7 +7,7 @@ export default function Hero_Crud() {
     Title: '',
     description: '',
     Image: null,
-    isHero: false,
+    // isHero: false,
   });
   const [heroItems, setHeroItems] = useState([]);
   const [isEditing, setIsEditing] = useState(null);
@@ -111,7 +111,7 @@ export default function Hero_Crud() {
       Title: item.Title,
       description: item.description,
       Image: null,
-      isHero: item.isHero,
+      // isHero: item.isHero,
     });
     setIsEditing(item._id);
     setImagePreview(null);
@@ -221,9 +221,12 @@ export default function Hero_Crud() {
                   </button>
                   <button
                     onClick={() => {
-                      setIsEditing(null); 
-                      setFormData({ Title: '', description: '', Image: null, isHero: false }); 
-                      setImagePreview(null);  
+                      setIsEditing(null);
+                      setFormData({
+                        Title: '', description: '', Image: null,
+                        // isHero: false
+                      });
+                      setImagePreview(null);
                     }}
                     className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
                   >

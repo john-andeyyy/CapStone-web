@@ -331,7 +331,7 @@ export default function AppointmentDetails() {
 
 
                 {/* Editable Amount */}
-              
+
 
                 <p><strong>Notes:</strong> {appointment.notes || 'N/A'}</p>
 
