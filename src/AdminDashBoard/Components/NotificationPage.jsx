@@ -5,8 +5,8 @@ import { showToast } from '../Components/ToastNotification';
 export default function NotificationPage() {
     const [notifications, setNotifications] = useState([]);
     const [selectedPatients, setSelectedPatients] = useState([]);
-    const [newNotification, setNewNotification] = useState({ title: '', message: '', sendTo: 'sendToOne', isSendEmail: false });
-    const [editedNotification, setEditedNotification] = useState({ id: null, title: '', message: '' });
+    const [newNotification, setNewNotification] = useState({ Title: '', Message: '', sendTo: 'sendToOne', isSendEmail: false });
+    const [editedNotification, setEditedNotification] = useState({ id: null, Title: '', Message: '' });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [modalType, setModalType] = useState(null);
@@ -26,8 +26,8 @@ export default function NotificationPage() {
         setLoading(true);
         try {
             const response = await axios.get(`${Baseurl}/Notification/admin/getAllNotif`, { withCredentials: true });
-            console.log(response.data)
-            const adminNotifications = response.data.filter(notification => notification.AdminOnly === true);
+            const adminNotifications = response.data
+            // .filter(notification => notification.adminOnly === true);
 
             setNotifications(adminNotifications.reverse());
         } catch (error) {
@@ -59,8 +59,8 @@ export default function NotificationPage() {
             return;
         }
 
-        if (!newNotification.title || !newNotification.message) {
-            setError('Title and message are required');
+        if (!newNotification.Title || !newNotification.Message) {
+            setError('Title and Message are required');
             return;
         }
 
@@ -69,8 +69,8 @@ export default function NotificationPage() {
         try {
             let endpoint = '';
             let payload = {
-                Title: newNotification.title,
-                Message: newNotification.message,
+                Title: newNotification.Title,
+                Message: newNotification.Message,
                 isSendEmail: newNotification.isSendEmail
             };
 
@@ -99,28 +99,28 @@ export default function NotificationPage() {
     };
 
     const resetNewNotificationForm = () => {
-        setNewNotification({ title: '', message: '', sendTo: 'sendToOne', isSendEmail: false });
+        setNewNotification({ Title: '', Message: '', sendTo: 'sendToOne', isSendEmail: false });
         setSelectedPatient(null);
         setSelectedPatients([]);
         setModalType(null);
     };
 
     const handleEdit = (notif) => {
-        setEditedNotification({ id: notif._id, title: notif.Title, message: notif.Message });
+        setEditedNotification({ id: notif._id, Title: notif.Title, Message: notif.Message });
         setModalType('edit');
     };
 
     const saveEdit = async () => {
-        if (!editedNotification.title || !editedNotification.message) {
-            setError('Title and message are required');
+        if (!editedNotification.Title || !editedNotification.Message) {
+            setError('Title and Message are required');
             return;
         }
 
         setLoading(true);
         try {
             const response = await axios.put(`${Baseurl}/Notification/${editedNotification.id}`, {
-                Title: editedNotification.title,
-                Message: editedNotification.message,
+                Title: editedNotification.Title,
+                Message: editedNotification.Message,
             });
             const updatedNotifications = notifications.map(notif =>
                 notif._id === editedNotification.id ? response.data : notif
@@ -137,13 +137,45 @@ export default function NotificationPage() {
     };
 
     const resetEditForm = () => {
-        setEditedNotification({ id: null, title: '', message: '' });
+        setEditedNotification({ id: null, Title: '', Message: '' });
         setModalType(null);
     };
 
-    const viewNotificationDetails = (notif) => {
+
+
+    const viewNotificationDetails = (notif, status) => {
+        console.log(notif._id);
+
+        // Check if adminisRead is false before updating
+        if (!notif.adminisRead) {
+            axios.put(`${Baseurl}/Notification/admin/adminmarkas`,
+                {
+                    notifid: notif._id,
+                    mark_as: status
+                },
+                { withCredentials: true }
+            ).then(response => {
+                console.log('Notification updated:', response.data);
+                // Update the local notification state
+                setNotifications((prev) =>
+                    prev.map(notification => {
+                        if (notification._id === notif._id) {
+                            // Return a new object with updated properties
+                            return {
+                                ...notification,
+                                adminisRead: true
+                            };
+                        }
+                        return notification;
+                    })
+                );
+            }).catch(error => {
+                console.error('Error updating notification:', error);
+            });
+        }
         setSelectedNotification(notif);
         setModalType('details');
+
     };
 
     const closeModal = () => {
@@ -166,7 +198,7 @@ export default function NotificationPage() {
             onClick={onClick}
         >
             <div>
-                <h3 className="text-xl font-semibold" style={{ color: notif.isAnnouncement ? 'red' : 'inherit' }}>
+                <h3 className="text-xl font-semibold" >
                     {notif.Title}
                 </h3>
                 <p className="mb-2">{notif.Message}</p>
@@ -178,11 +210,11 @@ export default function NotificationPage() {
                     })}
                 </p>
                 {/* Render Patient Status */}
-                {notif.PatientStatus && notif.PatientStatus.length > 0 && (
+                {notif.patientStatus && notif.patientStatus.length > 0 && (
                     <div className="mt-4">
                         <h4 className="text-lg font-semibold">Patients:</h4>
                         <ul className="list-disc list-inside">
-                            {notif.PatientStatus.map((status, index) => (
+                            {notif.patientStatus.map((status, index) => (
                                 <li key={index} className="text-gray-700">
                                     {`${status.patient.LastName || 'No LastName'}, ${status.patient.FirstName || 'No FirstName'} ${status.patient.MiddleName ? status.patient.MiddleName[0] + '.' : ''}`}
                                 </li>
@@ -213,27 +245,29 @@ export default function NotificationPage() {
                         </li>
                     ) : (
                         notifications
-                            .filter(notif => !notif.toAll)
+                            // .filter(notif => !notif.toAll)
                             .map(notif => {
-                                console.log('PatientStatus:', notif.PatientStatus); // Add this to inspect the structure
 
                                 return (
                                     <li
                                         key={notif._id}
-                                        className="p-4 border rounded shadow-sm cursor-pointer flex flex-col justify-between"
-                                        onClick={() => viewNotificationDetails(notif)}
+                                        className={`p-4 border rounded shadow-sm cursor-pointer
+                                            flex flex-col justify-between ${notif.adminisRead ? 'border-gray-300' : 'border-green-500'
+                                            }`}
+                                        onClick={() => viewNotificationDetails(notif, true)}
                                     >
                                         <div>
-                                            <h3 className="text-xl font-semibold" style={{ color: notif.isAnnouncement ? 'red' : 'inherit' }}>
-                                                {notif.Title}
+                                            <h3 className="text-xl font-semibold" >
+                                                {notif.user_Appointment_message ? 'New Appointment Request' : notif.title}
+
                                             </h3>
-                                            <p className="mb-2">{notif.Message}</p>
+                                            {/* <p className="mb-2">{notif.user_Appointment_message}</p> */}
+                                            <p className="mb-2">
+                                                {notif.user_Appointment_message ? notif.user_Appointment_message : notif.message}
+                                            </p>
+
                                             <p className="text-gray-600">
-                                                Date Created: {new Date(notif.createdAt).toLocaleDateString('en-US', {
-                                                    year: 'numeric',
-                                                    month: 'short',
-                                                    day: 'numeric',
-                                                })}
+                                                Date Created: {notif.createdAt}
                                             </p>
 
                                         </div>
@@ -243,9 +277,6 @@ export default function NotificationPage() {
 
                     )}
                 </ul>
-
-
-
 
             </div>
 
@@ -258,16 +289,16 @@ export default function NotificationPage() {
                         <div className="space-y-4">
                             <input
                                 type="text"
-                                name="title"
+                                name="Title"
                                 placeholder="Title"
-                                value={newNotification.title}
+                                value={newNotification.Title}
                                 onChange={handleNewNotificationChange}
                                 className="block mb-2 p-2 border rounded w-full"
                             />
                             <textarea
-                                name="message"
+                                name="Message"
                                 placeholder="Message"
-                                value={newNotification.message}
+                                value={newNotification.Message}
                                 onChange={handleNewNotificationChange}
                                 className="block mb-2 p-2 border rounded w-full"
                                 rows="4"
@@ -292,7 +323,7 @@ export default function NotificationPage() {
                                             onChange={(e) => {
                                                 const patient = patients.find(p => p.FirstName + ' ' + p.LastName === e.target.value);
                                                 setSelectedPatient(patient || null);
-                                                // Set the title to the selected patient's name
+                                                // Set the Title to the selected patient's name
 
                                             }}
                                             className="block w-full mb-2 p-2 border rounded"
@@ -380,17 +411,17 @@ export default function NotificationPage() {
                         <div className="space-y-4">
                             <input
                                 type="text"
-                                name="title"
+                                name="Title"
                                 placeholder="Title"
-                                value={editedNotification.title}
-                                onChange={(e) => setEditedNotification({ ...editedNotification, title: e.target.value })}
+                                value={editedNotification.Title}
+                                onChange={(e) => setEditedNotification({ ...editedNotification, Title: e.target.value })}
                                 className="block mb-2 p-2 border rounded w-full"
                             />
                             <textarea
-                                name="message"
+                                name="Message"
                                 placeholder="Message"
-                                value={editedNotification.message}
-                                onChange={(e) => setEditedNotification({ ...editedNotification, message: e.target.value })}
+                                value={editedNotification.Message}
+                                onChange={(e) => setEditedNotification({ ...editedNotification, Message: e.target.value })}
                                 className="block mb-2 p-2 border rounded w-full"
                                 rows="4"
                             />
@@ -417,20 +448,21 @@ export default function NotificationPage() {
             {modalType === 'details' && selectedNotification && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 ">
                     <div className="bg-base-100 p-6 rounded shadow-lg max-w-md w-full">
-                        <h2 className="text-2xl font-bold mb-4">{selectedNotification.Title}</h2>
-                        <p>{selectedNotification.Message}</p>
-                        <p className=" mt-4">Date Created: {new Date(selectedNotification.createdAt).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                        })}</p>
+                        <div className='mb-4'>
+                            <h2 className="text-2xl font-bold ">
+                                {selectedNotification.user_Appointment_message ? 'New Appointment Request' : selectedNotification.title}
+                            </h2>
+                            <p className="text-sm">Date Created: {selectedNotification.createdAt}</p>
+    
+                      </div>
+                        <p>{selectedNotification.user_Appointment_message ? selectedNotification.user_Appointment_message : selectedNotification.message}</p>
 
                         <div className='pt-3'>
-                            <h4 className="text-lg font-semibold">Patients:</h4>
-                            {selectedNotification.PatientStatus && selectedNotification.PatientStatus.length > 0 && (
+                            <h4 className="text-lg font-semibold">Patient/s:</h4>
+                            {selectedNotification.patientStatus && selectedNotification.patientStatus.length > 0 && (
                                 <div className=" overflow-auto max-h-28">
                                     <ul className="list-disc list-inside">
-                                        {selectedNotification.PatientStatus.map((status, index) => (
+                                        {selectedNotification.patientStatus.map((status, index) => (
                                             <li key={index} className="">
                                                 {`${status.patient.LastName || 'No LastName'}, ${status.patient.FirstName || 'No FirstName'} ${status.patient.MiddleName ? status.patient.MiddleName[0] + '.' : ''}`}
                                             </li>

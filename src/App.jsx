@@ -44,6 +44,7 @@ import Hero_Crud from './Landing-infopage/LandingPage_Hero/Hero_Crud';
 import Forget_pass from './Guest/GuestPages/Forget_pass';
 import TipsList from './Landing-infopage/Tips/TipsList';
 import TipPage from './Guest/GuestComponents/TipPage';
+import IncomeReport from './AdminDashBoard/Pages/ReportPages/Pages/IncomeReport';
 
 function AdminRoutes() {
   const location = useLocation();
@@ -105,6 +106,7 @@ function AdminRoutes() {
         <Route path="/Total_procedures" element={< Total_procedures />} />
         <Route path="/Report_Monthly_Appointment" element={< Report_Monthly_Appointment />} />
         <Route path="/Patient_Visits" element={< Patient_Visits />} />
+        <Route path="/IncomeReport" element={< IncomeReport />} />
 
         {/* //! components only! */}
         <Route path="/NotificationPage" element={<NotificationPage />} />

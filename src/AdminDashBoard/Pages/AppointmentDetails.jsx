@@ -12,7 +12,6 @@ export default function AppointmentDetails() {
     const [appointment, setAppointment] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [editStatus, seteditStatus] = useState(false);
-    const [isEditingNotes, setIsEditingNotes] = useState(false);
     const [editedAppointment, setEditedAppointment] = useState({});
     const [statusUpdate, setStatusUpdate] = useState('');
     const [files, setFiles] = useState({ Before: null, After: null, Xray: null });
@@ -20,14 +19,10 @@ export default function AppointmentDetails() {
     const [previewImages, setPreviewImages] = useState({ Before: null, After: null, Xray: null });
     const [fullScreenImage, setFullScreenImage] = useState(null);
     const [showModal, setShowModal] = useState(false);
+    const [showimage, setshowimage] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
     const [modalAction, setModalAction] = useState(null);
 
-    const [procedures, setProcedures] = useState([]);
-    const [newProcedure, setNewProcedure] = useState({ Procedure_name: '', Price: 0 });
-
-
-    // To store original fetched values
     const [originalAppointment, setOriginalAppointment] = useState({});
 
     // Fetch appointment details from the API
@@ -39,6 +34,7 @@ export default function AppointmentDetails() {
             );
 
             const data = response.data;
+            console.log(data)
             setAppointment(data);
             setOriginalAppointment({
                 Before: data.BeforeImage || '',
@@ -169,79 +165,9 @@ export default function AppointmentDetails() {
     if (!appointment) return <div>No appointment data available.</div>;
 
 
-    // Add a new procedure to the list
-    const handleAdd = () => {
-        if (newProcedure.Procedure_name && newProcedure.Price > 0) {
-            setProcedures([...procedures, { ...newProcedure, _id: Date.now().toString() }]); // Temporary ID for new procedures
-            setNewProcedure({ Procedure_name: '', Price: 0 });
-        }
+    const toggleImages = () => {
+        setshowimage(prev => !prev);
     };
-
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setNewProcedure((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
-
-    // Function to handle adding a new procedure
-    const handleAddProcedure = async () => {
-        try {
-            const response = await axios.post(`${import.meta.env.VITE_BASEURL}/procedures`, newProcedure);
-            setProcedures((prev) => [...prev, response.data]);
-            setNewProcedure({ name: '', price: '' }); // Clear input after adding
-        } catch (error) {
-            console.error('Error adding procedure:', error);
-        }
-    };
-
-    // Function to handle deleting a procedure
-    const handleDeleteProcedure = async (id) => {
-        try {
-            await axios.delete(`${import.meta.env.VITE_BASEURL}/procedures/${id}`);
-            setProcedures((prev) => prev.filter(proc => proc._id !== id));
-        } catch (error) {
-            console.error('Error deleting procedure:', error);
-        }
-    };
-
-
-
-    // Edit an existing procedure
-    const handleEdit = (index, field, value) => {
-        const updatedProcedures = [...procedures];
-        updatedProcedures[index][field] = value;
-        setProcedures(updatedProcedures);
-    };
-
-    // Delete procedure from the list
-    const handleDelete = (id) => {
-        const updatedProcedures = procedures.filter((proc) => proc._id !== id);
-        setProcedures(updatedProcedures);
-    };
-
-    // Save updated procedures to the server
-    const handleSave = () => {
-        const updatedProcedureData = procedures.map((proc) => ({
-            Procedure_name: proc.Procedure_name,
-            Price: proc.Price,
-            _id: proc._id.startsWith('temp_') ? undefined : proc._id // Send undefined for new procedures (no ID)
-        }));
-
-        axios.put(`${import.meta.env.VITE_BASEURL}/Appointments/appointmentUpdate/${appointment._id}`, {
-            procedures: updatedProcedureData,
-        },
-            { withCredentials: true }
-        )
-            .then((response) => {
-                setProcedures(response.data.procedures); // Assuming the server returns updated procedures
-                console.log("Procedures updated successfully");
-            })
-            .catch((err) => console.error(err));
-    };
-
     return (
         <div className="p-6 mx-auto">
             {/* max-w-5xl  */}
@@ -252,78 +178,94 @@ export default function AppointmentDetails() {
                 Go Back
             </button>
 
-            <div className='flex justify-between items-center mb-6'>
+            <div className='flex justify-between items-end '>
                 <div>
-                    <h1 className="text-3xl font-bold py-4">Appointment Details</h1>
-                    <div className="flex items-center space-x-4">
-                        <p className="flex items-center space-x-2">
-                            <strong>Status:</strong>
-                            {!editStatus ? (
-                                <span
-                                    className={`${appointment.Status === 'Cancelled' ? 'text-red-500' : 'text-green-500'
-                                        }`}
-                                >
-                                    {appointment.Status}
-                                </span>
-                            ) : (
-                                <select
-                                    className="p-2 border border-gray-300 rounded-lg"
-                                    value={statusUpdate}
-                                    onChange={handleStatusChange}
-                                >
-                                    <option value="Pending">Pending</option>
-                                    <option value="Rejected">Rejected</option>
-                                    <option value="Approved">Approved</option>
-                                    <option value="Completed">Completed</option>
-                                    <option value="Missed">Missed</option>
-                                    <option value="Cancelled">Cancelled</option>
-                                </select>
-                            )}
+                    <div className='pt-4'>
+                        <h1 className="text-3xl font-bold ">Appointment Details </h1>
+                        <p className={`pt-2 text-xl font-semibold `}>
+                            <span>Payment Status: </span>
+                            <span className={`${appointment.isfullypaid ? 'text-green-600' : 'text-red-600'}`}>
+                                {appointment.isfullypaid ? 'Paid' : 'Not Paid'}
+                            </span>
                         </p>
 
-                        <button
-                            className={` ${editStatus ? 'bg-red-500 p-3' : 'bg-yellow-600 px-5 py-1'} text-white rounded-lg transition-colors duration-300 hover:${editStatus ? 'bg-gray-600' : 'bg-yellow-500'}`}
-                            onClick={() => (editStatus ? handleCancelEdit() : seteditStatus(true))}
-                        >
-                            {editStatus ? 'Cancel Edit' : 'Edit'}
-                        </button>
 
-                        {editStatus && (
-                            <button
-                                className="p-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
-                                onClick={handleUpdate}>
-                                Save Changes
-                            </button>
-                        )}
+                        <div className="flex items-center space-x-4">
+                            <p className="flex items-center space-x-2">
+                                <strong>Status:</strong>
+                                {!editStatus ? (
+                                    <span
+                                        className={`${appointment.Status === 'Cancelled' ? 'text-red-500' : 'text-green-500'
+                                            }`}
+                                    >
+                                        {appointment.Status}
+                                    </span>
+                                ) : (
+                                    <select
+                                        className="p-2 border border-gray-300 rounded-lg"
+                                        value={statusUpdate}
+                                        onChange={handleStatusChange}
+                                    >
+                                        <option value="Pending">Pending</option>
+                                        <option value="Rejected">Rejected</option>
+                                        <option value="Approved">Approved</option>
+                                        <option value="Completed">Completed</option>
+                                        <option value="Missed">Missed</option>
+                                        <option value="Cancelled">Cancelled</option>
+                                    </select>
+                                )}
+                            </p>
+
+                            <div className='py-3'>
+                                <button
+                                    className={` ${editStatus ? 'bg-red-500 p-3' : 'bg-yellow-600 px-5 py-2'} text-white rounded-lg transition-colors duration-300 hover:${editStatus ? 'bg-gray-600' : 'bg-yellow-500'}`}
+                                    onClick={() => (editStatus ? handleCancelEdit() : seteditStatus(true))}
+                                >
+                                    {editStatus ? 'Cancel Edit' : 'Update'}
+                                </button>
+                            </div>
+
+                            {editStatus && (
+                                <button
+                                    className="p-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
+                                    onClick={handleUpdate}>
+                                    Save Changes
+                                </button>
+                            )}
+                        </div>
                     </div>
 
 
 
                 </div>
-                <button
-                    className={`p-3 w-32 ${isEditing ? 'bg-red-500' : 'bg-yellow-600'} text-white rounded-lg hover:${isEditing ? 'bg-gray-600' : 'bg-yellow-500'} transition`}
-                    onClick={() => isEditing ? handleCancelEdit() : setIsEditing(true)}
-                >
-                    {isEditing ? 'Cancel Edit' : 'Edit'}
-                </button>
+                <div className='flex space-x-3'>
+                    <button
+                        className={`p-3 w-32 ${isEditing ? 'bg-red-500' : 'bg-yellow-600'} text-white rounded-lg hover:${isEditing ? 'bg-gray-600' : 'bg-yellow-500'} transition`}
+                        onClick={() => isEditing ? handleCancelEdit() : setIsEditing(true)}
+                    >
+                        {isEditing ? 'Cancel Edit' : 'Edit'}
+                    </button>
+                    <div className="flex space-x-3">
+                        {isEditing && (
+                            <div className="">
+                                <button
+                                    className="p-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
+                                    onClick={handleUpdate}>
+                                    Save Changes
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
 
-            <div className="flex space-x-3">
-                {isEditing && (
-                    <div className="">
-                        <button
-                            className="p-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
-                            onClick={handleUpdate}>
-                            Save Changes
-                        </button>
-                    </div>
-                )}
-            </div>
+
 
             <div className="shadow-md rounded-lg p-6 mb-6 space-y-4">
                 <p><strong>Patient Name:</strong> {appointment.patient?.FirstName || 'N/A'} {appointment.patient?.LastName || 'N/A'}</p>
                 <p><strong>Start:</strong> {new Date(appointment.Start).toLocaleTimeString('en-US')}</p>
                 <p><strong>End:</strong> {new Date(appointment.End).toLocaleTimeString('en-US')}</p>
+                <h1 className='text-3xl text-red-600' >date </h1>
                 <strong>Dentist:</strong> {`${appointment.Dentist.FirstName} ${appointment.Dentist.MiddleName ? `${appointment.Dentist.MiddleName} ` : ''}${appointment.Dentist.LastName}`}
 
                 <ProceduresTable appointment={appointment} />
@@ -354,76 +296,82 @@ export default function AppointmentDetails() {
 
                 <p><strong>Request to Cancel:</strong> {appointment.RequestToCancel ? 'Yes' : 'No'}</p>
                 <p><strong>Request for Medical Certificate:</strong> {appointment.medcertiStatus}</p>
-                <p><strong>Fully Paid Status:</strong> {appointment.isfullypaid ? 'Yes' : 'No'}</p>
 
                 <h1 className='text-3xl text-red-600' >add here a button to send the medical cerificacte to the user email</h1>
-                <h1 className='text-3xl text-red-600' >is fully paid?</h1>
-
-                {/* Image upload and preview section */}
-                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-                    <div>
-                        <img
-                            src={previewImages.Before || appointment.BeforeImage || '/image-not-available.png'}
-                            alt="Before"
-                            className="mb-2 rounded-lg shadow-lg cursor-pointer"
-                            onClick={() => handleImageClick(previewImages.Before || appointment.BeforeImage)}
-                        />
-                        <label className="block mb-2 font-medium">Before Image:</label>
-
-                        {isEditing && (
-                            <div className="mb-4">
-                                <label className="block mb-2 font-medium">Upload New Before Image:</label>
-                                <input
-                                    type="file"
-                                    onChange={(e) => handleFileChange(e, 'Before')}
-                                    className="p-2 border border-gray-300 rounded-lg w-full"
-                                />
-                            </div>
-                        )}
-                    </div>
-
-                    <div>
-                        <img
-                            src={previewImages.After || appointment.AfterImage || '/image-not-available.png'}
-                            alt="After"
-                            className="mb-2 rounded-lg shadow-lg cursor-pointer"
-                            onClick={() => handleImageClick(previewImages.After || appointment.AfterImage)}
-                        />
-                        <label className="block mb-2 font-medium">After Image:</label>
-
-                        {isEditing && (
-                            <div className="mb-4">
-                                <label className="block mb-2 font-medium">Upload New After Image:</label>
-                                <input
-                                    type="file"
-                                    onChange={(e) => handleFileChange(e, 'After')}
-                                    className="p-2 border border-gray-300 rounded-lg w-full"
-                                />
-                            </div>
-                        )}
-                    </div>
-
-                    <div>
-                        <img
-                            src={previewImages.Xray || appointment.XrayImage || '/image-not-available.png'}
-                            alt="Xray"
-                            className="mb-2 rounded-lg shadow-lg cursor-pointer"
-                            onClick={() => handleImageClick(previewImages.Xray || appointment.XrayImage)}
-                        />
-                        <label className="block mb-2 font-medium">Xray Image:</label>
-
-                        {isEditing && (
-                            <div className="mb-4">
-                                <label className="block mb-2 font-medium">Upload New Xray Image:</label>
-                                <input
-                                    type="file"
-                                    onChange={(e) => handleFileChange(e, 'Xray')}
-                                    className="p-2 border border-gray-300 rounded-lg w-full"
-                                />
-                            </div>
-                        )}
-                    </div>
+                <div className="flex justify-end">
+                    <button className='btn bg-green-500 hover:bg-green-300 text-black'
+                        onClick={() => toggleImages()}>
+                        {showimage ? 'Hide Images' : 'Show Images'}
+                    </button>
                 </div>
+
+                {showimage && (
+                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+                        <div>
+                            <img
+                                src={previewImages.Before || appointment.BeforeImage || '/image-not-available.png'}
+                                alt="Before"
+                                className="mb-2 rounded-lg shadow-lg cursor-pointer"
+                                onClick={() => handleImageClick(previewImages.Before || appointment.BeforeImage)}
+                            />
+                            <label className="block mb-2 font-medium">Before Image:</label>
+
+                            {isEditing && (
+                                <div className="mb-4">
+                                    <label className="block mb-2 font-medium">Upload New Before Image:</label>
+                                    <input
+                                        type="file"
+                                        onChange={(e) => handleFileChange(e, 'Before')}
+                                        className="p-2 border border-gray-300 rounded-lg w-full"
+                                    />
+                                </div>
+                            )}
+                        </div>
+
+                        <div>
+                            <img
+                                src={previewImages.After || appointment.AfterImage || '/image-not-available.png'}
+                                alt="After"
+                                className="mb-2 rounded-lg shadow-lg cursor-pointer"
+                                onClick={() => handleImageClick(previewImages.After || appointment.AfterImage)}
+                            />
+                            <label className="block mb-2 font-medium">After Image:</label>
+
+                            {isEditing && (
+                                <div className="mb-4">
+                                    <label className="block mb-2 font-medium">Upload New After Image:</label>
+                                    <input
+                                        type="file"
+                                        onChange={(e) => handleFileChange(e, 'After')}
+                                        className="p-2 border border-gray-300 rounded-lg w-full"
+                                    />
+                                </div>
+                            )}
+                        </div>
+
+                        <div>
+                            <img
+                                src={previewImages.Xray || appointment.XrayImage || '/image-not-available.png'}
+                                alt="Xray"
+                                className="mb-2 rounded-lg shadow-lg cursor-pointer"
+                                onClick={() => handleImageClick(previewImages.Xray || appointment.XrayImage)}
+                            />
+                            <label className="block mb-2 font-medium">Xray Image:</label>
+
+                            {isEditing && (
+                                <div className="mb-4">
+                                    <label className="block mb-2 font-medium">Upload New Xray Image:</label>
+                                    <input
+                                        type="file"
+                                        onChange={(e) => handleFileChange(e, 'Xray')}
+                                        className="p-2 border border-gray-300 rounded-lg w-full"
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+
             </div>
 
             {/* Fullscreen Image View */}

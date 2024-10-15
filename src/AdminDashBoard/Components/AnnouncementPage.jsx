@@ -20,8 +20,8 @@ export default function AnnouncementPage() {
     const FetchAnnouncement = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${Baseurl}/Notification/admin/announcement`, { withCredentials: true });
-            const filtered = response.data.filter(notif => notif.isAnnouncement === true);
+            const response = await axios.get(`${Baseurl}/Announcement/announcementMessageonly`, { withCredentials: true });
+            const filtered = response.data
             setAnnouncements(filtered.reverse());
         } catch (error) {
             console.error('Error fetching notifications:', error);
@@ -44,7 +44,7 @@ export default function AnnouncementPage() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        axios.post(`${Baseurl}/Notification/all`, formData, { withCredentials: true })
+        axios.post(`${Baseurl}/Announcement/create`, formData, { withCredentials: true })
             .then(response => {
                 showToast('success', 'Announcement sent successfully');
                 setFormData({
@@ -92,7 +92,7 @@ export default function AnnouncementPage() {
                         <h3 className="font-bold text-lg">{selectedAnnouncement.Title}</h3>
                         <p className="mt-2">{selectedAnnouncement.Message}</p>
                         <p className="mt-4 text-sm text-gray-500">
-                            Created At: {new Date(selectedAnnouncement.createdAt).toLocaleDateString()}
+                            Created At: {selectedAnnouncement.createdAt}
                         </p>
                         <button
                             onClick={closeAnnouncementModal}
@@ -196,7 +196,7 @@ export default function AnnouncementPage() {
                                         </span>
                                     )}
                                 </p>
-                                <p className="text-sm text-gray-600">{new Date(announcement.createdAt).toLocaleDateString()}</p>
+                                <p className="text-sm text-gray-600">{announcement.createdAt}</p>
                             </div>
                         ))
                     ) : (
