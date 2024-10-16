@@ -3,6 +3,7 @@ import axios from 'axios';
 import DentistEdit from '../Components/Dentist/Dentist_edit';
 import { Link, useNavigate } from 'react-router-dom';
 import { showToast } from '../../AdminDashBoard/Components/ToastNotification';
+import UnavailableDentist from '../Components/Dentist/UnavailableDentist';
 
 export default function Dentist() {
     const BASEURL = import.meta.env.VITE_BASEURL;
@@ -210,11 +211,23 @@ export default function Dentist() {
             return "https://via.placeholder.com/150"; // Fallback if no image
         }
     };
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedDentistId, setSelectedDentistId] = useState('');
+
+    const openModal = (dentistId) => {
+        setSelectedDentistId(dentistId);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setSelectedDentistId(''); // Clear selected dentist ID
+    };
     return (
         <div className="container mx-auto p-4">
             <h1 className="text-3xl font-bold mb-4 text-center">Dentist List</h1>
             {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-           
+
             <div className="flex justify-between mb-4 ">
                 <button className="bg-primary py-2 px-4 rounded-lg hover:bg-secondary text-white" onClick={handleAddDentist}>
                     Add Dentist
@@ -292,6 +305,12 @@ export default function Dentist() {
                                         >
                                             Schedule
                                         </button>
+                                        <button
+                                            className="text-green-500"
+                                            onClick={() => openModal(dentist._id)} // Open the modal here
+                                        >
+                                            Manage Unavailable
+                                        </button>
                                     </td>
                                 </tr>
                             ))
@@ -302,6 +321,14 @@ export default function Dentist() {
                         )}
                     </tbody>
                 </table>
+                {isModalOpen && (
+                    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
+                        <div className="bg-white p-6 rounded shadow-md">
+                            <UnavailableDentist dentistId={selectedDentistId} />
+                            <button onClick={closeModal} className="mt-4 px-4 py-2 bg-red-500 text-white rounded">Close</button>
+                        </div>
+                    </div>
+                )}
             </div>
 
 

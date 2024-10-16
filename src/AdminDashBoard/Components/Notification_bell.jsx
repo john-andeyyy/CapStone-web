@@ -8,18 +8,21 @@ const Notification_bell = () => {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const [notifications, setNotifications] = useState([]);
-    const [expanded, setExpanded] = useState({});
+    const [unreadCount, setUnreadCount] = useState(0); // Unread notification count
     const [selectedNotification, setSelectedNotification] = useState(null); // To store the clicked notification
     const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
 
     const fetchNotifications = async () => {
         try {
-            const response = await axios.get(`${import.meta.env.VITE_BASEURL}/Notification/admin/getAllNotif`, {
+            const response = await axios.get(`${import.meta.env.VITE_BASEURL}/Notification/admin/AdminNotif`, {
                 withCredentials: true,
             });
-            const adminNotifications = response.data.filter(notification => notification.AdminOnly === true);
+            const adminNotifications = response.data.filter(notification => notification.adminOnly === true);
 
             setNotifications(adminNotifications.reverse());
+            // Calculate unread notifications count
+            const unreadNotifications = adminNotifications.filter(notification => !notification.adminisRead);
+            setUnreadCount(unreadNotifications.length);
         } catch (error) {
             console.error('Error fetching notifications:', error);
         }
@@ -34,22 +37,36 @@ const Notification_bell = () => {
         setIsOpen(!isOpen);
     };
 
-    const toggleMessage = (id) => {
-        setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
-    };
-
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'short', day: 'numeric' };
         return new Date(dateString).toLocaleDateString(undefined, options);
     };
 
-    const handleNotificationClick = (notification) => {
-        setSelectedNotification(notification); // Set the selected notification data
-        setIsModalOpen(true); // Show the modal
+    const handleNotificationClick = async (notification) => {
+        if (!notification.adminisRead) {
+            await markAsRead(notification._id);
+        }
+        setSelectedNotification(notification); 
+        setIsModalOpen(true);
     };
 
     const closeModal = () => {
-        setIsModalOpen(false); // Close the modal
+        setIsModalOpen(false);
+    };
+
+    const markAsRead = async (notifId) => {
+        try {
+            await axios.put('http://localhost:3000/Notification/admin/adminmarkas', {
+                notifid: notifId,
+                mark_as: true // Always set to true (read)
+            }, {
+                withCredentials: true,
+            });
+            // After marking as read, fetch updated notifications
+            fetchNotifications();
+        } catch (error) {
+            console.error('Error marking notification as read:', error);
+        }
     };
 
     return (
@@ -74,7 +91,7 @@ const Notification_bell = () => {
                         />
                     </svg>
                     <span className="badge badge-xs badge-primary indicator-item">
-                        {notifications.length}
+                        {unreadCount} 
                     </span>
                 </div>
             </button>
@@ -100,36 +117,16 @@ const Notification_bell = () => {
                                 {notifications.map((notification) => (
                                     <li
                                         key={notification._id}
-                                        className="p-1 border-b border-gray-200 hover:bg-base-100 cursor-pointer"
-                                        onClick={() => handleNotificationClick(notification)} // Handle click to show modal
+                                        className={`my-1 p-3 border-b border-gray-200 hover:bg-secondary text-black cursor-pointer ${!notification.adminisRead ? 'bg-green-200' : ''}`}
+                                        onClick={() => handleNotificationClick(notification)}
                                     >
                                         <div className="flex justify-between items-center">
                                             <div className="flex flex-col">
-                                                {notification.isAnnouncement && (
-                                                    <span className="text-lg mt-1 font-semibold text-error">Announcement!!!</span>
-                                                )}
-                                                <strong className={`text-sm ${notification.toAll ? 'text-red-500' : ''}`}>
-                                                    {notification.Title}
+                                                <strong className="text-sm">
+                                                    {notification.user_Appointment_Title || 'No Title'}
                                                 </strong>
                                             </div>
                                             <span className="text-xs text-gray-500">{formatDate(notification.createdAt)}</span>
-                                        </div>
-                                        {notification.Message.length > 100 && (
-                                            <button
-                                                className="text-xs text-blue-500 mt-1"
-                                                onClick={(e) => {
-                                                    e.stopPropagation(); // Prevent the parent click event
-                                                    toggleMessage(notification._id);
-                                                }}
-                                            >
-                                                {expanded[notification._id] ? 'Collapse' : 'Expand'}
-                                            </button>
-                                        )}
-                                        <div
-                                            className={`mt-2 text-sm transition-all duration-300 ease-in-out ${expanded[notification._id] ? 'max-h-full' : 'max-h-6 overflow-hidden'
-                                                }`}
-                                        >
-                                            {notification.Message}
                                         </div>
                                     </li>
                                 ))}
@@ -143,24 +140,8 @@ const Notification_bell = () => {
             <NotificationModal isOpen={isModalOpen} onClose={closeModal}>
                 {selectedNotification && (
                     <div className="p-4">
-                        {selectedNotification.isAnnouncement ? (
-                            <div>
-                                <h2 className="text-xl font-bold text-red-500">Announcement</h2><br />
-                                <p>{selectedNotification.Message}</p>
-                            </div>
-                        ) : (
-                            <div>
-                                <h2 className="text-xl font-bold">{selectedNotification.Title}</h2>
-                                <p>{selectedNotification.Message}</p>
-                                {selectedNotification.patients && (
-                                    <ul>
-                                        {selectedNotification.patients.map((patient) => (
-                                            <li key={patient._id}>{patient.name}</li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div>
-                        )}
+                        <h2 className="text-xl font-bold">{selectedNotification.user_Appointment_Title}</h2>
+                        <p>{selectedNotification.user_Appointment_message}</p>
                         <button className="btn mt-4" onClick={closeModal}>
                             Close
                         </button>

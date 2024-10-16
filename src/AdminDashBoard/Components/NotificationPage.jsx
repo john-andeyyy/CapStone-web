@@ -27,7 +27,7 @@ export default function NotificationPage() {
         try {
             const response = await axios.get(`${Baseurl}/Notification/admin/getAllNotif`, { withCredentials: true });
             const adminNotifications = response.data
-            // .filter(notification => notification.adminOnly === true);
+            .filter(notification => notification.adminOnly === true);
 
             setNotifications(adminNotifications.reverse());
         } catch (error) {
@@ -251,8 +251,8 @@ export default function NotificationPage() {
                                 return (
                                     <li
                                         key={notif._id}
-                                        className={`p-4 border rounded shadow-sm cursor-pointer
-                                            flex flex-col justify-between ${notif.adminisRead ? 'border-gray-300' : 'border-green-500'
+                                        className={`p-4 border rounded shadow-sm cursor-pointer text-black
+                                            flex flex-col justify-between ${notif.adminisRead ? 'border-gray-300 bg-white' : 'border-green-500 bg-green-200'
                                             }`}
                                         onClick={() => viewNotificationDetails(notif, true)}
                                     >

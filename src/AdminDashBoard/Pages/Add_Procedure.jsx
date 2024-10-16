@@ -206,7 +206,7 @@ export default function Add_Procedure() {
         </div>
 
       </div>
-      <div className="flex gap-4 mb-4">
+      <div className="flex gap-4 mb-4 bg-white">
         <button
           className={`btn ${availabilityFilter === true ? 'btn-success' : 'btn-outline'}`}
           onClick={() => setAvailabilityFilter(true)}
@@ -292,7 +292,7 @@ export default function Add_Procedure() {
             placeholder="Procedure Name"
             value={newProcedure.Procedure_name}
             onChange={(e) => setNewProcedure({ ...newProcedure, Procedure_name: e.target.value })}
-            className="border p-2 mb-2"
+            className="border p-2 mb-2 bg-white"
             required
           />
           <div className="label">
@@ -303,7 +303,7 @@ export default function Add_Procedure() {
             placeholder="Duration"
             value={newProcedure.Duration}
             onChange={(e) => setNewProcedure({ ...newProcedure, Duration: e.target.value })}
-            className="border p-2 mb-2"
+            className="border p-2 mb-2 bg-white"
             required
           />
           <div className="label">
@@ -314,7 +314,7 @@ export default function Add_Procedure() {
             placeholder="Price"
             value={newProcedure.Price}
             onChange={(e) => setNewProcedure({ ...newProcedure, Price: e.target.value })}
-            className="border p-2 mb-2"
+            className="border p-2 mb-2 bg-white"
             required
           />
           <div className="label">
@@ -325,7 +325,7 @@ export default function Add_Procedure() {
             placeholder="Description"
             value={newProcedure.Description}
             onChange={(e) => setNewProcedure({ ...newProcedure, Description: e.target.value })}
-            className="border p-2 mb-2"
+            className="border p-2 mb-2 bg-white"
             required
           />
 
@@ -344,7 +344,7 @@ export default function Add_Procedure() {
                 setImagePreview(null); // Clear the preview if no file is selected
               }
             }}
-            className="border p-2 mb-2"
+            className="border p-2 mb-2 bg-white"
           />
 
           {imagePreview && (
@@ -370,7 +370,7 @@ export default function Add_Procedure() {
 
       {/* Edit Modal */}
       <Modal isOpen={editProcedureModalOpen} close={() => setEditProcedureModalOpen(false)}>
-        <div className='text-white'>
+        <div className='text-black'>
           <h3 className="font-bold text-lg text-center ">Edit Procedure</h3>
           <form onSubmit={handleEditSubmit} className="flex flex-col">
 
@@ -389,7 +389,7 @@ export default function Add_Procedure() {
                   setImagePreview(null);
                 }
               }}
-              className="border p-2 mb-2"
+              className="border p-2 mb-2 bg-white"
             />
             {imagePreview && (
               <img src={imagePreview} alt="Image Preview" className="mt-2 border rounded" style={{ width: '100%', maxHeight: '200px', objectFit: 'contain' }} />
@@ -404,7 +404,7 @@ export default function Add_Procedure() {
               placeholder="Procedure Name"
               value={newProcedure.Procedure_name}
               onChange={(e) => setNewProcedure({ ...newProcedure, Procedure_name: e.target.value })}
-              className="border p-2 mb-2"
+              className="border p-2 mb-2 bg-white"
               required
             />
             <div className="label">
@@ -415,7 +415,7 @@ export default function Add_Procedure() {
               placeholder="Duration"
               value={newProcedure.Duration}
               onChange={(e) => setNewProcedure({ ...newProcedure, Duration: e.target.value })}
-              className="border p-2 mb-2"
+              className="border p-2 mb-2 bg-white"
               required
             />
             <div className="label">
@@ -426,7 +426,7 @@ export default function Add_Procedure() {
               placeholder="Price"
               value={newProcedure.Price}
               onChange={(e) => setNewProcedure({ ...newProcedure, Price: e.target.value })}
-              className="border p-2 mb-2"
+              className="border p-2 mb-2 bg-white"
               required
             />
             <div className="label">
@@ -437,7 +437,7 @@ export default function Add_Procedure() {
               placeholder="Description"
               value={newProcedure.Description}
               onChange={(e) => setNewProcedure({ ...newProcedure, Description: e.target.value })}
-              className="border p-2 mb-2"
+              className="border p-2 mb-2 bg-white"
               required
             />
             <div className="modal-action">
@@ -482,7 +482,7 @@ export default function Add_Procedure() {
             type="text"
             value={newProcedure.Procedure_name}
             readOnly
-            className="border p-2 mb-2"
+            className="border p-2 mb-2 bg-white"
           />
           <div className="label">
             <span className="label-text">Duration</span>
@@ -491,7 +491,7 @@ export default function Add_Procedure() {
             type="text"
             value={newProcedure.Duration}
             readOnly
-            className="border p-2 mb-2"
+            className="border p-2 mb-2 bg-white"
           />
           <div className="label">
             <span className="label-text">Price</span>
@@ -500,7 +500,7 @@ export default function Add_Procedure() {
             type="number"
             value={newProcedure.Price}
             readOnly
-            className="border p-2 mb-2"
+            className="border p-2 mb-2 bg-white"
           />
           <div className="label">
             <span className="label-text">Description</span>
@@ -509,7 +509,7 @@ export default function Add_Procedure() {
             type="text"
             value={newProcedure.Description}
             readOnly
-            className="border p-2 mb-2"
+            className="border p-2 mb-2 bg-white"
           />
           <div className="modal-action">
             <button
