@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import ReportMenu from '../components/ReportMenu';
 
 const AppointmentsReport = () => {
     const [appointments, setAppointments] = useState([]);
@@ -90,7 +91,9 @@ const AppointmentsReport = () => {
 
     return (
         <div className="p-4">
-            <h1 className="text-2xl font-bold mb-4">Appointments Report</h1>
+            <ReportMenu />
+
+            <h1 className="text-2xl font-bold mb-4">Income Report</h1>
 
             {/* Report Type Buttons */}
             <div className="mb-4">
@@ -156,7 +159,7 @@ const AppointmentsReport = () => {
                     <h2 className="text-xl font-semibold mb-2">Daily Report for {selectedDate}</h2>
                     <table className="min-w-full border border-gray-300">
                         <thead>
-                            <tr className="bg-gray-100">
+                            <tr className="bg-accent">
                                 <th className="border px-4 py-2">Date</th>
                                 <th className="border px-4 py-2">Amount</th>
                             </tr>
@@ -165,7 +168,7 @@ const AppointmentsReport = () => {
                             {Object.entries(reportData.daily).map(([day, amount]) => {
                                 if (day === selectedDate) {
                                     return (
-                                        <tr key={day} className="hover:bg-gray-50">
+                                        <tr key={day} className="hover:bg-green-400 hover:text-black">
                                             <td className="border px-4 py-2">{day}</td>
                                             <td className="border px-4 py-2">{amount}</td>
                                         </tr>
@@ -183,7 +186,7 @@ const AppointmentsReport = () => {
                     <h2 className="text-xl font-semibold mb-2">Monthly Report for {new Date(new Date().getFullYear(), selectedMonth - 1).toLocaleString('default', { month: 'long' })}</h2>
                     <table className="min-w-full border border-gray-300">
                         <thead>
-                            <tr className="bg-gray-100">
+                            <tr className="bg-accent">
                                 <th className="border px-4 py-2">Month</th>
                                 <th className="border px-4 py-2">Amount</th>
                             </tr>
@@ -192,7 +195,7 @@ const AppointmentsReport = () => {
                             {Object.entries(reportData.monthly).map(([month, amount]) => {
                                 if (month.split('-')[1] === selectedMonth.toString()) {
                                     return (
-                                        <tr key={month} className="hover:bg-gray-50">
+                                        <tr key={month} className="hover:bg-green-400 hover:text-black">
                                             <td className="border px-4 py-2">{month}</td>
                                             <td className="border px-4 py-2">{amount}</td>
                                         </tr>
@@ -220,7 +223,7 @@ const AppointmentsReport = () => {
                                 const monthKey = `${selectedYear}-${index + 1}`; // YYYY-MM
                                 const amount = reportData.yearly[monthKey] || 0; // Default to 0 if no data
                                 return (
-                                    <tr key={index} className="hover:bg-gray-50">
+                                    <tr key={index} className="hover:bg-green-400 hover:text-black">
                                         <td className="border px-4 py-2">{new Date(0, index).toLocaleString('default', { month: 'long' })}</td>
                                         <td className="border px-4 py-2">₱{amount}</td>
                                     </tr>

@@ -17,7 +17,7 @@ export default function ReportMenu() {
 
     return (
         <div className="dropdown relative text-white ">
-            
+
             <div tabIndex={0} role="button" onClick={toggleDropdown} className="btn m-1 text-white bg-green-500 hover:bg-green-300">
                 Select Reports
             </div>
@@ -36,6 +36,16 @@ export default function ReportMenu() {
                     <li>
                         <button onClick={() => handleNavigation('/Patient_Visits')} className="w-full text-left">
                             Patient Visits Summary
+                        </button>
+                    </li>
+                    <li>
+                        <button onClick={() => handleNavigation('/IncomeReport')} className="w-full text-left">
+                            IncomeReport Summary
+                        </button>
+                    </li>
+                    <li>
+                        <button onClick={() => handleNavigation('/Patient_Procedures_done')} className="w-full text-left">
+                            Patient_Procedures_done
                         </button>
                     </li>
                 </ul>

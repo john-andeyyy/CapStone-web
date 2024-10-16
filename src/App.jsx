@@ -45,6 +45,7 @@ import Forget_pass from './Guest/GuestPages/Forget_pass';
 import TipsList from './Landing-infopage/Tips/TipsList';
 import TipPage from './Guest/GuestComponents/TipPage';
 import IncomeReport from './AdminDashBoard/Pages/ReportPages/Pages/IncomeReport';
+import Patient_Procedures_done from './AdminDashBoard/Pages/ReportPages/Pages/Patient_Procedures_done';
 
 function AdminRoutes() {
   const location = useLocation();
@@ -107,6 +108,7 @@ function AdminRoutes() {
         <Route path="/Report_Monthly_Appointment" element={< Report_Monthly_Appointment />} />
         <Route path="/Patient_Visits" element={< Patient_Visits />} />
         <Route path="/IncomeReport" element={< IncomeReport />} />
+        <Route path="/Patient_Procedures_done" element={< Patient_Procedures_done />} />
 
         {/* //! components only! */}
         <Route path="/NotificationPage" element={<NotificationPage />} />
@@ -114,7 +116,7 @@ function AdminRoutes() {
 
 
         {/*//! edit of the info page and landing Pages */}
-        <Route path="/AddGroupMember" element={<AddGroupMember />} />
+        <Route path="/AddGroupMember" element={<AddGroupMember />} />    {/* component */}
         <Route path="/Grouplist" element={<Grouplist />} />
         <Route path="/Contactus_edit" element={<Contactus_Crud />} />
         <Route path="/Hero_edit" element={<Hero_Crud />} />

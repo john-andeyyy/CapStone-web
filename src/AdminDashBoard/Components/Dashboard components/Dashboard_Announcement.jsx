@@ -14,8 +14,8 @@ export default function Announcement() {
     const fetchAnnouncements = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${Baseurl}/Notification/admin/announcement`, { withCredentials: true });
-            const filtered = response.data.filter(notif => notif.isAnnouncement === true);
+            const response = await axios.get(`${Baseurl}/Announcement/announcementMessageonly`, { withCredentials: true });
+            const filtered = response.data;
             setAnnouncements(filtered.reverse().slice(0, 2));
         } catch (error) {
             console.error('Error fetching notifications:', error);

@@ -26,8 +26,22 @@ export default function Dashboard_Calendar() {
 
     // Loading and error states
     if (loading) return <div>Loading...</div>;
-    if (error) return <div>{error}</div>;
-
+    if (error) {
+        return (
+            <div className="p-2 rounded-lg text-center max-w-sm mx-auto bg-neutral shadow-lg">
+                <Calendar
+                    className="react-calendar rounded-lg shadow-md"
+                    onChange={(value) => setDate(value)}
+                    value={date}
+                    view={view}
+                    // onClickDay={handleDayClick}
+                    // tileClassName={tileClassName}
+                    // navigationLabel={navigationLabel}
+                    // onActiveStartDateChange={preventHeaderClick}
+                />
+            </div>
+        );
+    }
     const handleDayClick = (value) => {
         setSelectedDate(value);
         setView('day');

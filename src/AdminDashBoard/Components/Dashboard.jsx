@@ -17,7 +17,7 @@ export default function Dashboard() {
 
     const handleNavigate = (path) => {
         navigate(path);
-        setIsOpen(false); 
+        setIsOpen(false);
     };
 
     return (
@@ -87,21 +87,28 @@ export default function Dashboard() {
                                     onClick={() => handleNavigate('/Grouplist')}
                                 >
                                     <span className="material-symbols-outlined mr-2">person</span>
-                                    Group Member
+                                    Edit Group Member
                                 </li>
                                 <li
                                     className="p-2 rounded cursor-pointer flex items-center hover:bg-green-500 transition"
                                     onClick={() => handleNavigate('/Contactus_edit')}
                                 >
                                     <span className="material-symbols-outlined mr-2">contacts</span>
-                                    Contact Us Edit
+                                    Edit Contact Us
                                 </li>
                                 <li
                                     className="p-2 rounded cursor-pointer flex items-center hover:bg-green-500 transition"
                                     onClick={() => handleNavigate('/Hero_edit')}
                                 >
                                     <span className="material-symbols-outlined mr-2">contacts</span>
-                                    Hero Edit
+                                    Edit Hero
+                                </li>
+                                <li
+                                    className="p-2 rounded cursor-pointer flex items-center hover:bg-green-500 transition"
+                                    onClick={() => handleNavigate('/TipsList')}
+                                >
+                                    <span className="material-symbols-outlined mr-2">contacts</span>
+                                    Edit TIPS
                                 </li>
                             </ul>
                         </div>

@@ -12,7 +12,7 @@ export default function Add_Procedure() {
   const [procedureToEdit, setProcedureToEdit] = useState(null);
   const [procedureToDelete, setProcedureToDelete] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-
+  const [availabilityFilter, setAvailabilityFilter] = useState(true);
   const [procedureList, setProcedureList] = useState([]);
 
   const [newProcedure, setNewProcedure] = useState({ _id: '', Procedure_name: '', Duration: '', Price: '', Description: '' });
@@ -58,22 +58,30 @@ export default function Add_Procedure() {
     setDeleteConfirmationModalOpen(true);
   };
 
-  const confirmDelete = async () => {
+  const confirmtongleStatus = async (status) => {
     try {
-      await axios.delete(`${BASEURL}/Procedure/delete/${procedureToDelete._id}`, {
-        withCredentials: true,
-      });
-      setProcedureList(procedureList.filter((procedure) => procedure._id !== procedureToDelete._id));
-      showToast('success', 'Delete successful!');
+      await axios.put(`${BASEURL}/Procedure/updatestatus/${procedureToDelete._id}`,
+        { status },
+        { withCredentials: true }
+      );
 
+      // Update the procedure list with the new status
+      setProcedureList((prevProcedureList) =>
+        prevProcedureList.map((procedure) =>
+          procedure._id === procedureToDelete._id
+            ? { ...procedure, available: status } // Update the available status
+            : procedure
+        )
+      );
+
+      showToast('success', 'Status updated successfully!');
       setDeleteConfirmationModalOpen(false);
       setProcedureToDelete(null);
     } catch (error) {
-      showToast('error', 'Error deleting procedure:', error);
-      console.error('Error deleting procedure:', error);
+      showToast('error', 'Error updating procedure status:', error);
+      console.error('Error updating procedure status:', error);
     }
   };
-
 
 
   const handleAddSubmit = async (e) => {
@@ -142,9 +150,6 @@ export default function Add_Procedure() {
     }
   };
 
-
-
-
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
@@ -176,6 +181,11 @@ export default function Add_Procedure() {
     }
   };
 
+  const filteredAndAvailableProcedures = filteredProcedures.filter((procedure) => {
+    if (availabilityFilter === null) return true; // No filter applied
+    return procedure.available === availabilityFilter;
+  });
+
 
   return (
     <div className='container mx-auto text-sm lg:text-md'>
@@ -192,7 +202,29 @@ export default function Add_Procedure() {
           <div className='absolute left-3 top-3 h-4 w-4 text-gray-500'>
             <span className="material-symbols-outlined">search</span>
           </div>
+
         </div>
+
+      </div>
+      <div className="flex gap-4 mb-4">
+        <button
+          className={`btn ${availabilityFilter === true ? 'btn-success' : 'btn-outline'}`}
+          onClick={() => setAvailabilityFilter(true)}
+        >
+          Show Available
+        </button>
+        <button
+          className={`btn ${availabilityFilter === false ? 'btn-error' : 'btn-outline'}`}
+          onClick={() => setAvailabilityFilter(false)}
+        >
+          Show Not Available
+        </button>
+        <button
+          className="btn btn-outline"
+          onClick={() => setAvailabilityFilter(null)}
+        >
+          Show All
+        </button>
       </div>
 
 
@@ -202,15 +234,29 @@ export default function Add_Procedure() {
         <div className='flex-1'>Procedure Name <button onClick={handleSort} className='ml-2 text-white text-xl'>{sortOrder === 'asc' ? '↑' : '↓'}</button></div>
         <div className='flex-1 hidden lg:block'>Duration</div>
         <div className='flex-1 hidden lg:block'>Price</div>
+        <div className='flex-1 hidden lg:block'>Status</div>
         <div className='flex-1 text-center'>Actions</div>
       </div>
+      <div className='mt-4 text-lg overflow-auto max-h-[25rem]'>
 
-      <div className='mt-4 text-lg overflow-auto max-h-[28rem]'>
-        {filteredProcedures.map((procedure) => (
+        {filteredAndAvailableProcedures.map((procedure) => (
           <div key={procedure._id} className='flex w-full items-center border-b py-2'>
             <div className='flex-1'>{procedure.Procedure_name}</div>
             <div className='flex-1 hidden lg:block'>{procedure.Duration}</div>
             <div className='flex-1 hidden lg:block'>{procedure.Price}</div>
+            <div className='flex-1 hidden lg:block'>
+              {/* {procedure.available ? 'yes' : 'no'} */}
+              <button
+                className={`text-${procedure.available ? 'red' : 'green'}-500`}
+                onClick={() => openDeleteConfirmationModal(procedure)}
+              >
+                {/* <span className="material-symbols-outlined">
+                  {procedure.available ? 'cancel' : 'check_circle '}
+                </span> */}
+                  {procedure.available ? 'Mark Unavailable' : 'Mark Available '}
+              </button>
+
+            </div>
             <div className='flex-1 flex gap-2 justify-center'>
               <button className='text-green-500' onClick={() => openEditProcedureModal(procedure, 'View')}>
                 <span className="material-symbols-outlined">visibility</span>
@@ -218,13 +264,14 @@ export default function Add_Procedure() {
               <button className='text-blue-500' onClick={() => openEditProcedureModal(procedure, 'Edit')}>
                 <span className="material-symbols-outlined">edit</span>
               </button>
-              <button className='text-red-500' onClick={() => openDeleteConfirmationModal(procedure)}>
-                <span className="material-symbols-outlined">delete</span>
-              </button>
+
+
             </div>
           </div>
         ))}
       </div>
+
+
       <div className=' '>
         <div className='absolute bottom-3 right-3'>
           <button className='btn bg-primary hover:bg-secondary text-white' onClick={openAddPatientModal}>
@@ -479,16 +526,34 @@ export default function Add_Procedure() {
 
       {/* Delete Confirmation Modal */}
       <Modal isOpen={deleteConfirmationModalOpen} close={() => setDeleteConfirmationModalOpen(false)}>
-        <h3 className="font-bold text-lg text-center text-white">Delete Procedure</h3>
-        <p>Are you sure you want to delete {procedureToDelete?.Procedure_name}?</p>
+        <h3 className="font-bold text-lg text-center text-white">
+          Are you sure you want to make this procedure {procedureToDelete?.available ? 'unavailable' : 'available'}?
+        </h3>
+        <p className="text-center text-white">{procedureToDelete?.Procedure_name}</p>
         <div className="modal-action">
-          <button
-            type="button"
-            className="btn btn-error text-white"
-            onClick={confirmDelete}
-          >
-            Delete
-          </button>
+
+          {procedureToDelete && procedureToDelete.available ? (
+            <button
+              type="button"
+              className="btn btn-error text-white"
+              onClick={() => confirmtongleStatus(false)}
+            >
+              Mark as Not Available
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="btn btn-success text-white"
+              onClick={() => confirmtongleStatus(true)}
+            >
+              Mark as Available
+            </button>
+          )}
+
+
+
+
+
           <button
             type="button"
             className="btn btn-accent"
