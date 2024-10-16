@@ -323,7 +323,7 @@ export default function Dentist() {
                 </table>
                 {isModalOpen && (
                     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
-                        <div className="bg-white p-6 rounded shadow-md">
+                        <div className="bg-accent p-6 rounded shadow-md">
                             <UnavailableDentist dentistId={selectedDentistId} />
                             <button onClick={closeModal} className="mt-4 px-4 py-2 bg-red-500 text-white rounded">Close</button>
                         </div>

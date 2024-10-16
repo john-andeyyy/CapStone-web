@@ -58,10 +58,13 @@ export default function MedicalRequests() {
     };
 
     return (
+      request.patient &&
+      request.patient.FirstName &&
       request.patient.FirstName.toLowerCase().includes(searchQuery.toLowerCase()) &&
       showBasedOnStatus(statusFilter)
     );
   });
+
 
   const handleDeleteRequest = async () => {
     if (selectedRequest) {

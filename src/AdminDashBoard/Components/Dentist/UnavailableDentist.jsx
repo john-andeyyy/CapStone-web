@@ -7,7 +7,7 @@ const Modal = ({ isOpen, onClose, onSubmit, editFrom, editTo, setEditFrom, setEd
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-white p-4 rounded shadow-lg">
+            <div className="bg-accent p-4 rounded shadow-lg">
                 <h2 className="text-xl font-bold mb-4">Edit Unavailable Time</h2>
                 <form onSubmit={onSubmit}>
                     <div className="flex flex-col space-y-4">
@@ -181,7 +181,7 @@ const UnavailableDentist = ({ dentistId }) => {
             {/* Display Unavailable Times in a Table */}
             <h3 className="font-semibold mt-4">Unavailable Times</h3>
             {unavailableList.length > 0 ? (
-                <table className="min-w-full bg-white border border-gray-300">
+                <table className="min-w-full  border border-gray-300">
                     <thead>
                         <tr>
                             <th className="border px-4 py-2">ID</th>

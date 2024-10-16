@@ -46,6 +46,7 @@ import TipsList from './Landing-infopage/Tips/TipsList';
 import TipPage from './Guest/GuestComponents/TipPage';
 import IncomeReport from './AdminDashBoard/Pages/ReportPages/Pages/IncomeReport';
 import Patient_Procedures_done from './AdminDashBoard/Pages/ReportPages/Pages/Patient_Procedures_done';
+import UnavailableClinic from './AdminDashBoard/Components/UnavailableClinic';
 
 function AdminRoutes() {
   const location = useLocation();
@@ -102,6 +103,7 @@ function AdminRoutes() {
         <Route path="/admindashboard" element={<Dashboard />} />
         <Route path="/CalendarComponent" element={<CalendarComponent />} />
         <Route path="/DentistSchedule/:id" element={<DentistSchedule />} />
+        <Route path="/UnavailableClinic" element={<UnavailableClinic />} />
 
         {/* //! REPORTS */}
         <Route path="/Total_procedures" element={< Total_procedures />} />

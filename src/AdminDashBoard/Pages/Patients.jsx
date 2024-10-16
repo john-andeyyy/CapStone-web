@@ -15,18 +15,18 @@ export default function Patients_List() {
         const response = await fetchPatients();
         console.log(response);
         setPatientsInfo(response);
-        sessionStorage.setItem('patientsData', JSON.stringify(response));
+        // sessionStorage.setItem('patientsData', JSON.stringify(response));
         setLoading(false);
     };
 
     useEffect(() => {
         const cachedData = sessionStorage.getItem('patientsData');
-        if (cachedData) {
-            setPatientsInfo(JSON.parse(cachedData));
-            setLoading(false);
-        } else {
+        // if (cachedData) {
+        //     setPatientsInfo(JSON.parse(cachedData));
+        //     setLoading(false);
+        // } else {
             fetch_patient();
-        }
+        // }
     }, []);
 
     const handleSearchChange = (e) => {
@@ -84,6 +84,7 @@ export default function Patients_List() {
                         <table className='w-full text-left border-collapse'>
                             <thead className='bg-primary text-white sticky top-0 z-10'>
                                 <tr>
+                                    <th className='p-3'>id</th>
                                     <th className='p-3'>
                                         Last Name
                                         <button onClick={handleSort} className='ml-2'>
@@ -101,6 +102,7 @@ export default function Patients_List() {
                                 {filteredPatients.length > 0 ? (
                                     filteredPatients.map((patient) => (
                                         <tr key={patient.id} className='border-b'>
+                                            <td className='p-3'>{patient.id}</td>
                                             <td className='p-3'>{patient.LastName}</td>
                                             <td className='p-3'>{patient.FirstName}</td>
                                             <td className='p-3'>

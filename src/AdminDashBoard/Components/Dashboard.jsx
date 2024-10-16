@@ -62,6 +62,15 @@ export default function Dashboard() {
                         </span>
                         Edit BlogPage
                     </button>
+                    <button
+                        onClick={() => navigate('/UnavailableClinic')}
+                        className='bg-secondary w-full h-12 rounded-xl text-xl font-semibold text-white transition duration-300 hover:bg-green-600 flex items-center justify-center space-x-2'
+                    >
+                        <span className="material-symbols-outlined">
+                            event_busy
+                        </span>
+                        <span>Clinic Close</span>
+                    </button>
                 </div>
 
 
@@ -93,21 +102,21 @@ export default function Dashboard() {
                                     className="p-2 rounded cursor-pointer flex items-center hover:bg-green-500 transition"
                                     onClick={() => handleNavigate('/Contactus_edit')}
                                 >
-                                    <span className="material-symbols-outlined mr-2">contacts</span>
+                                    <span className="material-symbols-outlined mr-2">call</span>
                                     Edit Contact Us
                                 </li>
                                 <li
                                     className="p-2 rounded cursor-pointer flex items-center hover:bg-green-500 transition"
                                     onClick={() => handleNavigate('/Hero_edit')}
                                 >
-                                    <span className="material-symbols-outlined mr-2">contacts</span>
+                                    <span className="material-symbols-outlined mr-2">info</span>
                                     Edit Hero
                                 </li>
                                 <li
                                     className="p-2 rounded cursor-pointer flex items-center hover:bg-green-500 transition"
                                     onClick={() => handleNavigate('/TipsList')}
                                 >
-                                    <span className="material-symbols-outlined mr-2">contacts</span>
+                                    <span className="material-symbols-outlined mr-2">recommend</span>
                                     Edit TIPS
                                 </li>
                             </ul>

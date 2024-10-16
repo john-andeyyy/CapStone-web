@@ -64,6 +64,32 @@ export default function AppointmentDetails() {
     useEffect(() => {
         getdata();
     }, [id]);
+    const [showPaymentModal, setShowPaymentModal] = useState(false); // New state for payment modal
+
+    const handlePaymentStatusUpdate = async () => {
+        try {
+            await axios.put(
+                `${import.meta.env.VITE_BASEURL}/Appointments/appointmentUpdate/${id}`,
+                { isfullypaid: !appointment.isfullypaid }, // Toggle the isfullypaid status
+                { withCredentials: true }
+            );
+            showToast('success', 'Payment status updated successfully');
+            getdata(); // Refresh appointment data
+            setShowPaymentModal(false); // Close the payment modal
+        } catch (error) {
+            console.error('Error updating payment status:', error);
+            showToast('error', 'Failed to update payment status');
+        }
+    };
+
+    const handleOpenPaymentModal = () => {
+        setShowPaymentModal(true);
+    };
+
+    const handleClosePaymentModal = () => {
+        setShowPaymentModal(false);
+    };
+
 
     const handleEditChange = (e) => {
         setEditedAppointment({
@@ -111,7 +137,7 @@ export default function AppointmentDetails() {
                 setAppointment(response.data); // Assuming response contains the updated appointment data
                 seteditStatus(false)
                 setIsEditing(false);
-                setIsEditingNotes(false);
+                // setIsEditingNotes(false);
                 setFiles({ Before: null, After: null, Xray: null });
                 setPreviewImages({ Before: null, After: null, Xray: null });
                 showToast('success', 'Update Successfully');
@@ -134,7 +160,7 @@ export default function AppointmentDetails() {
             setFiles({ Before: null, After: null, Xray: null });
             setIsEditing(false);
             seteditStatus(false);
-            setIsEditingNotes(false);
+            // setIsEditingNotes(false);
             setShowModal(false);
         });
         setShowModal(true);
@@ -183,10 +209,21 @@ export default function AppointmentDetails() {
                     <div className='pt-4'>
                         <h1 className="text-3xl font-bold ">Appointment Details </h1>
                         <p className={`pt-2 text-xl font-semibold `}>
-                            <span>Payment Status: </span>
-                            <span className={`${appointment.isfullypaid ? 'text-green-600' : 'text-red-600'}`}>
-                                {appointment.isfullypaid ? 'Paid' : 'Not Paid'}
-                            </span>
+                            <div className='space-x-2'>
+                                <span>Payment Status: </span>
+                                <span className={`${appointment.isfullypaid ? 'text-green-600' : 'text-red-600'}`}>
+                                    {appointment.isfullypaid ? 'Paid' : 'Not Paid'}
+                                </span>
+
+                                <button
+                                    className={`text-md p-1 text-white rounded hover:bg-blue-600 ${appointment.isfullypaid ? 'bg-green-500' : 'bg-red-500'}`}
+                                    onClick={handleOpenPaymentModal}
+                                >
+                                    {appointment.isfullypaid ? 'Mark as Not Paid' : 'Mark as Paid'}
+                                </button>
+                            </div>
+
+
                         </p>
 
 
@@ -218,7 +255,8 @@ export default function AppointmentDetails() {
 
                             <div className='py-3'>
                                 <button
-                                    className={` ${editStatus ? 'bg-red-500 p-3' : 'bg-yellow-600 px-5 py-2'} text-white rounded-lg transition-colors duration-300 hover:${editStatus ? 'bg-gray-600' : 'bg-yellow-500'}`}
+                                    // px-5 py-2
+                                    className={` ${editStatus ? 'bg-red-500 p-3' : 'bg-yellow-600  p-1'} text-white rounded-lg transition-colors duration-300 hover:${editStatus ? 'bg-gray-600' : 'bg-yellow-500'}`}
                                     onClick={() => (editStatus ? handleCancelEdit() : seteditStatus(true))}
                                 >
                                     {editStatus ? 'Cancel Edit' : 'Update'}
@@ -265,16 +303,11 @@ export default function AppointmentDetails() {
                 <p><strong>Patient Name:</strong> {appointment.patient?.FirstName || 'N/A'} {appointment.patient?.LastName || 'N/A'}</p>
                 <p><strong>Start:</strong> {new Date(appointment.Start).toLocaleTimeString('en-US')}</p>
                 <p><strong>End:</strong> {new Date(appointment.End).toLocaleTimeString('en-US')}</p>
-                <h1 className='text-3xl text-red-600' >date </h1>
-                <strong>Dentist:</strong> {`${appointment.Dentist.FirstName} ${appointment.Dentist.MiddleName ? `${appointment.Dentist.MiddleName} ` : ''}${appointment.Dentist.LastName}`}
-
+                <p className=''><strong>Date:</strong> {new Date(appointment.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                <p> <strong>Dentist:</strong> {`${appointment.Dentist.FirstName} ${appointment.Dentist.MiddleName ? `${appointment.Dentist.MiddleName} ` : ''}${appointment.Dentist.LastName}`}</p>
                 <ProceduresTable appointment={appointment} />
 
-
-
                 {/* Editable Amount */}
-
-
                 <p><strong>Notes:</strong> {appointment.notes || 'N/A'}</p>
 
                 {/* Edit Notes Section */}
@@ -396,6 +429,27 @@ export default function AppointmentDetails() {
                             <button
                                 className="px-4 py-2 text-black bg-gray-300 rounded-lg hover:bg-gray-400"
                                 onClick={handleModalCancel}
+                            >
+                                No
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showPaymentModal && (
+                <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-60 z-50 flex justify-center items-center">
+                    <div className="bg-accent p-6 rounded-lg shadow-lg w-80">
+                        <p>Are you sure you want to mark this appointment as {appointment.isfullypaid ? 'Not Paid' : 'Paid'}?</p>
+                        <div className="flex justify-end space-x-4 mt-4">
+                            <button
+                                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+                                onClick={handlePaymentStatusUpdate}
+                            >
+                                Yes
+                            </button>
+                            <button
+                                className="px-4 py-2 text-black bg-gray-300 rounded-lg hover:bg-gray-400"
+                                onClick={handleClosePaymentModal}
                             >
                                 No
                             </button>

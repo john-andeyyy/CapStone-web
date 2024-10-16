@@ -123,7 +123,7 @@ const Notification_bell = () => {
                                         <div className="flex justify-between items-center">
                                             <div className="flex flex-col">
                                                 <strong className="text-sm">
-                                                    {notification.user_Appointment_Title || 'No Title'}
+                                                    {notification.user_Appointment_Title || notification.user_Appointment_message}
                                                 </strong>
                                             </div>
                                             <span className="text-xs text-gray-500">{formatDate(notification.createdAt)}</span>

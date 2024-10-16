@@ -30,15 +30,17 @@ const DentistSchedule = () => {
             setError(null);
             try {
                 const response = await axios.get(`${BASEURL}/dentist/appointmentlist/${id}`, { withCredentials: true });
+                const dentistName = response.data[0]?.DentistName || 'N/A';
                 if (response.status === 200) {
                     const approvedAppointments = response.data.filter((appointment) => appointment.Status === 'Approved');
-                    const dentistName = response.data[0]?.DentistName || 'N/A';
                     setDentistName(dentistName);
-                    console.log(approvedAppointments)
                     setAppointments(approvedAppointments);
                     filterAppointments(approvedAppointments, filter, selectedYear);
                 } else {
-                    setError('No appointments found.');
+                    // setError('No appointments found.');
+                    setDentistName(dentistName);
+                    setAppointments(approvedAppointments);
+                    filterAppointments(approvedAppointments, filter, selectedYear);
                 }
             } catch (err) {
                 console.error('Error fetching appointments:', err);
