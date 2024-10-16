@@ -1,14 +1,62 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { showToast } from '../ToastNotification';
+
+const Modal = ({ isOpen, onClose, onSubmit, editFrom, editTo, setEditFrom, setEditTo }) => {
+    if (!isOpen) return null; // Don't render anything if the modal is closed
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-white p-4 rounded shadow-lg">
+                <h2 className="text-xl font-bold mb-4">Edit Unavailable Time</h2>
+                <form onSubmit={onSubmit}>
+                    <div className="flex flex-col space-y-4">
+                        <div>
+                            <label htmlFor="editFromDate" className="block mb-1">From:</label>
+                            <input
+                                id="editFromDate"
+                                type="datetime-local"
+                                value={editFrom}
+                                onChange={(e) => setEditFrom(e.target.value)}
+                                className="border rounded px-2 py-1"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="editToDate" className="block mb-1">To:</label>
+                            <input
+                                id="editToDate"
+                                type="datetime-local"
+                                value={editTo}
+                                onChange={(e) => setEditTo(e.target.value)}
+                                className="border rounded px-2 py-1"
+                                required
+                            />
+                        </div>
+                        <div className="flex justify-between">
+                            <button type="submit" className="bg-blue-500 text-white px-4 py-1 rounded">
+                                Update Unavailable Time
+                            </button>
+                            <button type="button" onClick={onClose} className="text-red-500 px-4 py-1 rounded">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
 
 const UnavailableDentist = ({ dentistId }) => {
     const [unavailableList, setUnavailableList] = useState([]);
     const [error, setError] = useState(null);
     const [fromDate, setFromDate] = useState('');
     const [toDate, setToDate] = useState('');
-    const [editId, setEditId] = useState(null); // Track which item is being edited
-    const [editFrom, setEditFrom] = useState(''); // State for editing from date
-    const [editTo, setEditTo] = useState(''); // State for editing to date
+    const [editId, setEditId] = useState(null);
+    const [editFrom, setEditFrom] = useState('');
+    const [editTo, setEditTo] = useState('');
+    const [modalOpen, setModalOpen] = useState(false); // Modal visibility state
     const BASEURL = import.meta.env.VITE_BASEURL;
 
     const fetchUnavailableTimes = async () => {
@@ -39,13 +87,14 @@ const UnavailableDentist = ({ dentistId }) => {
             from: fromDate,
             to: toDate,
         };
+        showToast('success', ' successful!');
 
         try {
             const response = await axios.post(`${BASEURL}/dentist/dentists/${dentistId}/unavailable`, newUnavailable, { withCredentials: true });
             setUnavailableList((prev) => [...prev, response.data]);
             setFromDate('');
             setToDate('');
-            fetchUnavailableTimes(); // Refresh the list after adding
+            fetchUnavailableTimes();
         } catch (err) {
             setError(err.response?.data?.message || 'Error adding unavailable time');
         }
@@ -54,17 +103,19 @@ const UnavailableDentist = ({ dentistId }) => {
     const deleteUnavailableTime = async (id) => {
         try {
             await axios.delete(`${BASEURL}/dentist/dentists/${dentistId}/unavailable/${id}`, { withCredentials: true });
-            setUnavailableList((prev) => prev.filter((item) => item.id !== id));
+            setUnavailableList((prev) => prev.filter((item) => item._id !== id));
+            showToast('success', ' Delete successful!');
+
         } catch (err) {
             setError(err.response?.data?.message || 'Error deleting unavailable time');
         }
     };
 
     const initiateEdit = (item) => {
-        console.log('Editing item:', item); // Debug log
-        setEditId(item.id);
+        setEditId(item._id);
         setEditFrom(item.from);
         setEditTo(item.to);
+        setModalOpen(true); // Open the modal
     };
 
     const updateUnavailableTime = async (e) => {
@@ -77,12 +128,15 @@ const UnavailableDentist = ({ dentistId }) => {
         try {
             const response = await axios.put(`${BASEURL}/dentist/dentists/${dentistId}/unavailable/${editId}`, updatedUnavailable, { withCredentials: true });
             setUnavailableList((prev) =>
-                prev.map((item) => (item.id === editId ? response.data : item))
+                prev.map((item) => (item._id === editId ? response.data : item))
             );
-            setEditId(null); // Reset edit state
+            setModalOpen(false); // Close the modal
+            setEditId(null);
             setEditFrom('');
             setEditTo('');
-            fetchUnavailableTimes(); // Refresh the list after updating
+            fetchUnavailableTimes();
+            showToast('success', ' Udpate successful!');
+
         } catch (err) {
             setError(err.response?.data?.message || 'Error updating unavailable time');
         }
@@ -93,16 +147,16 @@ const UnavailableDentist = ({ dentistId }) => {
             <h2 className="text-xl font-bold mb-4">Manage Unavailable Times for Dentist</h2>
             {error && <p className="text-red-500">{error}</p>}
 
-            {/* Form for adding/updating unavailable times */}
-            <form onSubmit={editId ? updateUnavailableTime : addUnavailableTime} className="mb-4">
+            {/* Form for adding unavailable times */}
+            <form onSubmit={addUnavailableTime} className="mb-4">
                 <div className="flex space-x-4">
                     <div>
                         <label htmlFor="fromDate" className="block mb-1">From:</label>
                         <input
                             id="fromDate"
                             type="datetime-local"
-                            value={editId ? editFrom : fromDate}
-                            onChange={(e) => (editId ? setEditFrom(e.target.value) : setFromDate(e.target.value))}
+                            value={fromDate}
+                            onChange={(e) => setFromDate(e.target.value)}
                             className="border rounded px-2 py-1"
                             required
                         />
@@ -112,14 +166,14 @@ const UnavailableDentist = ({ dentistId }) => {
                         <input
                             id="toDate"
                             type="datetime-local"
-                            value={editId ? editTo : toDate}
-                            onChange={(e) => (editId ? setEditTo(e.target.value) : setToDate(e.target.value))}
+                            value={toDate}
+                            onChange={(e) => setToDate(e.target.value)}
                             className="border rounded px-2 py-1"
                             required
                         />
                     </div>
                     <button type="submit" className="bg-blue-500 text-white px-4 py-1 rounded">
-                        {editId ? 'Update Unavailable Time' : 'Add Unavailable Time'}
+                        Add Unavailable Time
                     </button>
                 </div>
             </form>
@@ -138,8 +192,8 @@ const UnavailableDentist = ({ dentistId }) => {
                     </thead>
                     <tbody>
                         {unavailableList.map((item) => (
-                            <tr key={item.id || `${item.from}-${item.to}`}>
-                                <td className="border px-4 py-2">{item.id}</td>
+                            <tr key={item._id || `${item.from}-${item._to}`}>
+                                <td className="border px-4 py-2">{item._id}</td>
                                 <td className="border px-4 py-2">{formatDate(item.from)}</td>
                                 <td className="border px-4 py-2">{formatDate(item.to)}</td>
                                 <td className="border px-4 py-2">
@@ -151,7 +205,7 @@ const UnavailableDentist = ({ dentistId }) => {
                                     </button>
                                     <button
                                         className="text-red-500 hover:underline ml-2"
-                                        onClick={() => deleteUnavailableTime(item.id)}
+                                        onClick={() => deleteUnavailableTime(item._id)}
                                     >
                                         Delete
                                     </button>
@@ -163,6 +217,17 @@ const UnavailableDentist = ({ dentistId }) => {
             ) : (
                 <p className="text-gray-500">No unavailable times found.</p>
             )}
+
+            {/* Modal for editing unavailable time */}
+            <Modal
+                isOpen={modalOpen}
+                onClose={() => setModalOpen(false)}
+                onSubmit={updateUnavailableTime}
+                editFrom={editFrom}
+                editTo={editTo}
+                setEditFrom={setEditFrom}
+                setEditTo={setEditTo}
+            />
         </div>
     );
 };
