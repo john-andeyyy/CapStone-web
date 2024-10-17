@@ -2,7 +2,7 @@ import React from 'react';
 
 const TeethSVG = ({ status,id, name, onClick, notes, isHovered, onMouseEnter, onMouseLeave }) => {
     const toothColor = status === 'missing' ? '#000000' : isHovered ? '#22C55E' : '#ffffff'; 
-
+// console.log(status)
     const handleHover = () => {
         if (onMouseEnter) {
             onMouseEnter(id); // Pass tooth ID to parent component on hover enter

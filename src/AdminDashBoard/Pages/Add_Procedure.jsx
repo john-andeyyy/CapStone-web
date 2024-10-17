@@ -216,7 +216,7 @@ export default function Add_Procedure() {
         </div>
 
       </div>
-      <div className="flex gap-4 mb-4 bg-white">
+      <div className="flex gap-4 mb-4 ">
         <button
           className={`btn ${availabilityFilter === true ? 'btn-success' : 'btn-outline'}`}
           onClick={() => setAvailabilityFilter(true)}

@@ -171,10 +171,10 @@ export default function Sidebar() {
                                             <FaFileAlt className="mr-3" />
                                             <span>Medical Requests</span>
                                         </li>
-                                        <li className={`p-2 rounded cursor-pointer flex items-center ${activeItem === 'completedRequests' ? 'bg-secondary text-gray-800' : 'hover:bg-secondary'}`} onClick={() => handleNavigate('/Medical_requests/completed', 'completedRequests')}>
+                                        {/* <li className={`p-2 rounded cursor-pointer flex items-center ${activeItem === 'completedRequests' ? 'bg-secondary text-gray-800' : 'hover:bg-secondary'}`} onClick={() => handleNavigate('/Medical_requests/completed', 'completedRequests')}>
                                             <span className="material-symbols-outlined mr-2">done</span>
                                             Completed Requests
-                                        </li>
+                                        </li> */}
                                     </ul>
                                 )}
                             </li>
