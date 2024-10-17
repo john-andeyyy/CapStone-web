@@ -1,54 +1,64 @@
 import React, { useEffect, useState } from 'react';
 import TeethSVG from '../../GrapicsFiles/Teeth'; // Adjust the path as needed
 import axios from 'axios';
+import MedicalHistoryUpdate from './MedicalHistory/MedicalHistoryUpdate';
 
 
-const Tooth2d = ({ userIds}) => {
+const Tooth2d = ({ userIds }) => {
     const Baseurl = import.meta.env.VITE_BASEURL
-    const userId = userIds 
-    const [notes, setNotes] = useState({}); // State to hold notes for each tooth
+    const userId = userIds
+    const [userid, setuserId] = useState(userIds);
+    const [notes, setNotes] = useState({});
+
     const [hoveredTooth, setHoveredTooth] = useState(null); // State to track hovered tooth ID
     const [selectedTooth, setSelectedTooth] = useState(null); // State to track selected tooth for modal
     const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
     const [newNote, setNewNote] = useState(''); // State for new note input
     const [editingIndex, setEditingIndex] = useState(null); // Index of the note being edited
     const [expandedTooth, setExpandedTooth] = useState(null); // State to track expanded tooth for notes
-    const [topCount, settopCount] = useState(null); 
-    const [bottomCount, setbottomCount] = useState(null); 
+    const [topCount, settopCount] = useState(null);
+    const [bottomCount, setbottomCount] = useState(null);
     const [expandedTeeth, setExpandedTeeth] = useState({});
+    const [showcreate, setshowcreate] = useState(false);
+
+    const fetchMedicalHistory = async () => {
+        try {
+            const response = await axios.get(`${Baseurl}/MedicalHistory/viewByUserId/${userId}`);
+            const data = response.data;
+            console.log('Tooth2d', data)
+
+            if (response.data.length > 0) {
+                const record = response.data[0]; // Assuming you want the first record
+
+                settopCount(record.topTeeth.length);
+                setbottomCount(record.bottomTeeth.length);
+
+                const initialToothData = {};
+                record.topTeeth.forEach(tooth => {
+                    initialToothData[`top-${tooth.toothNumber - 1}`] = {
+                        notes: tooth.notes || [],
+                        status: tooth.status || 'unknown', 
+                    };
+                });
+                record.bottomTeeth.forEach(tooth => {
+                    initialToothData[`bottom-${tooth.toothNumber - 1}`] = {
+                        notes: tooth.notes || [],
+                        status: tooth.status || 'unknown',
+                    };
+                });
+                setNotes(initialToothData); 
+                setshowcreate(false)
+
+            } else {
+                setshowcreate(true)
+            }
+        } catch (error) {
+            console.error('Error fetching medical history:', error);
+        }
+    };
 
     useEffect(() => {
-        const fetchMedicalHistory = async () => {
-            try {
-                const response = await axios.get(`${Baseurl}/MedicalHistory/viewByUserId/${userId}`);
-                const data = response.data;
 
-                if (response.data.length > 0) {
-                    const record = response.data[0]; // Assuming you want the first record
-
-                    settopCount(record.topTeeth.length);
-                    setbottomCount(record.bottomTeeth.length);
-
-                    // Initialize the notes and status state with data from topTeeth and bottomTeeth
-                    const initialToothData = {};
-                    record.topTeeth.forEach(tooth => {
-                        initialToothData[`top-${tooth.toothNumber - 1}`] = {
-                            notes: tooth.notes || [],
-                            status: tooth.status || 'unknown', // Default to 'unknown' if status is missing
-                        };
-                    });
-                    record.bottomTeeth.forEach(tooth => {
-                        initialToothData[`bottom-${tooth.toothNumber - 1}`] = {
-                            notes: tooth.notes || [],
-                            status: tooth.status || 'unknown',
-                        };
-                    });
-                    setNotes(initialToothData); // Set the notes and status state with fetched data
-                }
-            } catch (error) {
-                console.error('Error fetching medical history:', error);
-            }
-        };
 
         fetchMedicalHistory();
     }, [userId]);
@@ -138,11 +148,11 @@ const Tooth2d = ({ userIds}) => {
     const toggleToothExpansion = (toothId) => {
         setExpandedTeeth((prevState) => ({
             ...prevState,
-            [toothId]: !prevState[toothId], 
+            [toothId]: !prevState[toothId],
         }));
     };
 
-    
+
     // Function to determine if a tooth ID is being hovered
     const isToothHovered = (id) => hoveredTooth === id;
 
@@ -157,6 +167,9 @@ const Tooth2d = ({ userIds}) => {
 
     return (
         <div className="flex flex-col items-center py-10">
+            {showcreate && <MedicalHistoryUpdate userid={userid} fetchMedicalHistory={fetchMedicalHistory }/>}
+
+
             <div className="mb-4">
                 <div className="flex flex-wrap items-center justify-center space-x-4">
                     {/* Render SVG elements in the top row */}
@@ -217,7 +230,7 @@ const Tooth2d = ({ userIds}) => {
                                 onMouseLeave={handleMouseLeave}
                             >
                                 <div className="flex items-center justify-between mb-2">
-                                    <div className={`text-lg font-semibold ${isToothHighlighted ? 'text-yellow-300' : ''}`}>
+                                    <div className={`text-lg font-semibold ${isToothHighlighted ? 'text-red-500' : ''}`}>
                                         {index < topCount ? `Top: ${index + 1}` : `Bottom: ${index - topCount + 1}`}
                                         <span className="uppercase"> {toothStatus}</span> {/* Display the status */}
                                     </div>
@@ -272,7 +285,7 @@ const Tooth2d = ({ userIds}) => {
                             <table className="table-auto w-full text-left border">
                                 <thead>
                                     <tr
-                                        // className="bg-darkgray-200"
+                                    // className="bg-darkgray-200"
                                     >
                                         <th className="px-4 py-2">Note</th>
                                         <th className="px-4 py-2">Actions</th>

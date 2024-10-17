@@ -1,10 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ThemeController from '../GuestComponents/ThemeController';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export default function GuestNavBar() {
+
     const navigate = useNavigate()
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [name, setname] = useState([]);
+
+    const BASEURL = import.meta.env.VITE_BASEURL;
+
+    useEffect(() => {
+        axios.get(`${BASEURL}/Contactus/contactus`)
+            .then(response => {
+                if (response.data.length > 0) {
+                    setname(response.data[0]);
+                }
+            })
+            .catch(error => {
+                console.error('There was an error fetching the contact data:', error);
+            });
+    }, []);
+
+
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -14,7 +33,7 @@ export default function GuestNavBar() {
         <div className="bg-base-100 sticky top-0 z-50">
             <div className="navbar container mx-auto flex items-center justify-between flex-wrap">
                 <div className="flex-1">
-                    <a className="btn btn-ghost text-xl text-green-400" onClick={() => navigate('/')}>DenTeam</a>
+                    <a className="btn btn-ghost text-xl text-green-400" onClick={() => navigate('/')}>{name.DentalName}</a>
                 </div>
                 <div className="block lg:hidden">
                     <button onClick={toggleMenu} className="btn btn-ghost text-green-500">
@@ -32,17 +51,20 @@ export default function GuestNavBar() {
                             <button className="btn btn-ghost" onClick={() => { navigate('/AllServices') }}>SERVICES</button>
                         </li>
                         <li className="mb-2 md:mb-0">
-                            <button className="btn btn-ghost">CONTACT</button>
+                            <button className="btn btn-ghost"
+                                onClick={() => navigate('ContactusPage')}
+                            >CONTACT</button>
                         </li>
                         <li className="mb-2 md:mb-0">
-                            <button className="btn btn-ghost">TIPS</button>
+                            <button className="btn btn-ghost"
+                                onClick={() => navigate('TipPage')}>TIPS</button>
                         </li>
                         <li className="mb-2 md:mb-0">
                             <button className="btn btn-ghost"
                                 onClick={() => { navigate('The_DeanTeam') }}
                             >The DenTeam </button>
                         </li>
-{/*                         
+                        {/*                         
                         <li className="mb-2 md:mb-0">
                             <button className="btn btn-outline btn-success"
                                 onClick={() => {

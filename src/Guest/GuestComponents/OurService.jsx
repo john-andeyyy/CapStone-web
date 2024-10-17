@@ -14,7 +14,8 @@ export default function OurService() {
                     throw new Error('Network response was not ok');
                 }
                 const data = await response.json();
-                setProcedures(data);
+                const availableonly = data.filter((pro) => pro.available == true)
+                setProcedures(availableonly);
             } catch (error) {
                 console.error('Error fetching procedures:', error);
             }

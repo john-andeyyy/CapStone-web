@@ -1,7 +1,7 @@
 import React from 'react';
 
-const TeethSVG = ({ id, name, onClick, notes, isHovered, onMouseEnter, onMouseLeave }) => {
-    const toothColor = isHovered ? '#F0A500' : '#ffffff'; // Change color to black if hovered
+const TeethSVG = ({ status,id, name, onClick, notes, isHovered, onMouseEnter, onMouseLeave }) => {
+    const toothColor = status === 'missing' ? '#000000' : isHovered ? '#22C55E' : '#ffffff'; 
 
     const handleHover = () => {
         if (onMouseEnter) {

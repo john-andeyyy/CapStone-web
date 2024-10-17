@@ -47,6 +47,9 @@ import TipPage from './Guest/GuestComponents/TipPage';
 import IncomeReport from './AdminDashBoard/Pages/ReportPages/Pages/IncomeReport';
 import Patient_Procedures_done from './AdminDashBoard/Pages/ReportPages/Pages/Patient_Procedures_done';
 import UnavailableClinic from './AdminDashBoard/Components/UnavailableClinic';
+import ContactusPage from './Guest/GuestPages/ContactusPage';
+import MedicalHistoryCreate from './AdminDashBoard/Components/MedicalHistory/MedicalHistoryCreate';
+import MedicalHistoryUpdate from './AdminDashBoard/Components/MedicalHistory/MedicalHistoryUpdate';
 
 function AdminRoutes() {
   const location = useLocation();
@@ -124,12 +127,14 @@ function AdminRoutes() {
         <Route path="/Hero_edit" element={<Hero_Crud />} />
         <Route path="/TipsList" element={<TipsList />} />
 
-
+{/* //! CHART */}
+        <Route path="/Chart" element={<ShowChart />} />
         {/* //! palyground */}
 
-        <Route path="/Chart" element={<ShowChart />} />
 
 
+        <Route path="/MedicalHistoryCreate/:patientId" element={<MedicalHistoryCreate />} />
+        <Route path="/MedicalHistoryUpdate/:patientId" element={<MedicalHistoryUpdate />} />
 
       </Routes>
     </div>
@@ -185,7 +190,8 @@ function App() {
             <Route path="/AllServices" element={<AllServices />} />
             <Route path="/The_DeanTeam" element={<The_DeanTeam />} />
             <Route path="/Forget_pass" element={<Forget_pass />} />
-              <Route path="/TipPage" element={<TipPage />} />
+            <Route path="/TipPage" element={<TipPage />} />
+            <Route path="/ContactusPage" element={<ContactusPage />} />
 
           </Routes>
           <Footer />

@@ -4,11 +4,13 @@ import { useParams } from 'react-router-dom';
 import { showToast } from '../Components/ToastNotification';
 import { useNavigate } from 'react-router-dom';
 import ProceduresTable from '../Components/AppointmentDetails/ProceduresTable';
+import Tooth2d from '../Components/Tooth2d';
 
 export default function AppointmentDetails() {
     const navigate = useNavigate();
 
     const { id } = useParams();
+    const [userid, setuserid] = useState('');
     const [appointment, setAppointment] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [editStatus, seteditStatus] = useState(false);
@@ -20,6 +22,7 @@ export default function AppointmentDetails() {
     const [fullScreenImage, setFullScreenImage] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [showimage, setshowimage] = useState(false);
+    const [show2d, setshow2d] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
     const [modalAction, setModalAction] = useState(null);
 
@@ -34,7 +37,7 @@ export default function AppointmentDetails() {
             );
 
             const data = response.data;
-            console.log(data)
+            setuserid(data.patient._id)
             setAppointment(data);
             setOriginalAppointment({
                 Before: data.BeforeImage || '',
@@ -58,7 +61,6 @@ export default function AppointmentDetails() {
         }
     };
 
-    // Function to fetch all procedures
 
 
     useEffect(() => {
@@ -194,8 +196,11 @@ export default function AppointmentDetails() {
     const toggleImages = () => {
         setshowimage(prev => !prev);
     };
+    const toggle2d = () => {
+        setshow2d(prev => !prev);
+    };
     return (
-        <div className="p-6 mx-auto">
+        <div className="p-6 mx-auto max-w-7xl">
             {/* max-w-5xl  */}
             <button
                 onClick={() => navigate(-1)}
@@ -208,7 +213,7 @@ export default function AppointmentDetails() {
                 <div>
                     <div className='pt-4'>
                         <h1 className="text-3xl font-bold ">Appointment Details </h1>
-                        <p className={`pt-2 text-xl font-semibold `}>
+                        <div className={`pt-2 text-xl font-semibold `}>
                             <div className='space-x-2'>
                                 <span>Payment Status: </span>
                                 <span className={`${appointment.isfullypaid ? 'text-green-600' : 'text-red-600'}`}>
@@ -222,9 +227,7 @@ export default function AppointmentDetails() {
                                     {appointment.isfullypaid ? 'Mark as Not Paid' : 'Mark as Paid'}
                                 </button>
                             </div>
-
-
-                        </p>
+                        </div>
 
 
                         <div className="flex items-center space-x-4">
@@ -252,7 +255,6 @@ export default function AppointmentDetails() {
                                     </select>
                                 )}
                             </p>
-
                             <div className='py-3'>
                                 <button
                                     // px-5 py-2
@@ -262,7 +264,6 @@ export default function AppointmentDetails() {
                                     {editStatus ? 'Cancel Edit' : 'Update'}
                                 </button>
                             </div>
-
                             {editStatus && (
                                 <button
                                     className="p-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
@@ -273,14 +274,11 @@ export default function AppointmentDetails() {
                         </div>
                     </div>
 
-
-
                 </div>
                 <div className='flex space-x-3'>
                     <button
                         className={`p-3 w-32 ${isEditing ? 'bg-red-500' : 'bg-yellow-600'} text-white rounded-lg hover:${isEditing ? 'bg-gray-600' : 'bg-yellow-500'} transition`}
-                        onClick={() => isEditing ? handleCancelEdit() : setIsEditing(true)}
-                    >
+                        onClick={() => isEditing ? handleCancelEdit() : setIsEditing(true)}>
                         {isEditing ? 'Cancel Edit' : 'Edit'}
                     </button>
                     <div className="flex space-x-3">
@@ -297,24 +295,17 @@ export default function AppointmentDetails() {
                 </div>
             </div>
 
-
-
             <div className="shadow-md rounded-lg p-6 mb-6 space-y-4">
                 <p><strong>Patient Name:</strong> {appointment.patient?.FirstName || 'N/A'} {appointment.patient?.LastName || 'N/A'}</p>
                 <p><strong>Start:</strong> {new Date(appointment.Start).toLocaleTimeString('en-US')}</p>
                 <p><strong>End:</strong> {new Date(appointment.End).toLocaleTimeString('en-US')}</p>
                 <p className=''><strong>Date:</strong> {new Date(appointment.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                 <p> <strong>Dentist:</strong> {`${appointment.Dentist.FirstName} ${appointment.Dentist.MiddleName ? `${appointment.Dentist.MiddleName} ` : ''}${appointment.Dentist.LastName}`}</p>
-                <ProceduresTable appointment={appointment} />
-
-                {/* Editable Amount */}
+                <p><strong>Request to Cancel:</strong> {appointment.RequestToCancel ? 'Yes' : 'No'}</p>
+                <p><strong>Request for Medical Certificate:</strong> {appointment.medcertiStatus}</p>
+                <h1 className='text-3xl text-red-600' >add here a button to send the medical cerificacte to the user email</h1>
                 <p><strong>Notes:</strong> {appointment.notes || 'N/A'}</p>
-
-                {/* Edit Notes Section */}
-                {!isEditing ? (
-                    <>
-                    </>
-                ) : (
+                {isEditing && (
                     <div className="flex flex-col">
                         <p>Enter new notes: </p>
                         <textarea
@@ -326,85 +317,117 @@ export default function AppointmentDetails() {
                     </div>
                 )}
 
+                <ProceduresTable appointment={appointment} />
 
-                <p><strong>Request to Cancel:</strong> {appointment.RequestToCancel ? 'Yes' : 'No'}</p>
-                <p><strong>Request for Medical Certificate:</strong> {appointment.medcertiStatus}</p>
 
-                <h1 className='text-3xl text-red-600' >add here a button to send the medical cerificacte to the user email</h1>
+
+
+
+
+
                 <div className="flex justify-end">
                     <button className='btn bg-green-500 hover:bg-green-300 text-black'
                         onClick={() => toggleImages()}>
+                        <span className="material-symbols-outlined">
+                            {showimage ? 'visibility' : 'visibility_off'}
+                        </span>
                         {showimage ? 'Hide Images' : 'Show Images'}
                     </button>
                 </div>
 
                 {showimage && (
-                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-                        <div>
-                            <img
-                                src={previewImages.Before || appointment.BeforeImage || '/image-not-available.png'}
-                                alt="Before"
-                                className="mb-2 rounded-lg shadow-lg cursor-pointer"
-                                onClick={() => handleImageClick(previewImages.Before || appointment.BeforeImage)}
-                            />
-                            <label className="block mb-2 font-medium">Before Image:</label>
+                    <div>
+                        <h1 className="text-2xl font-bold mb-6 text-center">Before After Xray Section</h1>
 
-                            {isEditing && (
-                                <div className="mb-4">
-                                    <label className="block mb-2 font-medium">Upload New Before Image:</label>
-                                    <input
-                                        type="file"
-                                        onChange={(e) => handleFileChange(e, 'Before')}
-                                        className="p-2 border border-gray-300 rounded-lg w-full"
-                                    />
-                                </div>
-                            )}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {/* Before Image */}
+                            <div className="flex flex-col items-center">
+                                <img
+                                    src={previewImages.Before || appointment.BeforeImage || '/image-not-available.png'}
+                                    alt="Before"
+                                    className="mb-2 rounded-lg shadow-lg cursor-pointer"
+                                    onClick={() => handleImageClick(previewImages.Before || appointment.BeforeImage)}
+                                />
+                                <label className="block mb-2 font-medium">Before Image:</label>
+                                {isEditing && (
+                                    <div className="mb-4">
+                                        <label className="block mb-2 font-medium">Upload New Before Image:</label>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={(e) => handleFileChange(e, 'Before')}
+                                            className="p-2 border border-gray-300 rounded-lg w-full"
+                                        />
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* After Image */}
+                            <div className="flex flex-col items-center">
+                                <img
+                                    src={previewImages.After || appointment.AfterImage || '/image-not-available.png'}
+                                    alt="After"
+                                    className="mb-2 rounded-lg shadow-lg cursor-pointer"
+                                    onClick={() => handleImageClick(previewImages.After || appointment.AfterImage)}
+                                />
+                                <label className="block mb-2 font-medium">After Image:</label>
+                                {isEditing && (
+                                    <div className="mb-4">
+                                        <label className="block mb-2 font-medium">Upload New After Image:</label>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={(e) => handleFileChange(e, 'After')}
+                                            className="p-2 border border-gray-300 rounded-lg w-full"
+                                        />
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* X-ray Image */}
+                            <div className="flex flex-col items-center">
+                                <img
+                                    src={previewImages.Xray || appointment.XrayImage || '/image-not-available.png'}
+                                    alt="Xray"
+                                    className="mb-2 rounded-lg shadow-lg cursor-pointer"
+                                    onClick={() => handleImageClick(previewImages.Xray || appointment.XrayImage)}
+                                />
+                                <label className="block mb-2 font-medium">Xray Image:</label>
+                                {isEditing && (
+                                    <div className="mb-4">
+                                        <label className="block mb-2 font-medium">Upload New Xray Image:</label>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={(e) => handleFileChange(e, 'Xray')}
+                                            className="p-2 border border-gray-300 rounded-lg w-full"
+                                        />
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
-                        <div>
-                            <img
-                                src={previewImages.After || appointment.AfterImage || '/image-not-available.png'}
-                                alt="After"
-                                className="mb-2 rounded-lg shadow-lg cursor-pointer"
-                                onClick={() => handleImageClick(previewImages.After || appointment.AfterImage)}
-                            />
-                            <label className="block mb-2 font-medium">After Image:</label>
-
-                            {isEditing && (
-                                <div className="mb-4">
-                                    <label className="block mb-2 font-medium">Upload New After Image:</label>
-                                    <input
-                                        type="file"
-                                        onChange={(e) => handleFileChange(e, 'After')}
-                                        className="p-2 border border-gray-300 rounded-lg w-full"
-                                    />
-                                </div>
-                            )}
-                        </div>
-
-                        <div>
-                            <img
-                                src={previewImages.Xray || appointment.XrayImage || '/image-not-available.png'}
-                                alt="Xray"
-                                className="mb-2 rounded-lg shadow-lg cursor-pointer"
-                                onClick={() => handleImageClick(previewImages.Xray || appointment.XrayImage)}
-                            />
-                            <label className="block mb-2 font-medium">Xray Image:</label>
-
-                            {isEditing && (
-                                <div className="mb-4">
-                                    <label className="block mb-2 font-medium">Upload New Xray Image:</label>
-                                    <input
-                                        type="file"
-                                        onChange={(e) => handleFileChange(e, 'Xray')}
-                                        className="p-2 border border-gray-300 rounded-lg w-full"
-                                    />
-                                </div>
-                            )}
-                        </div>
                     </div>
+
                 )}
 
+                <div className="flex justify-end">
+                    <button className='btn bg-green-500 hover:bg-green-300 text-black'
+                        onClick={() => toggle2d()}>
+                        <span className="material-symbols-outlined">
+                            {show2d ? 'visibility' : 'visibility_off'}
+                        </span>
+                        {show2d ? 'Hide Medical History (2d)' : 'Show Medical History (2d)'}
+                    </button>
+                </div>
+                {show2d &&
+                    <div>
+                        <h1 className="text-2xl font-bold mb-6 text-center">Medical History Section</h1>
+
+                        <Tooth2d userIds={userid} />
+                    </div>
+
+                }
             </div>
 
             {/* Fullscreen Image View */}

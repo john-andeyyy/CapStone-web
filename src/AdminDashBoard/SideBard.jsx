@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { get_profile } from './Fetchs/Admin/admin_profile';
 import ThemeController from '../Guest/GuestComponents/ThemeController';
 import Daisyui_modal from './Components/Daisyui_modal';
-
+import axios from 'axios';
 export default function Sidebar() {
     const [isOpen, setIsOpen] = useState(false);
     const [activeItem, setActiveItem] = useState('general');
@@ -29,9 +29,21 @@ export default function Sidebar() {
             console.error('Error fetching profile:', error);
         }
     };
+    const [dentalname, setdentalname] = useState([]);
 
     useEffect(() => {
         fetchProfile();
+        const BASEURL = import.meta.env.VITE_BASEURL;
+
+        axios.get(`${BASEURL}/Contactus/contactus`)
+            .then(response => {
+                if (response.data.length > 0) {
+                    setdentalname(response.data[0]);
+                }
+            })
+            .catch(error => {
+                console.error('There was an error fetching the contact data:', error);
+            });
     }, []);
 
     const handleNavigate = (path, item) => {
@@ -77,6 +89,8 @@ export default function Sidebar() {
         window.location.reload();
     };
 
+
+
     return (
         <div className='text-white'>
             <button
@@ -93,7 +107,7 @@ export default function Sidebar() {
                             <span className="material-symbols-outlined text-red-500">logout</span>
                         </button>
                         <h2 className="text-xl font-bold hidden md:block">
-                            <span className='text-white'>Alejandria's Dental</span> Clinic
+                            <span className='text-white'>{dentalname.DentalName}</span> Clinic
                         </h2>
                         <button onClick={() => setIsOpen(!isOpen)} className="md:hidden">
                             {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
@@ -211,7 +225,7 @@ export default function Sidebar() {
                                 )}
                             </li> */}
 
-                            
+
                         </ul>
                     </div>
                 </div>

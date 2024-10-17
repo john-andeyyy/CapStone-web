@@ -42,22 +42,28 @@ const PatientProfile = () => {
                 }
             );
 
-            setFullPatient(response.data); // Store full patient details
+            // Store full patient details
+            setFullPatient(response.data);
             setPatient({
                 FirstName: response.data.FirstName || "...",
                 LastName: response.data.LastName || "...",
-                MiddleName: response.data.MiddleName || "...",
+                MiddleName: response.data.MiddleName || "..."
             });
 
-            const anyDone = response.data.procedureHistory.some(procedure => procedure.Status.toLowerCase() === 'done');
-            setShowButton(anyDone);
+            const history = await axios.get(
+                `${Baseurl}/Appointments/AdminUser/appointmentofuser/${id}`,
+                {
+                    withCredentials: true
+                }
+            );
+            const historydata = history.data;
+            const anyPendingOrEmpty = historydata.some(appointment =>
+                appointment.Status.toLowerCase() === 'pending' || appointment.Status === ''
+            );
 
-            const formattedProcedureHistory = response.data.procedureHistory.map(procedure => ({
-                ...procedure,
-                date: new Date(procedure.date).toLocaleDateString(),
-                Amount: `₱${procedure.Amount}`
-            }));
-            setDentalHistory(formattedProcedureHistory);
+            setShowButton(anyPendingOrEmpty);
+            setDentalHistory(historydata);
+            console.log('Formatted Procedure History', historydata);
 
         } catch (error) {
             console.log(error.message);
@@ -69,18 +75,13 @@ const PatientProfile = () => {
     }, []);
 
     const formatProcedures = (procedures) => {
-        const exampleProcedure = "Xray";
         if (procedures.length > 3) {
-            const displayedProcedures = procedures.slice(0, 2);
-            const includesExample = procedures.includes(exampleProcedure);
-            if (includesExample) {
-                return `${displayedProcedures.join(', ')}... (${exampleProcedure})`;
-            } else {
-                return `${displayedProcedures.join(', ')}...`;
-            }
+            const displayedProcedures = procedures.slice(0, 2).map(proc => proc.Procedure_name);
+            return `${displayedProcedures.join(', ')}... (${procedures.length - 2} more)`;
         }
-        return procedures.join(', ');
+        return procedures.map(proc => proc.Procedure_name).join(', ');
     };
+
 
     const handleRowClick = (id) => {
         navigate(`/appointment/${id}`);
@@ -184,12 +185,12 @@ const PatientProfile = () => {
                             </thead>
                             <tbody className="divide-y divide-gray-200">
                                 {dentalHistory.map((record) => (
-                                    <tr key={record.id} onClick={() => handleRowClick(record.id)} className="cursor-pointer">
-                                        <td className="px-2 py-4 whitespace-nowrap">{record.date}</td>
+                                    <tr key={record._id} onClick={() => handleRowClick(record._id)} className="cursor-pointer">
+                                        <td className="px-2 py-4 whitespace-nowrap">{new Date(record.date).toLocaleDateString()}</td>
                                         <td className="hidden md:table-cell px-2 py-4 whitespace-nowrap">{formatProcedures(record.procedures)}</td>
                                         <td className="hidden md:table-cell px-2 py-4 whitespace-nowrap">{record.Amount}</td>
                                         <td className="px-2 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                            {showButton && record.Status.toLowerCase() === 'done' && (
+                                            {showButton && record.Status.toLowerCase() === 'Pending' && (
                                                 <button className="text-green-500 hover:text-green-700">
                                                     <span className="hidden md:inline">📝 Create medical certificate</span>
                                                     <span className="md:hidden">📝</span>
@@ -199,6 +200,7 @@ const PatientProfile = () => {
                                     </tr>
                                 ))}
                             </tbody>
+
                         </table>
                     </div>
 

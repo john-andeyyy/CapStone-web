@@ -185,6 +185,16 @@ export default function Add_Procedure() {
     if (availabilityFilter === null) return true; // No filter applied
     return procedure.available === availabilityFilter;
   });
+  const formatDuration = (totalMinutes) => {
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    if (hours > 0) {
+      return `${hours} hrs ${minutes} mins`;
+    } else {
+      return `${minutes} mins`; // Only show minutes if there are no hours
+    }
+  };
 
 
   return (
@@ -242,7 +252,7 @@ export default function Add_Procedure() {
         {filteredAndAvailableProcedures.map((procedure) => (
           <div key={procedure._id} className='flex w-full items-center border-b py-2'>
             <div className='flex-1'>{procedure.Procedure_name}</div>
-            <div className='flex-1 hidden lg:block'>{procedure.Duration}</div>
+            <div className='flex-1 hidden lg:block'>{formatDuration(procedure.Duration)}</div>
             <div className='flex-1 hidden lg:block'>{procedure.Price}</div>
             <div className='flex-1 hidden lg:block'>
               {/* {procedure.available ? 'yes' : 'no'} */}
@@ -298,14 +308,42 @@ export default function Add_Procedure() {
           <div className="label">
             <span className="label-text">Duration</span>
           </div>
-          <input
-            type="text"
-            placeholder="Duration"
-            value={newProcedure.Duration}
-            onChange={(e) => setNewProcedure({ ...newProcedure, Duration: e.target.value })}
-            className="border p-2 mb-2 bg-white"
-            required
-          />
+          <div className="flex items-center gap-2">
+            {/* Hours Input */}
+            <input
+              type="number"
+              placeholder="Hours"
+              value={newProcedure.Duration ? Math.floor(newProcedure.Duration / 60) : ''}  // Display hours or empty if no value
+              onChange={(e) => {
+                const hours = e.target.value === '' ? '' : parseInt(e.target.value);
+                const totalMinutes = hours === '' ? (newProcedure.Duration % 60) : (hours * 60 + (newProcedure.Duration % 60));
+                setNewProcedure({ ...newProcedure, Duration: totalMinutes });
+              }}
+              className="border p-2 mb-2 bg-white w-20"
+              min="0"
+              required
+            />
+            <span>Hrs</span>
+
+            {/* Minutes Input */}
+            <input
+              type="number"
+              placeholder="Minutes"
+              value={newProcedure.Duration ? newProcedure.Duration % 60 : ''}  // Display minutes or empty if no value
+              onChange={(e) => {
+                const minutes = e.target.value === '' ? '' : parseInt(e.target.value);
+                const totalMinutes = (Math.floor(newProcedure.Duration / 60) * 60) + (minutes === '' ? 0 : minutes);
+                setNewProcedure({ ...newProcedure, Duration: totalMinutes });
+              }}
+              className="border p-2 mb-2 bg-white w-20"
+              min="0"
+              max="59"
+              required
+            />
+            <span>Mins</span>
+          </div>
+
+
           <div className="label">
             <span className="label-text">Price</span>
           </div>
@@ -394,11 +432,9 @@ export default function Add_Procedure() {
             {imagePreview && (
               <img src={imagePreview} alt="Image Preview" className="mt-2 border rounded" style={{ width: '100%', maxHeight: '200px', objectFit: 'contain' }} />
             )}
-
             <div className="label">
               <span className="label-text">Procedure Name</span>
             </div>
-
             <input
               type="text"
               placeholder="Procedure Name"
@@ -410,14 +446,42 @@ export default function Add_Procedure() {
             <div className="label">
               <span className="label-text">Duration</span>
             </div>
-            <input
-              type="text"
-              placeholder="Duration"
-              value={newProcedure.Duration}
-              onChange={(e) => setNewProcedure({ ...newProcedure, Duration: e.target.value })}
-              className="border p-2 mb-2 bg-white"
-              required
-            />
+            
+
+            <div className="flex items-center gap-2">
+              {/* Hours Input */}
+              <input
+                type="number"
+                placeholder="Hours"
+                value={newProcedure.Duration !== null ? Math.floor(newProcedure.Duration / 60) : ''}  // Show empty string if duration is null
+                onChange={(e) => {
+                  const hours = e.target.value === '' ? '' : parseInt(e.target.value);
+                  const totalMinutes = hours === '' ? (newProcedure.Duration % 60) : (hours * 60 + (newProcedure.Duration % 60));
+                  setNewProcedure({ ...newProcedure, Duration: totalMinutes });
+                }}
+                className="border p-2 mb-2 bg-white w-20"
+                min="0"
+                required
+              />
+              <span>Hrs</span>
+
+              {/* Minutes Input */}
+              <input
+                type="number"
+                placeholder="Minutes"
+                value={newProcedure.Duration !== null ? newProcedure.Duration % 60 : ''}  // Show empty string if duration is null
+                onChange={(e) => {
+                  const minutes = e.target.value === '' ? '' : parseInt(e.target.value);
+                  const totalMinutes = (Math.floor(newProcedure.Duration / 60) * 60) + (minutes === '' ? 0 : minutes);
+                  setNewProcedure({ ...newProcedure, Duration: totalMinutes });
+                }}
+                className="border p-2 mb-2 bg-white w-20"
+                min="0"
+                max="59"
+                required
+              />
+              <span>Mins</span>
+            </div>
             <div className="label">
               <span className="label-text">Price</span>
             </div>
@@ -489,7 +553,7 @@ export default function Add_Procedure() {
           </div>
           <input
             type="text"
-            value={newProcedure.Duration}
+            value={formatDuration(newProcedure.Duration)}
             readOnly
             className="border p-2 mb-2 bg-white"
           />
