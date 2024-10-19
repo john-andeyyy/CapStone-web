@@ -12,6 +12,15 @@ const AppointmentsReport = () => {
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]); // Default to today's date
     const yearsAvailable = [...new Set(appointments.map(appointment => new Date(appointment.date).getFullYear()))];
 
+    // Utility to format dates to "Month Day, Year" (e.g., October 21, 2024)
+    const formatDate = (date) => {
+        return new Date(date).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        });
+    };
+
     useEffect(() => {
         const fetchAppointments = async () => {
             try {
@@ -38,7 +47,7 @@ const AppointmentsReport = () => {
             const yearly = {};
 
             appointments.forEach(appointment => {
-                if (appointment.isfullypaid) {
+                if (appointment.status === "Approved") {
                     const date = new Date(appointment.date);
                     const dayKey = date.toISOString().split('T')[0]; // YYYY-MM-DD
                     const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`; // YYYY-MM
@@ -156,7 +165,7 @@ const AppointmentsReport = () => {
             {/* Display the selected report */}
             {selectedReport === 'daily' && (
                 <>
-                    <h2 className="text-xl font-semibold mb-2">Daily Report for {selectedDate}</h2>
+                    <h2 className="text-xl font-semibold mb-2">Daily Report for {formatDate(selectedDate)}</h2>
                     <table className="min-w-full border border-gray-300">
                         <thead>
                             <tr className="bg-accent">
@@ -169,7 +178,7 @@ const AppointmentsReport = () => {
                                 if (day === selectedDate) {
                                     return (
                                         <tr key={day} className="hover:bg-green-400 hover:text-black">
-                                            <td className="border px-4 py-2">{day}</td>
+                                            <td className="border px-4 py-2">{formatDate(day)}</td>
                                             <td className="border px-4 py-2">{amount}</td>
                                         </tr>
                                     );
@@ -196,7 +205,7 @@ const AppointmentsReport = () => {
                                 if (month.split('-')[1] === selectedMonth.toString()) {
                                     return (
                                         <tr key={month} className="hover:bg-green-400 hover:text-black">
-                                            <td className="border px-4 py-2">{month}</td>
+                                            <td className="border px-4 py-2">{new Date(0, parseInt(month.split('-')[1]) - 1).toLocaleString('default', { month: 'long' })}</td>
                                             <td className="border px-4 py-2">{amount}</td>
                                         </tr>
                                     );
@@ -208,7 +217,8 @@ const AppointmentsReport = () => {
                 </>
             )}
 
-            {selectedReport === 'yearly' && (
+            {selectedReport === 'yearly'
+ && (
                 <>
                     <h2 className="text-xl font-semibold mb-2">Yearly Report for {selectedYear}</h2>
                     <table className="min-w-full border border-gray-300">

@@ -145,7 +145,9 @@ function AdminRoutes() {
 function App() {
   const [isExpired, setIsExpired] = useState(false);
   const isLogin = localStorage.getItem('Islogin');
+  const Baseurl = import.meta.env.VITE_BASEURL
 
+  console.log(Baseurl)
   useEffect(() => {
     const timeout = parseInt(localStorage.getItem('expiresin'), 10);
     const lastActiveTime = parseInt(localStorage.getItem('lastActiveTime'), 10);
