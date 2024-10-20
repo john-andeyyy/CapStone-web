@@ -12,15 +12,6 @@ const AppointmentsReport = () => {
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]); // Default to today's date
     const yearsAvailable = [...new Set(appointments.map(appointment => new Date(appointment.date).getFullYear()))];
 
-    // Utility to format dates to "Month Day, Year" (e.g., October 21, 2024)
-    const formatDate = (date) => {
-        return new Date(date).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-        });
-    };
-
     useEffect(() => {
         const fetchAppointments = async () => {
             try {
@@ -47,7 +38,7 @@ const AppointmentsReport = () => {
             const yearly = {};
 
             appointments.forEach(appointment => {
-                if (appointment.status === "Approved") {
+                if (appointment.isfullypaid) {
                     const date = new Date(appointment.date);
                     const dayKey = date.toISOString().split('T')[0]; // YYYY-MM-DD
                     const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`; // YYYY-MM
@@ -99,158 +90,158 @@ const AppointmentsReport = () => {
     }
 
     return (
-        <div className="p-4">
+        <div className="">
             <ReportMenu />
+            <div className=" rounded-lg shadow-md">
+                <h1 className="text-2xl font-bold text-green-400 p-4">Income Report</h1>
 
-            <h1 className="text-2xl font-bold mb-4">Income Report</h1>
+                {/* Report Type Buttons */}
+                <div className="mb-4">
+                    <button className="bg-green-500 text-white py-2 px-4 rounded mx-2" onClick={() => handleReportChange('daily')}>Daily Report</button>
+                    <button className="bg-blue-500 text-white py-2 px-4 rounded mx-2" onClick={() => handleReportChange('monthly')}>Monthly Report</button>
+                    <button className="bg-yellow-500 text-white py-2 px-4 rounded mx-2" onClick={() => handleReportChange('yearly')}>Yearly Report</button>
+                </div>
 
-            {/* Report Type Buttons */}
-            <div className="mb-4">
-                <button className="bg-green-500 text-white py-2 px-4 rounded mx-2" onClick={() => handleReportChange('daily')}>Daily Report</button>
-                <button className="bg-blue-500 text-white py-2 px-4 rounded mx-2" onClick={() => handleReportChange('monthly')}>Monthly Report</button>
-                <button className="bg-yellow-500 text-white py-2 px-4 rounded mx-2" onClick={() => handleReportChange('yearly')}>Yearly Report</button>
+                {/* Date Picker for Daily Report */}
+                {selectedReport === 'daily' && (
+                    <div className="mb-4">
+                        <label htmlFor="date-picker" className="mr-2">Select Date:</label>
+                        <input
+                            type="date"
+                            id="date-picker"
+                            className="border rounded px-2 py-1"
+                            value={selectedDate}
+                            onChange={handleDateChange}
+                        />
+                        {/* Today's Button */}
+                        {selectedDate !== new Date().toISOString().split('T')[0] && (
+                            <button
+                                className="ml-4 bg-gray-500 text-white py-2 px-4 rounded"
+                                onClick={handleTodayClick}
+                            >
+                                Today
+                            </button>
+                        )}
+                    </div>
+                )}
+
+                {/* Month Selector for Monthly and Yearly Reports */}
+                {(selectedReport === 'monthly' || selectedReport === 'yearly') && (
+                    <div className="mb-4">
+                        <label htmlFor="month-select" className="mr-2">Select Month:</label>
+                        <select id="month-select" className="border rounded px-2 py-1" value={selectedMonth} onChange={handleMonthChange}>
+                            {[...Array(12)].map((_, index) => (
+                                <option key={index} value={index + 1}>
+                                    {new Date(0, index).toLocaleString('default', { month: 'long' })}
+                                </option>
+                            ))}
+                        </select>
+
+                        {/* Year Selector for Yearly Reports */}
+                        {selectedReport === 'yearly' && (
+                            <div className="mt-2">
+                                <label htmlFor="year-select" className="mr-2">Select Year:</label>
+                                <select id="year-select" className="border rounded px-2 py-1" value={selectedYear} onChange={handleYearChange}>
+                                    {yearsAvailable.map(year => (
+                                        <option key={year} value={year}>
+                                            {year}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Display the selected report */}
+                {selectedReport === 'daily' && (
+                    <>
+                        <h2 className="text-xl font-semibold mb-2">Daily Report for {selectedDate}</h2>
+                        <table className="min-w-full border border-gray-300">
+                            <thead>
+                                <tr className="bg-accent">
+                                    <th className="border px-4 py-2">Date</th>
+                                    <th className="border px-4 py-2">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {Object.entries(reportData.daily).map(([day, amount]) => {
+                                    if (day === selectedDate) {
+                                        return (
+                                            <tr key={day} className="hover:bg-green-400 hover:text-black">
+                                                <td className="border px-4 py-2">{day}</td>
+                                                <td className="border px-4 py-2">{amount}</td>
+                                            </tr>
+                                        );
+                                    }
+                                    return null;
+                                })}
+                            </tbody>
+                        </table>
+                    </>
+                )}
+
+                {selectedReport === 'monthly' && (
+                    <>
+                        <h2 className="text-xl font-semibold mb-2">Monthly Report for {new Date(new Date().getFullYear(), selectedMonth - 1).toLocaleString('default', { month: 'long' })}</h2>
+                        <table className="min-w-full border border-gray-300">
+                            <thead>
+                                <tr className="bg-accent">
+                                    <th className="border px-4 py-2">Month</th>
+                                    <th className="border px-4 py-2">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {Object.entries(reportData.monthly).map(([month, amount]) => {
+                                    if (month.split('-')[1] === selectedMonth.toString()) {
+                                        return (
+                                            <tr key={month} className="hover:bg-green-400 hover:text-black">
+                                                <td className="border px-4 py-2">{month}</td>
+                                                <td className="border px-4 py-2">{amount}</td>
+                                            </tr>
+                                        );
+                                    }
+                                    return null;
+                                })}
+                            </tbody>
+                        </table>
+                    </>
+                )}
+
+                {selectedReport === 'yearly' && (
+                    <>
+                        <h2 className="text-xl font-semibold mb-2">Yearly Report for {selectedYear}</h2>
+                        <table className="min-w-full border border-gray-300">
+                            <thead>
+                                <tr className="bg-accent">
+                                    <th className="border px-4 py-2">Month</th>
+                                    <th className="border px-4 py-2">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {Array.from({ length: 12 }, (_, index) => {
+                                    const monthKey = `${selectedYear}-${index + 1}`; // YYYY-MM
+                                    const amount = reportData.yearly[monthKey] || 0; // Default to 0 if no data
+                                    return (
+                                        <tr key={index} className="hover:bg-green-400 hover:text-black">
+                                            <td className="border px-4 py-2">{new Date(0, index).toLocaleString('default', { month: 'long' })}</td>
+                                            <td className="border px-4 py-2">₱{amount}</td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                            <tfoot>
+                                <tr className="bg-accent">
+                                    <td className="border px-4 py-2 font-bold">Total</td>
+                                    <td className="border px-4 py-2 font-bold">
+                                        ₱{Object.values(reportData.yearly).reduce((acc, curr) => acc + curr, 0)}
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </>
+                )}
             </div>
-
-            {/* Date Picker for Daily Report */}
-            {selectedReport === 'daily' && (
-                <div className="mb-4">
-                    <label htmlFor="date-picker" className="mr-2">Select Date:</label>
-                    <input
-                        type="date"
-                        id="date-picker"
-                        className="border rounded px-2 py-1"
-                        value={selectedDate}
-                        onChange={handleDateChange}
-                    />
-                    {/* Today's Button */}
-                    {selectedDate !== new Date().toISOString().split('T')[0] && (
-                        <button
-                            className="ml-4 bg-gray-500 text-white py-2 px-4 rounded"
-                            onClick={handleTodayClick}
-                        >
-                            Today
-                        </button>
-                    )}
-                </div>
-            )}
-
-            {/* Month Selector for Monthly and Yearly Reports */}
-            {(selectedReport === 'monthly' || selectedReport === 'yearly') && (
-                <div className="mb-4">
-                    <label htmlFor="month-select" className="mr-2">Select Month:</label>
-                    <select id="month-select" className="border rounded px-2 py-1" value={selectedMonth} onChange={handleMonthChange}>
-                        {[...Array(12)].map((_, index) => (
-                            <option key={index} value={index + 1}>
-                                {new Date(0, index).toLocaleString('default', { month: 'long' })}
-                            </option>
-                        ))}
-                    </select>
-
-                    {/* Year Selector for Yearly Reports */}
-                    {selectedReport === 'yearly' && (
-                        <div className="mt-2">
-                            <label htmlFor="year-select" className="mr-2">Select Year:</label>
-                            <select id="year-select" className="border rounded px-2 py-1" value={selectedYear} onChange={handleYearChange}>
-                                {yearsAvailable.map(year => (
-                                    <option key={year} value={year}>
-                                        {year}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    )}
-                </div>
-            )}
-
-            {/* Display the selected report */}
-            {selectedReport === 'daily' && (
-                <>
-                    <h2 className="text-xl font-semibold mb-2">Daily Report for {formatDate(selectedDate)}</h2>
-                    <table className="min-w-full border border-gray-300">
-                        <thead>
-                            <tr className="bg-accent">
-                                <th className="border px-4 py-2">Date</th>
-                                <th className="border px-4 py-2">Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {Object.entries(reportData.daily).map(([day, amount]) => {
-                                if (day === selectedDate) {
-                                    return (
-                                        <tr key={day} className="hover:bg-green-400 hover:text-black">
-                                            <td className="border px-4 py-2">{formatDate(day)}</td>
-                                            <td className="border px-4 py-2">{amount}</td>
-                                        </tr>
-                                    );
-                                }
-                                return null;
-                            })}
-                        </tbody>
-                    </table>
-                </>
-            )}
-
-            {selectedReport === 'monthly' && (
-                <>
-                    <h2 className="text-xl font-semibold mb-2">Monthly Report for {new Date(new Date().getFullYear(), selectedMonth - 1).toLocaleString('default', { month: 'long' })}</h2>
-                    <table className="min-w-full border border-gray-300">
-                        <thead>
-                            <tr className="bg-accent">
-                                <th className="border px-4 py-2">Month</th>
-                                <th className="border px-4 py-2">Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {Object.entries(reportData.monthly).map(([month, amount]) => {
-                                if (month.split('-')[1] === selectedMonth.toString()) {
-                                    return (
-                                        <tr key={month} className="hover:bg-green-400 hover:text-black">
-                                            <td className="border px-4 py-2">{new Date(0, parseInt(month.split('-')[1]) - 1).toLocaleString('default', { month: 'long' })}</td>
-                                            <td className="border px-4 py-2">{amount}</td>
-                                        </tr>
-                                    );
-                                }
-                                return null;
-                            })}
-                        </tbody>
-                    </table>
-                </>
-            )}
-
-            {selectedReport === 'yearly'
- && (
-                <>
-                    <h2 className="text-xl font-semibold mb-2">Yearly Report for {selectedYear}</h2>
-                    <table className="min-w-full border border-gray-300">
-                        <thead>
-                            <tr className="bg-accent">
-                                <th className="border px-4 py-2">Month</th>
-                                <th className="border px-4 py-2">Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {Array.from({ length: 12 }, (_, index) => {
-                                const monthKey = `${selectedYear}-${index + 1}`; // YYYY-MM
-                                const amount = reportData.yearly[monthKey] || 0; // Default to 0 if no data
-                                return (
-                                    <tr key={index} className="hover:bg-green-400 hover:text-black">
-                                        <td className="border px-4 py-2">{new Date(0, index).toLocaleString('default', { month: 'long' })}</td>
-                                        <td className="border px-4 py-2">₱{amount}</td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                        <tfoot>
-                            <tr className="bg-accent">
-                                <td className="border px-4 py-2 font-bold">Total</td>
-                                <td className="border px-4 py-2 font-bold">
-                                    ₱{Object.values(reportData.yearly).reduce((acc, curr) => acc + curr, 0)}
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </>
-            )}
         </div>
     );
 };

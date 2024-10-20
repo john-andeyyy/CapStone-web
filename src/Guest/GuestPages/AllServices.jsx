@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { ServicesList } from '../../Landing-infopage/Infopagedata';
 
 export default function OurService() {
     const [procedures, setProcedures] = useState([]);
@@ -8,18 +9,28 @@ export default function OurService() {
     const BASEURL = import.meta.env.VITE_BASEURL;
     const proceduresApiUrl = `${BASEURL}/Procedure/showwithimage`;
 
-    useEffect(() => {
-        const fetchProcedures = async () => {
-            try {
-                const response = await axios.get(proceduresApiUrl);
-                setProcedures(response.data);
-            } catch (error) {
-                console.error('Error fetching procedures:', error);
-            }
-        };
+    const { data: ServicesData } = ServicesList();
 
-        fetchProcedures();
-    }, [proceduresApiUrl]);
+    useEffect(() => {
+        if (ServicesData) {
+            setProcedures(ServicesData);
+        }
+        
+    }, [ServicesData]);
+
+
+    // useEffect(() => {
+    //     const fetchProcedures = async () => {
+    //         try {
+    //             const response = await axios.get(proceduresApiUrl);
+    //             setProcedures(response.data);
+    //         } catch (error) {
+    //             console.error('Error fetching procedures:', error);
+    //         }
+    //     };
+
+    //     fetchProcedures();
+    // }, [proceduresApiUrl]);
 
     const indexOfLastProcedure = currentPage * proceduresPerPage;
     const indexOfFirstProcedure = indexOfLastProcedure - proceduresPerPage;

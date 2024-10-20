@@ -11,8 +11,7 @@ dayjs.extend(isBetween);
 const BASEURL = import.meta.env.VITE_BASEURL;
 
 const DentistSchedule = () => {
-    const navigate = useNavigate()
-
+    const navigate = useNavigate();
     const { id } = useParams();
     const [appointments, setAppointments] = useState([]);
     const [filteredAppointments, setFilteredAppointments] = useState([]);
@@ -22,7 +21,7 @@ const DentistSchedule = () => {
     const [customDateRange, setCustomDateRange] = useState({ start: null, end: null });
     const [showCustomDatePicker, setShowCustomDatePicker] = useState(false);
     const [selectedYear, setSelectedYear] = useState('');
-    const [DentistName, setDentistName] = useState('');
+    const [dentistName, setDentistName] = useState('');
 
     useEffect(() => {
         const fetchAppointments = async () => {
@@ -30,17 +29,13 @@ const DentistSchedule = () => {
             setError(null);
             try {
                 const response = await axios.get(`${BASEURL}/dentist/appointmentlist/${id}`, { withCredentials: true });
-                const dentistName = response.data[0]?.DentistName || 'N/A';
                 if (response.status === 200) {
                     const approvedAppointments = response.data.filter((appointment) => appointment.Status === 'Approved');
-                    setDentistName(dentistName);
+                    setDentistName(response.data[0]?.DentistName || 'N/A');
                     setAppointments(approvedAppointments);
                     filterAppointments(approvedAppointments, filter, selectedYear);
                 } else {
-                    // setError('No appointments found.');
-                    setDentistName(dentistName);
-                    setAppointments(approvedAppointments);
-                    filterAppointments(approvedAppointments, filter, selectedYear);
+                    setError('No appointments found.');
                 }
             } catch (err) {
                 console.error('Error fetching appointments:', err);
@@ -49,6 +44,7 @@ const DentistSchedule = () => {
                 setLoading(false);
             }
         };
+        
 
         fetchAppointments();
     }, [id]);
@@ -108,9 +104,9 @@ const DentistSchedule = () => {
         setSelectedYear(event.target.value);
         setFilter(event.target.value ? 'year' : '');
     };
-    const handleRowClick = (appointment) => {
-        navigate(`/appointment/${appointment._id}`)
 
+    const handleRowClick = (appointment) => {
+        navigate(`/appointment/${appointment._id}`);
     };
 
     if (loading) {
@@ -120,7 +116,6 @@ const DentistSchedule = () => {
     if (error) {
         return <div className="text-center text-red-500 py-4">{error}</div>;
     }
-
     return (
         <div className="px-4 py-6">
             <button

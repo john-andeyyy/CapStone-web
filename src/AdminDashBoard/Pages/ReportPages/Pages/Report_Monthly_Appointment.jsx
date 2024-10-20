@@ -208,215 +208,217 @@ export default function Report_Monthly_Appointment() {
     return (
         <div className="">
             <ReportMenu />
-            <h2 className="text-2xl font-bold text-green-400 p-4">Appointment Report</h2>
-            <h1 className="text-1xl mt-4 sm:mt-0 pb-7">
-                {new Date().toLocaleString('default', { month: 'long' })} {new Date().getDate()}, {new Date().getFullYear()}
-            </h1>
+            <div className=" rounded-lg shadow-md">
+                <h2 className="text-2xl font-bold text-green-400 p-4">Appointment Report</h2>
+                <h1 className="text-1xl mt-4 sm:mt-0 pb-7">
+                    {new Date().toLocaleString('default', { month: 'long' })} {new Date().getDate()}, {new Date().getFullYear()}
+                </h1>
 
-            <div className="pb-7 flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-3">
-                {!viewingYearly ? (
-                    <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 items-center">
-                        {!isToday ? (
-                            <>
-                                {/* Month Input */}
-                                <input
-                                    type="month"
-                                    id="month"
-                                    value={month}
-                                    onChange={(e) => setMonth(e.target.value)}
-                                    className="w-full sm:w-auto p-2 border rounded shadow-sm"
-                                />
+                <div className="pb-7 flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-3">
+                    {!viewingYearly ? (
+                        <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 items-center">
+                            {!isToday ? (
+                                <>
+                                    {/* Month Input */}
+                                    <input
+                                        type="month"
+                                        id="month"
+                                        value={month}
+                                        onChange={(e) => setMonth(e.target.value)}
+                                        className="w-full sm:w-auto p-2 border rounded shadow-sm"
+                                    />
 
-                                {/* Previous Month Button */}
-                                <button
-                                    onClick={() =>
-                                        setMonth(
-                                            new Date(new Date(month).setMonth(new Date(month).getMonth() - 1))
-                                                .toISOString()
-                                                .slice(0, 7)
-                                        )
-                                    }
-                                    className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200"
-                                    aria-label="Previous Month"
-                                >
-                                    Previous Month
-                                </button>
+                                    {/* Previous Month Button */}
+                                    <button
+                                        onClick={() =>
+                                            setMonth(
+                                                new Date(new Date(month).setMonth(new Date(month).getMonth() - 1))
+                                                    .toISOString()
+                                                    .slice(0, 7)
+                                            )
+                                        }
+                                        className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200"
+                                        aria-label="Previous Month"
+                                    >
+                                        Previous Month
+                                    </button>
 
-                                {/* Next Month Button */}
-                                <button
-                                    onClick={() =>
-                                        setMonth(
-                                            new Date(new Date(month).setMonth(new Date(month).getMonth() + 1))
-                                                .toISOString()
-                                                .slice(0, 7)
-                                        )
-                                    }
-                                    className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200"
-                                    aria-label="Next Month"
-                                >
-                                    Next Month
-                                </button>
-                            </>
-                        ) : (
-                            <>
-                                <button
-                                    onClick={() => setIsToday(false)}
-                                    className="w-full sm:w-auto px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-200"
-                                    aria-label="Switch to Monthly View"
-                                >
-                                    Monthly
-                                </button>
-                            </>
-                        )}
+                                    {/* Next Month Button */}
+                                    <button
+                                        onClick={() =>
+                                            setMonth(
+                                                new Date(new Date(month).setMonth(new Date(month).getMonth() + 1))
+                                                    .toISOString()
+                                                    .slice(0, 7)
+                                            )
+                                        }
+                                        className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200"
+                                        aria-label="Next Month"
+                                    >
+                                        Next Month
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <button
+                                        onClick={() => setIsToday(false)}
+                                        className="w-full sm:w-auto px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-200"
+                                        aria-label="Switch to Monthly View"
+                                    >
+                                        Monthly
+                                    </button>
+                                </>
+                            )}
 
-                        {/* Today Button */}
-                        <button
-                            onClick={() => {
-                                setMonth(new Date().toISOString().slice(0, 7)); // Set to current month
-                                setIsToday(true);
-                                setViewingYearly(false);
-                            }}
-                            className="w-full sm:w-auto px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition duration-200"
-                            aria-label="View Today's Appointments"
-                        >
-                            Today
-                        </button>
-                    </div>
-                ) : (
-                    <div className="w-full"> {/* Full width for year selector */}
-                        {/* Year Select */}
-                        <div className="mb-4 w-full">
-                            <label htmlFor="year-selector" className="block text-sm font-medium text-gray-700">Select Year:</label>
-                            <select
-                                id="year-selector"
-                                value={selectedYear}
-                                onChange={(e) => setSelectedYear(Number(e.target.value))}
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"
+                            {/* Today Button */}
+                            <button
+                                onClick={() => {
+                                    setMonth(new Date().toISOString().slice(0, 7)); // Set to current month
+                                    setIsToday(true);
+                                    setViewingYearly(false);
+                                }}
+                                className="w-full sm:w-auto px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition duration-200"
+                                aria-label="View Today's Appointments"
                             >
-                                {years.map((year) => (
-                                    <option key={year} value={year}>{year}</option>
-                                ))}
-                            </select>
+                                Today
+                            </button>
                         </div>
-                    </div>
-                )}
-                <button
-                    onClick={() => {
-                        setViewingYearly(!viewingYearly);
-                        setIsToday(false);
-                        if (viewingYearly) {
-                            setMonth(new Date().toISOString().slice(0, 7));
-                        }
-                    }}
-                    className="w-full sm:w-auto mt-2 sm:mt-0 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition duration-200"
-                    aria-label={`Switch to ${viewingYearly ? 'Monthly' : 'Yearly'} View`}
-                >
-                    {viewingYearly ? 'View Monthly' : 'View Yearly'}
-                </button>
-            </div>
-
-
-            <div className=''>
-
-                {/* Display Counts for Completed and Missed Appointments */}
-                <div className="">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="flex items-center justify-center p-6 bg-green-100 rounded-lg shadow-lg">
-                            <div>
-                                <h3 className="text-2xl font-semibold text-green-700">Completed Appointments</h3>
-                                <p className="text-xl text-green-900">{completedCount}</p>
+                    ) : (
+                        <div className="w-full"> {/* Full width for year selector */}
+                            {/* Year Select */}
+                            <div className="mb-4 w-full">
+                                <label htmlFor="year-selector" className="block text-sm font-medium text-gray-700">Select Year:</label>
+                                <select
+                                    id="year-selector"
+                                    value={selectedYear}
+                                    onChange={(e) => setSelectedYear(Number(e.target.value))}
+                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"
+                                >
+                                    {years.map((year) => (
+                                        <option key={year} value={year}>{year}</option>
+                                    ))}
+                                </select>
                             </div>
                         </div>
-                        <div className="flex items-center justify-center p-6 bg-red-100 rounded-lg shadow-lg">
-                            <div>
-                                <h3 className="text-2xl font-semibold text-red-700">Missed Appointments</h3>
-                                <p className="text-xl text-red-900">{missedCount}</p>
-                            </div>
-                        </div>
-                    </div>
+                    )}
+                    <button
+                        onClick={() => {
+                            setViewingYearly(!viewingYearly);
+                            setIsToday(false);
+                            if (viewingYearly) {
+                                setMonth(new Date().toISOString().slice(0, 7));
+                            }
+                        }}
+                        className="w-full sm:w-auto mt-2 sm:mt-0 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition duration-200"
+                        aria-label={`Switch to ${viewingYearly ? 'Monthly' : 'Yearly'} View`}
+                    >
+                        {viewingYearly ? 'View Monthly' : 'View Yearly'}
+                    </button>
                 </div>
 
-                {/* Conditionally render chart or table based on today's report */}
-                {isToday ? (
-                    <div>
-                        <h3 className="text-lg sm:text-xl font-semibold mt-4 text-center sm:text-left">Today's Appointments</h3>
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full border-collapse border border-gray-200 mt-2 text-sm sm:text-base">
-                                <thead>
-                                    <tr>
-                                        <th className="border border-gray-300 p-2 text-left">Patient Name</th>
-                                        <th className="border border-gray-300 p-2 text-left">Status</th>
-                                        <th className="border border-gray-300 p-2 text-left">Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {filteredAppointments.map((appointment) => (
-                                        <tr key={appointment._id}>
-                                            <td className="border border-gray-300 p-2">
-                                                {appointment.patient.LastName} {appointment.patient.FirstName}
-                                            </td>
-                                            <td className={`border border-gray-300 p-2 font-bold ${appointment.status === 'Completed' ? 'text-green-500' : 'text-red-500'}`}>
-                                                {appointment.status}
-                                            </td>
-                                            <td className="border border-gray-300 p-2">
-                                                {new Date(appointment.date).toLocaleDateString('en-US', {
-                                                    year: 'numeric',
-                                                    month: 'long',
-                                                    day: 'numeric',
-                                                })}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                ) : (
-                    <div>
-                        {/* Render the chart */}
-                        <div className="hidden sm:block">
-                            <BarChart chartData={getChartData()} />
-                        </div>
 
+                <div className=''>
 
-                        {/* Appointment summary if applicable */}
-                        {isToday && (
-                            <div>
-                                <h3 className="text-lg sm:text-xl font-semibold mt-4 text-center sm:text-left">Appointment Summary</h3>
-                                <div className="overflow-x-auto">
-                                    <table className="min-w-full border-collapse border border-gray-200 mt-2 text-sm sm:text-base">
-                                        <thead>
-                                            <tr>
-                                                <th className="border border-gray-300 p-2 text-left">Patient Name</th>
-                                                <th className="border border-gray-300 p-2 text-left">Status</th>
-                                                <th className="border border-gray-300 p-2 text-left">Date</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {filteredAppointments.map((appointment) => (
-                                                <tr key={appointment._id}>
-                                                    <td className="border border-gray-300 p-2">
-                                                        {appointment.patient.LastName} {appointment.patient.FirstName}
-                                                    </td>
-                                                    <td className={`border border-gray-300 p-2 font-bold ${appointment.status === 'Completed' ? 'text-green-500' : 'text-red-500'}`}>
-                                                        {appointment.status}
-                                                    </td>
-                                                    <td className="border border-gray-300 p-2">
-                                                        {new Date(appointment.date).toLocaleDateString('en-US', {
-                                                            year: 'numeric',
-                                                            month: 'long',
-                                                            day: 'numeric',
-                                                        })}
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
+                    {/* Display Counts for Completed and Missed Appointments */}
+                    <div className="">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="flex items-center justify-center p-6 bg-green-100 rounded-lg shadow-lg">
+                                <div>
+                                    <h3 className="text-2xl font-semibold text-green-700">Completed Appointments</h3>
+                                    <p className="text-xl text-green-900">{completedCount}</p>
                                 </div>
                             </div>
-                        )}
+                            <div className="flex items-center justify-center p-6 bg-red-100 rounded-lg shadow-lg">
+                                <div>
+                                    <h3 className="text-2xl font-semibold text-red-700">Missed Appointments</h3>
+                                    <p className="text-xl text-red-900">{missedCount}</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                )}
+
+                    {/* Conditionally render chart or table based on today's report */}
+                    {isToday ? (
+                        <div>
+                            <h3 className="text-lg sm:text-xl font-semibold mt-4 text-center sm:text-left">Today's Appointments</h3>
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full border-collapse border border-gray-200 mt-2 text-sm sm:text-base">
+                                    <thead>
+                                        <tr>
+                                            <th className="border border-gray-300 p-2 text-left">Patient Name</th>
+                                            <th className="border border-gray-300 p-2 text-left">Status</th>
+                                            <th className="border border-gray-300 p-2 text-left">Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {filteredAppointments.map((appointment) => (
+                                            <tr key={appointment._id}>
+                                                <td className="border border-gray-300 p-2">
+                                                    {appointment.patient.LastName} {appointment.patient.FirstName}
+                                                </td>
+                                                <td className={`border border-gray-300 p-2 font-bold ${appointment.status === 'Completed' ? 'text-green-500' : 'text-red-500'}`}>
+                                                    {appointment.status}
+                                                </td>
+                                                <td className="border border-gray-300 p-2">
+                                                    {new Date(appointment.date).toLocaleDateString('en-US', {
+                                                        year: 'numeric',
+                                                        month: 'long',
+                                                        day: 'numeric',
+                                                    })}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    ) : (
+                        <div>
+                            {/* Render the chart */}
+                            <div className="hidden sm:block">
+                                <BarChart chartData={getChartData()} />
+                            </div>
+
+
+                            {/* Appointment summary if applicable */}
+                            {isToday && (
+                                <div>
+                                    <h3 className="text-lg sm:text-xl font-semibold mt-4 text-center sm:text-left">Appointment Summary</h3>
+                                    <div className="overflow-x-auto">
+                                        <table className="min-w-full border-collapse border border-gray-200 mt-2 text-sm sm:text-base">
+                                            <thead>
+                                                <tr>
+                                                    <th className="border border-gray-300 p-2 text-left">Patient Name</th>
+                                                    <th className="border border-gray-300 p-2 text-left">Status</th>
+                                                    <th className="border border-gray-300 p-2 text-left">Date</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {filteredAppointments.map((appointment) => (
+                                                    <tr key={appointment._id}>
+                                                        <td className="border border-gray-300 p-2">
+                                                            {appointment.patient.LastName} {appointment.patient.FirstName}
+                                                        </td>
+                                                        <td className={`border border-gray-300 p-2 font-bold ${appointment.status === 'Completed' ? 'text-green-500' : 'text-red-500'}`}>
+                                                            {appointment.status}
+                                                        </td>
+                                                        <td className="border border-gray-300 p-2">
+                                                            {new Date(appointment.date).toLocaleDateString('en-US', {
+                                                                year: 'numeric',
+                                                                month: 'long',
+                                                                day: 'numeric',
+                                                            })}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

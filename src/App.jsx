@@ -50,6 +50,7 @@ import UnavailableClinic from './AdminDashBoard/Components/UnavailableClinic';
 import ContactusPage from './Guest/GuestPages/ContactusPage';
 import MedicalHistoryCreate from './AdminDashBoard/Components/MedicalHistory/MedicalHistoryCreate';
 import MedicalHistoryUpdate from './AdminDashBoard/Components/MedicalHistory/MedicalHistoryUpdate';
+import CalendarComponentsss from './AdminDashBoard/Pages/Add_PatientAppointment/CalendarComponent';
 
 function AdminRoutes() {
   const location = useLocation();
@@ -107,6 +108,7 @@ function AdminRoutes() {
         <Route path="/CalendarComponent" element={<CalendarComponent />} />
         <Route path="/DentistSchedule/:id" element={<DentistSchedule />} />
         <Route path="/UnavailableClinic" element={<UnavailableClinic />} />
+        <Route path="/CalendarComponentsss" element={<CalendarComponentsss />} />
 
         {/* //! REPORTS */}
         <Route path="/Total_procedures" element={< Total_procedures />} />

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { showToast } from '../../../AdminDashBoard/Components/ToastNotification';
-export default function DentistEdit({ isOpen, close, selectedDentist, setDentists }) {
+export default function DentistEdit({ isOpen, onClose, selectedDentist, updateDentistData }) {
     const BASEURL = import.meta.env.VITE_BASEURL;
 
     const [dentistData, setDentistData] = useState({
@@ -87,10 +87,12 @@ export default function DentistEdit({ isOpen, close, selectedDentist, setDentist
                 },
                 withCredentials: true,
             });
-            setDentists(response.data);
+            
+            updateDentistData(response.data);
+
             showToast('success', 'Edit successful!');
 
-            close();
+            onClose();
         } catch (error) {
             console.error("Error updating dentist data:", error);
         }
@@ -224,7 +226,7 @@ export default function DentistEdit({ isOpen, close, selectedDentist, setDentist
                     </div>
                     <div className="flex justify-between">
                         <button type="submit" className="bg-blue-500 text-white rounded-md px-4 py-2">Update</button>
-                        <button type="button" onClick={close} className="bg-gray-300 text-black rounded-md px-4 py-2">Cancel</button>
+                        <button type="button" onClick={onClose} className="bg-gray-300 text-black rounded-md px-4 py-2">Cancel</button>
                     </div>
                 </form>
             </div>

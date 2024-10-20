@@ -3,53 +3,35 @@ import { useNavigate } from 'react-router-dom';
 
 export default function ReportMenu() {
     const navigate = useNavigate();
-    const [isOpen, setIsOpen] = useState(false); // State to manage dropdown visibility
+    const [selectedReport, setSelectedReport] = useState('/Total_procedures'); // Default value
 
-    // Function to toggle the dropdown
-    const toggleDropdown = () => {
-        setIsOpen((prev) => !prev);
-    };
-
+    // Function to handle selection and navigation
     const handleNavigation = (path) => {
-        navigate(path);
-        setIsOpen(false);
+        setSelectedReport(path); // Set the selected value
+        if (path) navigate(path); // Navigate to the corresponding path
     };
 
     return (
-        <div className="dropdown relative text-white ">
+        <div className="grid grid-cols-2 gap-4">
+            <div className="flex items-center mb-4">
+                <h1 className='bg-error'> need to fix</h1>
+                <label htmlFor="report-selector" className="block font-semibold mr-4">
+                    Select Reports:
+                </label>
 
-            <div tabIndex={0} role="button" onClick={toggleDropdown} className="btn m-1 text-white bg-green-500 hover:bg-green-300">
-                Select Reports
+                <select
+                    id="report-selector"
+                    value={selectedReport} // Bind to state
+                    onChange={(e) => handleNavigation(e.target.value)} // Handle changes
+                    className="block p-2 border border-gray-400 rounded-md focus:outline-none transition max-w-xs"
+                >
+                    <option value="/Total_procedures">Procedure Summary</option>
+                    <option value="/Report_Monthly_Appointment">Appointment Summary</option>
+                    <option value="/Patient_Visits">Patient Visits Summary</option>
+                    <option value="/IncomeReport">Income Report Summary</option>
+                    <option value="/Patient_Procedures_done">Patient Procedures Done</option>
+                </select>
             </div>
-            {isOpen && (
-                <ul className="dropdown-content menu bg-secondary rounded-box z-[1] w-52 p-2 shadow ">
-                    <li>
-                        <button onClick={() => handleNavigation('/Total_procedures')} className="w-full text-left">
-                            Procedure Summary
-                        </button>
-                    </li>
-                    <li>
-                        <button onClick={() => handleNavigation('/Report_Monthly_Appointment')} className="w-full text-left">
-                            Appointment Summary
-                        </button>
-                    </li>
-                    <li>
-                        <button onClick={() => handleNavigation('/Patient_Visits')} className="w-full text-left">
-                            Patient Visits Summary
-                        </button>
-                    </li>
-                    <li>
-                        <button onClick={() => handleNavigation('/IncomeReport')} className="w-full text-left">
-                            IncomeReport Summary
-                        </button>
-                    </li>
-                    <li>
-                        <button onClick={() => handleNavigation('/Patient_Procedures_done')} className="w-full text-left">
-                            Patient_Procedures_done
-                        </button>
-                    </li>
-                </ul>
-            )}
         </div>
     );
 }

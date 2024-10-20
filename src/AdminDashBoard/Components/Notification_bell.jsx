@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import ThemeController from '../../Guest/GuestComponents/ThemeController';
@@ -6,11 +6,13 @@ import NotificationModal from '../Components/Modal'; // Import the modal
 
 const Notification_bell = () => {
     const navigate = useNavigate();
+    const dropdownRef = useRef(null); // Ref for the dropdown
+    const modalRef = useRef(null); // Ref for the modal
     const [isOpen, setIsOpen] = useState(false);
     const [notifications, setNotifications] = useState([]);
-    const [unreadCount, setUnreadCount] = useState(0); // Unread notification count
-    const [selectedNotification, setSelectedNotification] = useState(null); // To store the clicked notification
-    const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
+    const [unreadCount, setUnreadCount] = useState(0);
+    const [selectedNotification, setSelectedNotification] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const fetchNotifications = async () => {
         try {
@@ -20,7 +22,6 @@ const Notification_bell = () => {
             const adminNotifications = response.data.filter(notification => notification.adminOnly === true);
 
             setNotifications(adminNotifications.reverse());
-            // Calculate unread notifications count
             const unreadNotifications = adminNotifications.filter(notification => !notification.adminisRead);
             setUnreadCount(unreadNotifications.length);
         } catch (error) {
@@ -46,7 +47,7 @@ const Notification_bell = () => {
         if (!notification.adminisRead) {
             await markAsRead(notification._id);
         }
-        setSelectedNotification(notification); 
+        setSelectedNotification(notification);
         setIsModalOpen(true);
     };
 
@@ -58,16 +59,33 @@ const Notification_bell = () => {
         try {
             await axios.put('http://localhost:3000/Notification/admin/adminmarkas', {
                 notifid: notifId,
-                mark_as: true // Always set to true (read)
+                mark_as: true,
             }, {
                 withCredentials: true,
             });
-            // After marking as read, fetch updated notifications
             fetchNotifications();
         } catch (error) {
             console.error('Error marking notification as read:', error);
         }
     };
+
+    // Close dropdown and modal when clicking outside
+    const handleClickOutside = (event) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+            setIsOpen(false); // Close dropdown if clicked outside
+        }
+        if (modalRef.current && !modalRef.current.contains(event.target)) {
+            setIsModalOpen(false); // Close modal if clicked outside
+        }
+    };
+
+    useEffect(() => {
+        // Add click event listener to document
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     return (
         <div className="relative flex justify-end items-center bg-base-100">
@@ -91,13 +109,13 @@ const Notification_bell = () => {
                         />
                     </svg>
                     <span className="badge badge-xs badge-primary indicator-item">
-                        {unreadCount} 
+                        {unreadCount}
                     </span>
                 </div>
             </button>
 
             {isOpen && (
-                <div className="absolute top-full right-0 mt-2 w-80 bg-neutral shadow-lg rounded-lg z-10 overflow-hidden">
+                <div ref={dropdownRef} className="absolute top-full right-0 mt-2 w-80 bg-neutral shadow-lg rounded-lg z-10 overflow-hidden">
                     <div className="p-3 text-lg font-semibold border-b border-gray-200 flex justify-between">
                         <div>Notifications</div>
                         <button
@@ -137,17 +155,21 @@ const Notification_bell = () => {
             )}
 
             {/* Modal to show notification details */}
-            <NotificationModal isOpen={isModalOpen} onClose={closeModal}>
-                {selectedNotification && (
-                    <div className="p-4">
-                        <h2 className="text-xl font-bold">{selectedNotification.user_Appointment_Title}</h2>
-                        <p>{selectedNotification.user_Appointment_message}</p>
-                        <button className="btn mt-4" onClick={closeModal}>
-                            Close
-                        </button>
-                    </div>
-                )}
-            </NotificationModal>
+            {isModalOpen && (
+                <NotificationModal ref={modalRef} isOpen={isModalOpen} onClose={closeModal}>
+                    {selectedNotification && (
+                        <div className="p-4">
+                            <h2 className="text-xl font-bold">{selectedNotification.user_Appointment_Title}</h2>
+                            <p>{selectedNotification.user_Appointment_message}</p>
+                            <div className='flex justify-center'>
+                                <button className="bg-[#D9D9D9] hover:bg-[#ADAAAA] btn mt-4" onClick={closeModal}>
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </NotificationModal>
+            )}
         </div>
     );
 };

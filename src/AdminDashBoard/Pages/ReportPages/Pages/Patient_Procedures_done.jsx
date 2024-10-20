@@ -94,72 +94,81 @@ const PatientProceduresDone = () => {
     }
 
     return (
-        <div className="p-4">
+        <div className="">
             <ReportMenu />
-            <h1 className="text-2xl font-bold mb-4">Patient Procedures Done</h1>
-
-            {/* Search Input */}
-            <input
-                type="text"
-                placeholder="Search Patients..."
-                className="border rounded px-2 py-1 mb-4 w-full"
-                value={searchTerm}
-                onChange={handleSearchChange}
-            />
-
-            {/* Suggestions List */}
-            {suggestions.length > 0 && (
-                <ul className="border rounded shadow-lg bg-white max-h-40 overflow-auto z-10 absolute">
-                    {suggestions.map(patient => (
-                        <li
-                            key={patient.id}
-                            className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
-                            onClick={() => handleSuggestionClick(patient)}
-                        >
-                            {`${patient.FirstName} ${patient.LastName}`}
-                        </li>
-                    ))}
-                </ul>
-            )}
-
-            {/* Patient Dropdown */}
-            <label className="block mb-2 mt-4">
-                Select Patient:
-                <select
-                    className="border rounded px-2 py-1 w-full mb-4"
-                    value={selectedPatient ? selectedPatient.id : ''}
-                    onChange={handlePatientChange}
-                >
-                    <option value="">--Select a patient--</option>
-                    {patients.map(patient => (
-                        <option key={patient.id} value={patient.id}>
-                            {`${patient.FirstName} ${patient.LastName}`}
-                        </option>
-                    ))}
-                </select>
-            </label>
-
-            {selectedPatient && (
-                <div>
-                    <h2 className="text-xl font-bold mb-2">{`Procedures for ${selectedPatient.FirstName} ${selectedPatient.LastName}`}</h2>
-                    <table className="min-w-full border border-gray-300">
-                        <thead>
-                            <tr className="bg-accent">
-                                <th className="border px-4 py-2">Procedure Name</th>
-                                <th className="border px-4 py-2">Count</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {Object.entries(proceduresCount).map(([procedureName, count]) => (
-                                <tr key={procedureName}>
-                                    <td className="border px-4 py-2">{procedureName}</td>
-                                    <td className="border px-4 py-2">{count}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+            <div className=" rounded-lg shadow-md">
+                <div className='flex flex-col lg:flex-row justify-between items-center mb-4'>
+                    <h1 className="text-2xl font-bold text-green-400 p-4">Patient Procedures Done</h1>
+                    <div className="relative mr-5 mt-3">
+                        {/* Search Input */}
+                        <input
+                            type="text"
+                            placeholder="Search Patients..."
+                            className="border rounded px-2 py-1 mb-4 w-full"
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                        />
+                    </div>
                 </div>
-            )}
+
+                {/* Suggestions List */}
+                {suggestions.length > 0 && (
+                    <ul className="border rounded shadow-lg bg-white max-h-40 overflow-auto z-10 absolute">
+                        {suggestions.map(patient => (
+                            <li
+                                key={patient.id}
+                                className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                                onClick={() => handleSuggestionClick(patient)}
+                            >
+                                {`${patient.FirstName} ${patient.LastName}`}
+                            </li>
+                        ))}
+                    </ul>
+                )}
+
+                {/* Patient Dropdown */}
+                <div className='grid grid-cols-2 gap-4'>
+                    <div className="flex flex-col">
+                        <label className="block mb-2 mt-2">
+                            Select Patient:
+                            <select
+                                className="ml-10 border rounded px-2 py-1 mb-4"
+                                value={selectedPatient ? selectedPatient.id : ''}
+                                onChange={handlePatientChange}
+                            >
+                                <option value="">--Select a patient--</option>
+                                {patients.map(patient => (
+                                    <option key={patient.id} value={patient.id}>
+                                        {`${patient.FirstName} ${patient.LastName}`}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                    </div>
+                </div>
+
+                {selectedPatient && (
+                    <div>
+                        <h2 className="text-xl font-bold mb-2">{`Procedures for ${selectedPatient.FirstName} ${selectedPatient.LastName}`}</h2>
+                        <table className="min-w-full border border-gray-300">
+                            <thead>
+                                <tr className="bg-accent">
+                                    <th className="border px-4 py-2">Procedure Name</th>
+                                    <th className="border px-4 py-2">Count</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {Object.entries(proceduresCount).map(([procedureName, count]) => (
+                                    <tr key={procedureName}>
+                                        <td className="border px-4 py-2">{procedureName}</td>
+                                        <td className="border px-4 py-2">{count}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

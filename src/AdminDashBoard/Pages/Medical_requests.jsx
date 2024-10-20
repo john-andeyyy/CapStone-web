@@ -161,22 +161,23 @@ export default function MedicalRequests() {
       </div>
 
       {/* Filter by Status */}
-      <div className="mb-4">
-        <label htmlFor="status" className="block mb-2 font-semibold">Filter by Status:</label>
-        <select
-          id="status"
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="block w-full p-2 border border-gray-300 rounded-md"
-        >
-          {/* <option value="All">All</option> */}
-          <option value="Approved">Approved</option>
-          <option value="Pending">Pending</option>
-          <option value="Rejected">Rejected</option>
-          <option value="Archive">Archive (delete)</option>
-        </select>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="flex flex mb-4">
+          <label htmlFor="status" className="block mb-2 font-semibold mt-3">Filter by Status:</label>
+          <select
+            id="status"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="block p-2 border border-gray-300 rounded-md ml-5"
+          >
+            {/* <option value="All">All</option> */}
+            <option value="Approved">Approved</option>
+            <option value="Pending">Pending</option>
+            <option value="Rejected">Rejected</option>
+            <option value="Archive">Archive (delete)</option>
+          </select>
+        </div>
       </div>
-
       {/* Request List */}
       <div className="p-2 flex text-white bg-primary">
         <div className="flex-1 font-bold">Name</div>
@@ -263,14 +264,14 @@ export default function MedicalRequests() {
       {/* Modals */}
       {/* Accept Request Modal */}
       <Modal title="Accept Request" isOpen={acceptConfirmation} onClose={() => setAcceptConfirmation(false)}>
-        <p>Are you sure you want to approve request ID: {selectedRequest?.id}?</p>
+        <p className="text-center">Are you sure you want to approve request ID: {selectedRequest?.id}?</p>
         <div className="flex justify-center mt-4">
           {actionLoading ? (
             <span className="loading loading-spinner loading-lg"></span>
           ) : (
             <>
               <button
-                className="btn btn-primary mr-2"
+                className="bg-[#4285F4] hover:bg-[#0C65F8] btn mr-2"
                 onClick={() => {
                   setActionLoading(true); // Start loading
                   handleAcceptRequest(); // Trigger accept action
@@ -280,7 +281,7 @@ export default function MedicalRequests() {
                 Confirm
               </button>
               <button
-                className="btn btn-secondary"
+                className="bg-[#D9D9D9] hover:bg-[#ADAAAA] btn"
                 onClick={() => setAcceptConfirmation(false)}
                 disabled={actionLoading} // Disable cancel during loading
               >
@@ -293,14 +294,14 @@ export default function MedicalRequests() {
 
       {/* Delete Request Modal */}
       <Modal title="Delete Request" isOpen={deleteConfirmation} onClose={() => setDeleteConfirmation(false)}>
-        <p>Are you sure you want to reject request ID: {selectedRequest?.id}?</p>
+        <p className="text-center">Are you sure you want to reject request ID: {selectedRequest?.id}?</p>
         <div className="flex justify-center mt-4">
           {actionLoading ? (
             <span className="loading loading-spinner loading-lg"></span>
           ) : (
             <>
               <button
-                className="btn btn-primary mr-2"
+                className="bg-[#4285F4] btn hover:bg-[#0C65F8] mr-2"
                 onClick={() => {
                   setActionLoading(true); // Start loading
                   handleDeleteRequest(); // Trigger delete action
@@ -310,7 +311,7 @@ export default function MedicalRequests() {
                 Confirm
               </button>
               <button
-                className="btn btn-secondary"
+                className="bg-[#D9D9D9] btn hover:bg-[#ADAAAA]"
                 onClick={() => setDeleteConfirmation(false)}
                 disabled={actionLoading}
               >
@@ -323,14 +324,14 @@ export default function MedicalRequests() {
 
       {/* Archive Request Modal */}
       <Modal title="Archive Request" isOpen={archiveConfirmation} onClose={() => setArchiveConfirmation(false)}>
-        <p>Are you sure you want to archive request ID: {selectedRequest?.id}?</p>
+        <p className="text-center">Are you sure you want to archive request ID: {selectedRequest?.id}?</p>
         <div className="flex justify-center mt-4">
           {actionLoading ? (
             <span className="loading loading-spinner loading-lg"></span>
           ) : (
             <>
               <button
-                className="btn btn-primary mr-2"
+                className="bg-[#4285F4] btn hover:bg-[#0C65F8]  mr-2"
                 onClick={() => {
                   setActionLoading(true); // Start loading
                   handleArchiveRequest(); // Trigger archive action
@@ -340,7 +341,7 @@ export default function MedicalRequests() {
                 Confirm
               </button>
               <button
-                className="btn btn-secondary"
+                className="bg-[#D9D9D9] btn hover:bg-[#ADAAAA]"
                 onClick={() => setArchiveConfirmation(false)}
                 disabled={actionLoading}
               >

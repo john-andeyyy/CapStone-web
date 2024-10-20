@@ -15,6 +15,7 @@ export default function Dentist() {
     const [previewImage, setPreviewImage] = useState(null);
     const [filterText, setFilterText] = useState('');
     const [availabilityFilter, setAvailabilityFilter] = useState('available');
+    const [isEditmodal, setisEditmodal] = useState(false);
 
     const [newDentist, setNewDentist] = useState({
         FirstName: '',
@@ -90,7 +91,16 @@ export default function Dentist() {
             });
 
             if (response.status === 201) {
-                setDentists([...dentists, response.data]);
+
+                const createdDentist = {
+                    ...newDentist, // Spread the existing data
+                    _id: response.data.data._id, // Assuming the API returns the new ID
+                    isAvailable: true // Default value if needed, adjust according to your logic
+                };
+
+                setDentists((prevDentists) => [...prevDentists, createdDentist]);
+
+
                 showToast('success', 'Dentist added successfully!');
                 setShowAddModal(false);
                 // Reset state
@@ -105,7 +115,7 @@ export default function Dentist() {
                     ProfilePicture: null
                 });
                 // Re-fetch the dentist list
-                fetchDentistList();
+                // fetchDentistList();
             } else {
                 alert('Failed to add dentist. Please try again.');
             }
@@ -144,7 +154,6 @@ export default function Dentist() {
     };
 
 
-    const [isEditmodal, setisEditmodal] = useState(false);
 
     const handle_availability = (userid) => {
         const currentstatus = userid.isAvailable;
@@ -176,6 +185,7 @@ export default function Dentist() {
     };
 
     const updateDentistData = (updatedDentist) => {
+
         setDentists((prevDentists) =>
             prevDentists.map((dentist) =>
                 dentist._id === updatedDentist._id ? updatedDentist : dentist
@@ -284,11 +294,13 @@ export default function Dentist() {
                                             className="text-blue-500"
                                             onClick={() => {
                                                 setisEditmodal(true);
-                                                setSelectedDentist(dentist);
+                                                setSelectedDentist(dentist)
+
                                             }}
                                         >
                                             Edit
                                         </button>
+                                        
                                         <button
                                             className="text-red-500"
                                             onClick={() => {
@@ -336,7 +348,7 @@ export default function Dentist() {
                 <DentistEdit
                     isOpen={isEditmodal}
                     onClose={() => setisEditmodal(false)}
-                    dentistData={selectedDentist}
+                    selectedDentist={selectedDentist}
                     updateDentistData={updateDentistData}
                 />
             )}

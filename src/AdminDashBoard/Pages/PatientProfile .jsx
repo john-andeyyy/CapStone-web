@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Tooth2d from '../Components/Tooth2d';
+import Add_RecordbyAdmin from './Components/Add_RecordbyAdmin';
 
 const PatientProfile = () => {
     const { id } = useParams();
@@ -133,17 +134,71 @@ const PatientProfile = () => {
                             className="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                         />
                     </div>
+
+                </div>
+
+                <div className="flex justify-end pt-5">
+                    <button onClick={() => setIsModalOpen(true)} className="btn text-white bg-secondary">
+                        Full Details
+                    </button>
                 </div>
             </div>
 
-            {/* Full Details Button */}
-            <div className="mt-4">
-                <button onClick={() => setIsModalOpen(true)} className="btn text-white btn-primary">
-                    Full Details
-                </button>
+            <Tooth2d userIds={userIds} />
+
+            <div className="w-auto mt-6">
+                <div className='flex justify-between items-center py-5'>
+                    <h3 className="text-xl font-semibold">Procedure History</h3>
+                    <Add_RecordbyAdmin userIds={userIds} />
+
+                </div>
+
+
+                <div className="overflow-x-auto mt-2">
+                    <div className="max-h-96 overflow-y-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-primary text-white sticky top-0 z-10">
+                                <tr>
+                                    <th className="px-2 py-3 text-left text-xs font-medium  uppercase tracking-wider">Date</th>
+                                    <th className="hidden md:table-cell px-2 py-3 text-left text-xs font-medium  uppercase tracking-wider">Procedures</th>
+                                    <th className="hidden md:table-cell px-2 py-3 text-left text-xs font-medium uppercase tracking-wider">Amount</th>
+                                    <th className="hidden md:table-cell px-2 py-3 text-left text-xs font-medium uppercase tracking-wider">Status</th>
+                                    {/* <th className="px-2 py-3 text-xs font-medium  uppercase tracking-wider text-center">Action</th> */}
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-200">
+                                {dentalHistory.map((record) => (
+                                    <tr key={record._id} onClick={() => handleRowClick(record._id)} className="cursor-pointer">
+                                        <td className="px-2 py-4 whitespace-nowrap">
+                                            {new Date(record.date).toLocaleDateString('en-US', {
+                                                year: 'numeric',
+                                                month: 'short', // Short month name (e.g., "Oct")
+                                                day: 'numeric',
+                                            })}
+                                        </td>
+                                        <td className="hidden md:table-cell px-2 py-4 whitespace-nowrap">{formatProcedures(record.procedures)}</td>
+                                        <td className="hidden md:table-cell px-2 py-4 whitespace-nowrap">{record.Amount}</td>
+                                        <td className="hidden md:table-cell px-2 py-4 whitespace-nowrap">{record.Status}</td>
+                                        {/* <td className="px-2 py-4 whitespace-nowrap text-center text-sm font-medium">
+                                            {showButton && record.Status.toLowerCase() === 'Pending' && (
+                                                <button className="text-green-500 hover:text-green-700">
+                                                    <span className="hidden md:inline">📝 Create medical certificate</span>
+                                                    <span className="md:hidden">📝</span>
+                                                </button>
+                                            )}
+                                        </td> */}
+                                    </tr>
+                                ))}
+                            </tbody>
+
+                        </table>
+                    </div>
+
+                </div>
             </div>
 
-            {/* Custom Modal */}
+            {/* modal */}
+
             {isModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
                     <div className=" bg-accent p-6 rounded-lg shadow-lg w-11/12 md:w-1/2">
@@ -151,7 +206,7 @@ const PatientProfile = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {fullPatient && requiredFields.map((field) => (
                                 <div key={field} className="field">
-                                    <label className="block text-sm font-medium text-gray-700 capitalize">{field}</label>
+                                    <label className="block text-sm font-medium capitalize">{field}</label>
                                     <input
                                         type="text"
                                         value={fullPatient[field] || ""}
@@ -167,45 +222,6 @@ const PatientProfile = () => {
                     </div>
                 </div>
             )}
-
-            <Tooth2d userIds={userIds} />
-
-            <div className="w-auto mt-6">
-                <h3 className="text-xl font-semibold mt-6">Procedure History</h3>
-                <div className="overflow-x-auto mt-2">
-                    <div className="max-h-96 overflow-y-auto">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-primary text-white sticky top-0 z-10">
-                                <tr>
-                                    <th className="px-2 py-3 text-left text-xs font-medium  uppercase tracking-wider">Date</th>
-                                    <th className="hidden md:table-cell px-2 py-3 text-left text-xs font-medium  uppercase tracking-wider">Procedures</th>
-                                    <th className="hidden md:table-cell px-2 py-3 text-left text-xs font-medium uppercase tracking-wider">Amount</th>
-                                    <th className="px-2 py-3 text-xs font-medium  uppercase tracking-wider text-center">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-200">
-                                {dentalHistory.map((record) => (
-                                    <tr key={record._id} onClick={() => handleRowClick(record._id)} className="cursor-pointer">
-                                        <td className="px-2 py-4 whitespace-nowrap">{new Date(record.date).toLocaleDateString()}</td>
-                                        <td className="hidden md:table-cell px-2 py-4 whitespace-nowrap">{formatProcedures(record.procedures)}</td>
-                                        <td className="hidden md:table-cell px-2 py-4 whitespace-nowrap">{record.Amount}</td>
-                                        <td className="px-2 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                            {showButton && record.Status.toLowerCase() === 'Pending' && (
-                                                <button className="text-green-500 hover:text-green-700">
-                                                    <span className="hidden md:inline">📝 Create medical certificate</span>
-                                                    <span className="md:hidden">📝</span>
-                                                </button>
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-
-                        </table>
-                    </div>
-
-                </div>
-            </div>
         </div>
     );
 };

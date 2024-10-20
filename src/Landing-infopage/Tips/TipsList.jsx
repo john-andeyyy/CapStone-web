@@ -103,29 +103,26 @@ const TipsList = () => {
                 </button>
             </div>
 
-            {/* Toggle Button for View Mode */}
-            <div className="mb-4">
+            <div className="mb-4 space-x-2">
                 <button
-                    className={`mr-2 ${isCardView ? "bg-blue-500" : "bg-gray-300"} text-white py-2 px-4 rounded`}
-                    onClick={() => setIsCardView(true)}
-                >
-                    Card View
-                </button>
-                <button
-                    className={`ml-2 ${!isCardView ? "bg-blue-500" : "bg-gray-300"} text-white py-2 px-4 rounded`}
+                    className={`ml-2 ${!isCardView ? "bg-blue-500" : "bg-blue-300"} text-white py-2 px-4 rounded`}
                     onClick={() => setIsCardView(false)}
                 >
                     Table View
                 </button>
+                <button
+                    className={`mr-2 ${isCardView ? "bg-blue-500" : "bg-blue-300"} text-white py-2 px-4 rounded`}
+                    onClick={() => setIsCardView(true)}
+                >
+                    Card View
+                </button>
             </div>
 
-            {/* No Tips Available */}
             {filteredTips.length === 0 ? (
                 <div className="text-center text-gray-500 font-semibold text-xl">
                     No tips available.
                 </div>
             ) : isCardView ? (
-                /* Responsive Tip Cards Grid */
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-h-[37rem] overflow-auto p-5">
                     {filteredTips.map((tip) => (
                         <div
@@ -170,63 +167,63 @@ const TipsList = () => {
                     ))}
                 </div>
             ) : (
-                        // Table View
-                        <table className="min-w-full border-collapse border border-gray-200">
-                            <thead>
-                                <tr className="bg-green-400 text-black">
-                                    <th className="border border-gray-200 px-4 py-2 text-left w-[10%] text-xs">ID</th>
-                                    <th className="border border-gray-200 px-4 py-2 text-left">Image</th>
-                                    <th className="border border-gray-200 px-4 py-2 text-left max-w-[150px]">Title</th>
-                                    <th className="border border-gray-200 px-4 py-2 text-left max-w-[250px]">Description</th>
-                                    <th className="border border-gray-200 px-4 py-2 text-left">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredTips.map((tip) => (
-                                    <tr key={tip._id} className="border-b">
-                                        <td className="border border-gray-200 px-2 py-2 text-xs">
-                                            {tip._id.slice(0, 8)}
-                                        </td>
-                                        <td className="border border-gray-200 px-4 py-2">
-                                            <img
-                                                src={getProfileImage(tip.image)}
-                                                alt={tip.Title}
-                                                className="w-16 h-16 object-cover rounded-full"
-                                            />
-                                        </td>
-                                        <td className="border border-gray-200 px-4 py-2 max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
-                                            {tip.Title}
-                                        </td>
-                                        <td className="border border-gray-200 px-4 py-2 max-w-[250px] overflow-hidden text-ellipsis whitespace-nowrap">
-                                            {tip.Description}
-                                        </td>
-                                        <td className="border border-gray-200 px-4 py-2 text-center">
-                                            <div className="space-x-2">
-                                                <button
-                                                    className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded text-sm"
-                                                    onClick={() => handleViewClick(tip)}
-                                                >
-                                                    View
-                                                </button>
-                                                <button
-                                                    className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded text-sm"
-                                                    onClick={() => handleUpdateClick(tip)}
-                                                >
-                                                    Update
-                                                </button>
-                                                <button
-                                                    className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded text-sm"
-                                                    onClick={() => handleDeleteClick(tip)}
-                                                >
-                                                    Delete
-                                                </button>
-                                            </div>
-                                        </td>
+                // Table View
+                <table className="min-w-full border-collapse border border-gray-200">
+                    <thead>
+                        <tr className="bg-green-400 text-black">
+                            <th className="border border-gray-200 px-4 py-2 text-left w-[10%] text-xs">ID</th>
+                            <th className="border border-gray-200 px-4 py-2 text-left">Image</th>
+                            <th className="border border-gray-200 px-4 py-2 text-left max-w-[150px]">Title</th>
+                            <th className="border border-gray-200 px-4 py-2 text-left max-w-[250px]">Description</th>
+                            <th className="border border-gray-200 px-4 py-2 text-left">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {filteredTips.map((tip) => (
+                            <tr key={tip._id} className="border-b">
+                                <td className="border border-gray-200 px-2 py-2 text-xs">
+                                    {tip._id.slice(0, 8)}
+                                </td>
+                                <td className="border border-gray-200 px-4 py-2">
+                                    <img
+                                        src={getProfileImage(tip.image)}
+                                        alt={tip.Title}
+                                        className="w-16 h-16 object-cover rounded-full"
+                                    />
+                                </td>
+                                <td className="border border-gray-200 px-4 py-2 max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
+                                    {tip.Title}
+                                </td>
+                                <td className="border border-gray-200 px-4 py-2 max-w-[250px] overflow-hidden text-ellipsis whitespace-nowrap">
+                                    {tip.Description}
+                                </td>
+                                <td className="border border-gray-200 px-4 py-2 text-center">
+                                    <div className="space-x-2">
+                                        <button
+                                            className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded text-sm"
+                                            onClick={() => handleViewClick(tip)}
+                                        >
+                                            View
+                                        </button>
+                                        <button
+                                            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded text-sm"
+                                            onClick={() => handleUpdateClick(tip)}
+                                        >
+                                            Update
+                                        </button>
+                                        <button
+                                            className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded text-sm"
+                                            onClick={() => handleDeleteClick(tip)}
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                </td>
 
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
 
 
             )}

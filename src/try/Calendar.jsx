@@ -4,15 +4,14 @@ import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Link } from 'react-router-dom';
-import Modal from '../AdminDashBoard/Components/Modal';
 import axios from 'axios';
+import Modal from '../AdminDashBoard/Components/Modal';
 
 const Baseurl = import.meta.env.VITE_BASEURL;
 
 const locales = {
     'en-US': enUS,
 };
-
 const localizer = dateFnsLocalizer({
     format,
     parse,

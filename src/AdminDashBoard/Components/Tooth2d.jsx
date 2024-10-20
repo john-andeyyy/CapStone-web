@@ -20,6 +20,7 @@ const Tooth2d = ({ userIds }) => {
     const [bottomCount, setbottomCount] = useState(null);
     const [expandedTeeth, setExpandedTeeth] = useState({});
     const [showcreate, setshowcreate] = useState(false);
+    const [show2d, setshow2d] = useState(false);
     const [statusMessage, setStatusMessage] = useState(null);
     const [status, setStatus] = useState('');
     const [showcard, setshowcard] = useState(false);
@@ -90,7 +91,6 @@ const Tooth2d = ({ userIds }) => {
         setEditingIndex(null);
     };
 
-   
     const handleSaveNote = async () => {
         if (newNote.trim()) {
             const updatedNotes = { ...notes };
@@ -109,9 +109,9 @@ const Tooth2d = ({ userIds }) => {
 
             updatedNotes[selectedTooth.id] = updatedToothData;
             setNotes(updatedNotes);
-            setNewNote(''); 
+            setNewNote('');
             setEditingIndex(null);
-            setStatus(''); 
+            setStatus('');
 
             const updatePayload = {
                 topTeeth: toothType === 'topTeeth'
@@ -222,72 +222,91 @@ const Tooth2d = ({ userIds }) => {
     };
 
     return (
-        <div className="flex flex-col items-center py-10 w-full">
+        <div className="flex flex-col py-5 ">
             {showcreate && <MedicalHistoryUpdate userid={userid} fetchMedicalHistory={fetchMedicalHistory} />}
 
-
-            <div className="mb-4">
-                <div className="flex flex-wrap items-center justify-center ">
-                    {/* Render SVG elements in the top row */}
-                    {range(topCount).map((index) => {
-                        const toothId = `top-${index}`;
-                        const toothData = getToothData(toothId); // Get tooth data (status and notes)
-
-                        return (
-                            <div
-                                key={toothId}
-                                onMouseEnter={() => handleMouseEnter(toothId)}
-                                onMouseLeave={handleMouseLeave}
-                                className="flex flex-col items-center"
-                            >
-                                <TeethSVG
-                                    id={toothId}
-                                    name={`Tooth ${index + 1}`}
-                                    onClick={() => handleSvgClick(toothId, `Tooth ${index + 1}`)}
-                                    isHovered={isToothHovered(toothId)}
-                                    className={`transition-transform ${isToothHovered(toothId) ? 'transform scale-110' : ''} hover:cursor-pointer`}
-                                    status={toothData.status} // Pass the status from the tooth data
-                                />
-                                <span className="mt-2 text-sm text-gray-700">Top: {index + 1}</span>
-                            </div>
-                        );
-                    })}
-                </div>
-                
-                <div className="flex flex-wrap items-center justify-center  mt-4">
-                    {/* Render SVG elements in the bottom row */}
-                    {range(bottomCount).map((index) => {
-                        const toothId = `bottom-${index}`;
-                        const toothData = getToothData(toothId); // Get tooth data (status and notes)
-
-                        return (
-                            <div
-                                key={toothId}
-                                onMouseEnter={() => handleMouseEnter(toothId)}
-                                onMouseLeave={handleMouseLeave}
-                                className="flex flex-col items-center"
-                            >
-                                <TeethSVG
-                                    id={toothId}
-                                    name={`Tooth ${index + topCount + 1}`}
-                                    onClick={() => handleSvgClick(toothId, `Tooth ${index + topCount + 1}`)}
-                                    isHovered={isToothHovered(toothId)}
-                                    className={`transition-transform ${isToothHovered(toothId) ? 'transform scale-110' : ''} hover:cursor-pointer`}
-                                    status={toothData.status} // Pass the status from the tooth data
-                                />
-                                <span className="mt-2 text-sm text-gray-700">Bottom: {index + 1}</span>
-                            </div>
-                        );
-                    })}
-                </div>
+            <div>
+                <button
+                    onClick={() => setshow2d((prev) => !prev)} // Toggle the showcard state
+                    className="bg-blue-500 text-right text-white font-semibold rounded-lg px-4 py-2 mb-4 shadow-md hover:bg-blue-600 transition duration-300"
+                >
+                    {show2d ? 'Hide Medical History' : 'Show Medical History'}
+                </button>
 
             </div>
-            <button
-                onClick={() => setshowcard((prev) => !prev)} // Toggle the showcard state
-                className="bg-blue-500 text-white font-semibold rounded-lg px-4 py-2 mb-4 shadow-md hover:bg-blue-600 transition duration-300"
-            >
-                {showcard ? 'Hide' : 'Show'}
-            </button>
+            {show2d && (
+                <div>
+                    <div className="mb-4">
+                        <div className="flex flex-wrap items-center justify-center ">
+                            {/* Render SVG elements in the top row */}
+                            {range(topCount).map((index) => {
+                                const toothId = `top-${index}`;
+                                const toothData = getToothData(toothId); // Get tooth data (status and notes)
+
+                                return (
+                                    <div
+                                        key={toothId}
+                                        onMouseEnter={() => handleMouseEnter(toothId)}
+                                        onMouseLeave={handleMouseLeave}
+                                        className="flex flex-col items-center"
+                                    >
+                                        <TeethSVG
+                                            id={toothId}
+                                            name={`Tooth ${index + 1}`}
+                                            onClick={() => handleSvgClick(toothId, `Tooth ${index + 1}`)}
+                                            isHovered={isToothHovered(toothId)}
+                                            className={`transition-transform ${isToothHovered(toothId) ? 'transform scale-110' : ''} hover:cursor-pointer`}
+                                            status={toothData.status} // Pass the status from the tooth data
+                                        />
+                                        <span className="mt-2 text-sm text-gray-700">Top: {index + 1}</span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        <div className="flex flex-wrap items-center justify-center  mt-4">
+                            {/* Render SVG elements in the bottom row */}
+                            {range(bottomCount).map((index) => {
+                                const toothId = `bottom-${index}`;
+                                const toothData = getToothData(toothId); // Get tooth data (status and notes)
+
+                                return (
+                                    <div
+                                        key={toothId}
+                                        onMouseEnter={() => handleMouseEnter(toothId)}
+                                        onMouseLeave={handleMouseLeave}
+                                        className="flex flex-col items-center"
+                                    >
+                                        <TeethSVG
+                                            id={toothId}
+                                            name={`Tooth ${index + topCount + 1}`}
+                                            onClick={() => handleSvgClick(toothId, `Tooth ${index + topCount + 1}`)}
+                                            isHovered={isToothHovered(toothId)}
+                                            className={`transition-transform ${isToothHovered(toothId) ? 'transform scale-110' : ''} hover:cursor-pointer`}
+                                            status={toothData.status} // Pass the status from the tooth data
+                                        />
+                                        <span className="mt-2 text-sm text-gray-700">Bottom: {index + 1}</span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+
+                    {!showcreate &&
+                        <div className='flex text-right justify-right'>
+                            {/* <div className='flex justify-end text-right'> */}
+
+                            <button
+                                onClick={() => setshowcard((prev) => !prev)} // Toggle the showcard state
+                                className="bg-blue-500 text-white font-semibold rounded-lg px-4 py-2 mb-4 shadow-md hover:bg-blue-600 transition duration-300"
+                            >
+                                {showcard ? 'Hide' : 'Show'}
+                            </button>
+                        </div>
+                    }
+                </div>
+            )}
             {showcard && (
                 <div className="w-full max-w-6xl mt-8 px-4">
                     {/* Notes section */}
@@ -381,7 +400,7 @@ const Tooth2d = ({ userIds }) => {
                             </button>
                         </div>
 
-                        
+
                         {/* Scrollable table for notes */}
                         <div className="mb-4 max-h-60 overflow-y-auto">
                             <table className="table-auto w-full text-left border">

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Contactusdata } from '../../Landing-infopage/Infopagedata';
 
 export default function ContactusPage() {
     const BASEURL = import.meta.env.VITE_BASEURL;
@@ -7,17 +8,24 @@ export default function ContactusPage() {
     const [contactInfo, setContactInfo] = useState(null);
     const [name, setname] = useState([]);
 
+    const { data: ContactusData } = Contactusdata();
     useEffect(() => {
-        axios.get(`${BASEURL}/Contactus/contactus`)
-            .then(response => {
-                if (response.data.length > 0) {
-                    setContactInfo(response.data[0]);
-                }
-            })
-            .catch(error => {
-                console.error('There was an error fetching the contact data:', error);
-            });
-    }, []);
+        if (ContactusData) {
+            setContactInfo(ContactusData);
+        }
+
+    }, [ContactusData]);
+    // useEffect(() => {
+    //     axios.get(`${BASEURL}/Contactus/contactus`)
+    //         .then(response => {
+    //             if (response.data.length > 0) {
+    //                 setContactInfo(response.data[0]);
+    //             }
+    //         })
+    //         .catch(error => {
+    //             console.error('There was an error fetching the contact data:', error);
+    //         });
+    // }, []);
 
     if (!contactInfo) {
         return <div>Loading...</div>;
@@ -31,7 +39,7 @@ export default function ContactusPage() {
             : "https://via.placeholder.com/150";
     };
     return (
-        <div className="bg-white min-h-screen flex flex-col items-center p-8">
+        <div className=" min-h-screen flex flex-col items-center p-8">
             <div className="w-full max-w-3xl bg-green-100 rounded-lg shadow-lg p-6">
                 {/* Dental Office Logo */}
                 {contactInfo.logo && (

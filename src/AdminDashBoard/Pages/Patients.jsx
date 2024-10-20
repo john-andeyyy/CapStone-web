@@ -25,7 +25,7 @@ export default function Patients_List() {
         //     setPatientsInfo(JSON.parse(cachedData));
         //     setLoading(false);
         // } else {
-            fetch_patient();
+        fetch_patient();
         // }
     }, []);
 
@@ -93,9 +93,10 @@ export default function Patients_List() {
                                             </span>
                                         </button>
                                     </th>
-                                    <th className='p-3'>First Name</th>
+                                    <th className='p-3'>Fisrst Name</th>
+                                    <th className='p-3'>Middle Name </th>
                                     <th className='p-3'>Last Visit</th>
-                                    <th className='p-3 text-center'>Actions</th>
+                                    <th className='p-3 text-center'>View</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -105,6 +106,7 @@ export default function Patients_List() {
                                             <td className='p-3'>{patient.id}</td>
                                             <td className='p-3'>{patient.LastName}</td>
                                             <td className='p-3'>{patient.FirstName}</td>
+                                            <td className='p-3'>{patient.MiddleName}</td>
                                             <td className='p-3'>
                                                 {patient.LatestAppointment
                                                     ? new Date(patient.LatestAppointment.date).toLocaleDateString('en-US', {
