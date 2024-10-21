@@ -50,10 +50,12 @@ export default function Announcement() {
 
         return (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-secondary rounded-lg shadow-lg w-11/12 md:w-1/2 lg:w-1/3 max-h-[80vh] max-w-[90vw] overflow-hidden">
+                <div className="bg-[#C6E4DA] rounded-lg shadow-lg w-11/12 md:w-1/2 lg:w-1/3 max-h-[80vh] max-w-[90vw] overflow-hidden">
                     <div className="flex justify-between items-center p-4 border-b">
-                        <h2 className="text-lg font-semibold">{title}</h2>
-                        <button className="text-gray-600" onClick={onClose}>X</button>
+                        <h2 className="text-lg font-bold text-[#266D53] text-center">{title}</h2>
+                        <button className="text-gray-600" onClick={onClose}><span class="material-symbols-outlined">
+                            close
+                        </span></button>
                     </div>
                     <div className="p-4 max-h-[80vh] overflow-y-auto">{children}</div>
                 </div>
@@ -81,7 +83,7 @@ export default function Announcement() {
                                     <span className="material-symbols-outlined mr-2 text-error">campaign</span>
                                     {announcement.Title}
                                 </h2>
-                                <button className="text-secondary cursor-pointer ml-2" onClick={() => openModal(announcement)}>
+                                <button className="text-[#266D53] cursor-pointer ml-2" onClick={() => openModal(announcement)}>
                                     View
                                 </button>
                             </div>

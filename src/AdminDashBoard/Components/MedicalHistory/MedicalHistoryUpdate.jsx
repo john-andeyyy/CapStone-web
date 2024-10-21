@@ -108,14 +108,14 @@ const MedicalHistoryUpdate = ({ userid, fetchMedicalHistory }) => {
     return (
         <div className="container mx-auto p-4">
             <button
-                className="bg-blue-600 text-white px-4 py-2 mb-4 rounded shadow hover:bg-blue-700 transition"
+                className="bg-[#3EB489] hover:bg-[#62A78E] text-white px-4 py-2 mb-4 rounded shadow transition"
                 onClick={openModal}
             >
                 Create Medical History
             </button>
 
             <dialog id="my_modal_3" className="modal">
-                <div className="modal-box max-w-2xl">
+                <div className="modal-box max-w-2xl  bg-[#C6E4DA]">
                     <form method="dialog" onSubmit={handleSubmit} className="space-y-4">
                         {/* Close button */}
                         <button
@@ -126,7 +126,7 @@ const MedicalHistoryUpdate = ({ userid, fetchMedicalHistory }) => {
                             ✕
                         </button>
 
-                        <h1 className="text-2xl font-bold mb-4">Create Medical History Record:</h1>
+                        <h1 className="text-2xl font-bold mb-4 text-[#266D53] text-center">Create Medical History Record:</h1>
                         <p className="text-lg text-center text-red-600 font-semibold">{error}</p>
 
                         {/* <div>
@@ -267,30 +267,34 @@ const MedicalHistoryUpdate = ({ userid, fetchMedicalHistory }) => {
                                 </div>
                             </>
                         ) : (
-                            <>
-                                <div>
-                                    <label className="block text-lg mb-1">Number of Top Teeth:</label>
-                                    <input
-                                        type="number"
-                                        value={numTopTeeth}
-                                        onChange={(e) => setNumTopTeeth(parseInt(e.target.value))}
-                                        className="border p-2 w-full rounded focus:outline-none focus:ring focus:ring-blue-300"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-lg mb-1">Number of Bottom Teeth:</label>
-                                    <input
-                                        type="number"
-                                        value={numBottomTeeth}
-                                        onChange={(e) => setNumBottomTeeth(parseInt(e.target.value))}
-                                        className="border p-2 w-full rounded focus:outline-none focus:ring focus:ring-blue-300"
-                                    />
-                                </div>
-                            </>
+
+                            <div className='grid grid-cols-2 gap-4'>
+                                <>
+                                    <div>
+                                        <label className="block text-lg mb-1">Number of Top Teeth:</label>
+                                        <input
+                                            type="number"
+                                            value={numTopTeeth}
+                                            onChange={(e) => setNumTopTeeth(parseInt(e.target.value))}
+                                            className="border p-2 w-full rounded focus:outline-none focus:ring focus:ring-blue-300"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-lg mb-1">Number of Bottom Teeth:</label>
+                                        <input
+                                            type="number"
+                                            value={numBottomTeeth}
+                                            onChange={(e) => setNumBottomTeeth(parseInt(e.target.value))}
+                                            className="border p-2 w-full rounded focus:outline-none focus:ring focus:ring-blue-300"
+                                        />
+                                    </div>
+                                </>
+                            </div>
+
                         )}
 
-                        <div className="modal-action">
-                            <button type="submit" className="btn btn-success">
+                        <div className="modal-action flex justify-center m-5">
+                            <button type="submit" className="bg-[#4285F4] hover:bg-[#0C65F8] p-3 rounded text-black">
                                 Submit
                             </button>
                         </div>

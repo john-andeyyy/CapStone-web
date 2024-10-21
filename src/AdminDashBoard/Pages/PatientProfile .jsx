@@ -90,12 +90,20 @@ const PatientProfile = () => {
 
     return (
         <div className="container mx-auto p-4">
-            <button
-                onClick={() => navigate(-1)}
-                className="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75"
-            >
-                Go Back
-            </button>
+
+            <div className='grid grid-cols-2 items-center'>
+                <div className='flex items-center'>
+                    <button
+                        onClick={() => navigate(-1)}
+                        className="flex items-center text-[#3EB489] hover:text-[#62A78E] font-semibold focus:outline-none"
+                    >
+                        <span className="material-symbols-outlined text-2xl mr-2">arrow_back</span>
+                        <p className='text-xl'>Go Back</p>
+                    </button>
+                </div>
+            </div>
+
+
             <h1 className="mt-5 mb-5 text-2xl font-semibold py-4 lg:py-0">Patient Profile</h1>
 
             <div className="shadow-md rounded-lg p-6 bg-[#F5F5F5]">
@@ -207,7 +215,14 @@ const PatientProfile = () => {
             {isModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
                     <div className=" bg-accent p-6 rounded-lg shadow-lg w-11/12 md:w-1/2">
-                        <h2 className="text-xl font-semibold mb-4">Full Patient Details</h2>
+                        <div className='flex justify-end'>
+                            <button onClick={() => setIsModalOpen(false)} className="text-gary-500">
+                                <span class="material-symbols-outlined">
+                                    close
+                                </span>
+                            </button>
+                        </div>
+                        <h2 className="text-xl font-semibold mb-4 text-[#266D53] text-center mb-5">Full Patient Details</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {fullPatient && requiredFields.map((field) => (
                                 <div key={field} className="field">
@@ -221,11 +236,7 @@ const PatientProfile = () => {
                                 </div>
                             ))}
                         </div>
-                        <div className='flex justify-center'>
-                            <button onClick={() => setIsModalOpen(false)} className="bg-[#D9D9D9] hover:bg-[#ADAAAA] btn mt-4">
-                                Close
-                            </button>
-                        </div>
+
                     </div>
                 </div>
             )}

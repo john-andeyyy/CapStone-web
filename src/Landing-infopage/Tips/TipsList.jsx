@@ -127,7 +127,7 @@ const TipsList = () => {
                     {filteredTips.map((tip) => (
                         <div
                             key={tip._id}
-                            className="border border-gray-200 rounded-lg shadow-lg p-4 flex flex-col justify-between"
+                            className="border border-gray-200 rounded-lg bg-gray-100 shadow-lg p-4 flex flex-col justify-between"
                         >
                             <div onClick={() => handleViewClick(tip)} className="cursor-pointer">
                                 <div className="flex justify-center mb-4">
@@ -138,10 +138,10 @@ const TipsList = () => {
                                     />
                                 </div>
 
-                                <p className="text-green-500 font-semibold">Title:</p>
+                                <p className="text-[#266D53] font-semibold uppercase">Title:</p>
                                 <h2 className="pl-5 font-bold text-lg sm:text-xl mb-2">{tip.Title}</h2>
 
-                                <p className="text-green-500 font-semibold">Description:</p>
+                                <p className="text-[#266D53] font-semibold uppercase">Description:</p>
                                 <div className="max-h-20 sm:max-h-24 overflow-auto mb-4">
                                     <p className="pl-5  text-sm sm:text-base">{tip.Description}</p>
                                 </div>
@@ -150,14 +150,14 @@ const TipsList = () => {
                             {/* Update and Delete Buttons */}
                             <div className="flex space-x-2 mt-auto">
                                 <button
-                                    className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 sm:py-2 px-2 sm:px-4 rounded text-sm sm:text-base"
+                                    className="w-full bg-[#4285F4] hover:bg-[#0C65F8] text-black font-semibold py-1 sm:py-2 px-2 sm:px-4 rounded text-sm sm:text-base"
                                     onClick={() => handleUpdateClick(tip)}
                                 >
                                     Update Tip
                                 </button>
 
                                 <button
-                                    className="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-1 sm:py-2 px-2 sm:px-4 rounded text-sm sm:text-base"
+                                    className="w-full bg-[#D9D9D9] hover:bg-[#ADAAAA] text-black font-semibold py-1 sm:py-2 px-2 sm:px-4 rounded text-sm sm:text-base"
                                     onClick={() => handleDeleteClick(tip)}
                                 >
                                     Delete Tip

@@ -27,7 +27,7 @@ export default function NotificationPage() {
         try {
             const response = await axios.get(`${Baseurl}/Notification/admin/getAllNotif`, { withCredentials: true });
             const adminNotifications = response.data
-            .filter(notification => notification.adminOnly === true);
+                .filter(notification => notification.adminOnly === true);
 
             setNotifications(adminNotifications.reverse());
         } catch (error) {
@@ -231,7 +231,7 @@ export default function NotificationPage() {
             <div className='flex space-x-5 pb-2'>
                 <button
                     onClick={() => setModalType('new')}
-                    className="bg-green-500 text-white px-4 py-2 rounded"
+                    className="bg-[#4285F4] hover:bg-[#0C65F8] text-white px-4 py-2 rounded"
                 >
                     Send New Notification
                 </button>
@@ -283,8 +283,8 @@ export default function NotificationPage() {
             {/* New Notification Modal */}
             {modalType === 'new' && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                    <div className="bg-base-100 p-6 rounded shadow-lg max-w-md w-full">
-                        <h2 className="text-2xl font-bold mb-4">Send New Notification</h2>
+                    <div className=" bg-[#C6E4DA] p-6 rounded shadow-lg max-w-md w-full">
+                        <h2 className="text-xl font-bold mb-4 text-[#266D53] text-center">Send New Notification</h2>
                         {error && <p className="text-red-500">{error}</p>}
                         <div className="space-y-4">
                             <input
@@ -385,13 +385,13 @@ export default function NotificationPage() {
                             <div className="flex justify-end space-x-4">
                                 <button
                                     onClick={sendNotification}
-                                    className={`px-4 py-2 rounded text-white ${isConfirmed ? 'bg-blue-500' : 'bg-gray-400 cursor-not-allowed'}`}
+                                    className={`px-4 py-2 rounded text-black ${isConfirmed ? 'bg-[#4285F4] hover:bg-[#0C65F8]' : 'bg-gray-400 cursor-not-allowed'}`}
                                 >
                                     Send Notification
                                 </button>
                                 <button
                                     onClick={closeModal}
-                                    className="bg-error text-white px-4 py-2 rounded"
+                                    className="bg-[#D9D9D9] hover:bg-[#ADAAAA] text-black px-4 py-2 rounded"
                                 >
                                     Cancel
                                 </button>
@@ -453,8 +453,8 @@ export default function NotificationPage() {
                                 {selectedNotification.user_Appointment_message ? 'New Appointment Request' : selectedNotification.title}
                             </h2>
                             <p className="text-sm">Date Created: {selectedNotification.createdAt}</p>
-    
-                      </div>
+
+                        </div>
                         <p>{selectedNotification.user_Appointment_message ? selectedNotification.user_Appointment_message : selectedNotification.message}</p>
 
                         <div className='pt-3'>

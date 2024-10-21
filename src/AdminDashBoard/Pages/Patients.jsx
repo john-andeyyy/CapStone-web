@@ -83,13 +83,18 @@ export default function Patients_List() {
                                 <span className="material-symbols-outlined">search</span>
                             </div>
                         </div>
+
+                    </div>
+
+                    <div className="flex justify-end mt-2">
                         <button
                             onClick={() => setIsModalOpen(true)}
-                            className='bg-blue-500 text-white px-4 py-2 rounded ml-4'
+                            className="bg-blue-500 text-white px-4 py-2 rounded"
                         >
                             Add Patient
                         </button>
                     </div>
+
 
                     <div className='mt-4 overflow-auto max-h-[510px]'>
                         <table className='w-full text-left border-collapse'>
@@ -125,7 +130,7 @@ export default function Patients_List() {
                                                         month: 'long',
                                                         day: 'numeric',
                                                     })
-                                                    : <span className='text-red-600'>Unavailable</span>}
+                                                    : <span className='text-red-600'>No Record</span>}
                                             </td>
                                             <td className='p-2 text-center bg-gray-100 border border-black flex justify-center'>
                                                 <button

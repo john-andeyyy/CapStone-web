@@ -203,12 +203,18 @@ export default function AppointmentDetails() {
     return (
         <div className="p-6 mx-auto max-w-7xl">
             {/* max-w-5xl  */}
-            <button
-                onClick={() => navigate(-1)}
-                className="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75"
-            >
-                Go Back
-            </button>
+            <div className='grid grid-cols-2 items-center'>
+                <div className='flex items-center'>
+                    <button
+                        onClick={() => navigate(-1)}
+                        className="flex items-center text-[#3EB489] hover:text-[#62A78E] mb-3 font-semibold focus:outline-none"
+                    >
+                        <span className="material-symbols-outlined text-2xl mr-2">arrow_back</span>
+                        <p className='text-xl'>Go Back</p>
+                    </button>
+                </div>
+            </div>
+
             <div className='flex justify-between items-end mb-6 p-4 bg-gray-100 rounded-lg shadow-md'>
                 <h1 className="text-3xl font-semibold text-gray-800">Appointment Details</h1>
 
@@ -219,23 +225,23 @@ export default function AppointmentDetails() {
                     <div className="grid grid-cols-3 gap-6">
                         <div className="flex flex-col">
                             <p className="font-bold uppercase text-gray-700">Patient Name</p>
-                            <div className="bg-gray-200 p-3 rounded-lg shadow-md">
+                            <div className="bg-[#D3CDCD] p-3 rounded-lg shadow-md">
                                 {appointment.patient?.FirstName || 'N/A'} {appointment.patient?.LastName || 'N/A'}
                             </div>
                         </div>
 
                         <div className="flex flex-col">
                             <p className="font-bold uppercase text-gray-700">Date</p>
-                            <div className="bg-gray-200 p-3 rounded-lg shadow-md">
+                            <div className="bg-[#D3CDCD] p-3 rounded-lg shadow-md">
                                 {new Date(appointment.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                             </div>
                         </div>
 
                         <div className="flex flex-col">
                             <p className="font-bold uppercase text-gray-700">Status</p>
-                            <div className="flex  items-center space-x-4 bg-gray-200 p-3 rounded-lg shadow-md">
+                            <div className="flex  items-center space-x-4 bg-[#D3CDCD] p-3 rounded-lg shadow-md">
                                 {!editStatus ? (
-                                    <span className={`${appointment.Status === 'Cancelled' ? 'text-red-500' : 'text-green-500'} font-bold`}>
+                                    <span className={`${appointment.Status === 'Cancelled' ? 'text-red-500' : 'text-[#266D53]'} font-bold`}>
                                         {appointment.Status}
                                     </span>
                                 ) : (
@@ -256,7 +262,7 @@ export default function AppointmentDetails() {
 
                             <div className="flex items-center space-x-4 mt-4">
                                 <button
-                                    className={`p-3 rounded-lg text-white transition-colors duration-300 ${editStatus ? 'bg-red-500 hover:bg-gray-600' : 'bg-yellow-500 hover:bg-yellow-600'}`}
+                                    className={`p-3 rounded-lg text-white transition-colors duration-300 ${editStatus ? 'bg-red-500 hover:bg-gray-600' : 'bg-[#4285F4] hover:bg-[#0C65F8]'}`}
                                     onClick={() => (editStatus ? handleCancelEdit() : seteditStatus(true))}
                                 >
                                     {editStatus ? 'Cancel Edit' : 'Edit Status'}
@@ -274,7 +280,7 @@ export default function AppointmentDetails() {
 
                         </div>
 
-                        
+
                     </div>
 
 

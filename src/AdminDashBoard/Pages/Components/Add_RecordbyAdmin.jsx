@@ -92,7 +92,7 @@ export default function SetAppointment({ userIds }) {
     return (
         <div>
             <button
-                className="btn text-xl font-semibold bg-green-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-green-500 transition duration-300"
+                className="btn text-xl font-semibold bg-[#3EB489] hover:bg-[#62A78E] text-white px-5 py-2 rounded-lg shadow-md transition duration-300"
                 onClick={() => setOpenFullModal(true)}
             >
                 Add Record
@@ -104,41 +104,53 @@ export default function SetAppointment({ userIds }) {
                 clear();
             }}>
 
-                <h3 className="text-xl font-semibold text-center mb-6">Set Appointment</h3>
+                <h3 className="text-xl font-bold text-[#266D53] text-center mb-6">Set Appointment</h3>
 
                 <div className="space-y-4">
-                    <div>
-                        <label className="block text-sm mb-1">Select Dentist</label>
-                        <select
-                            className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            value={selectedDentist}
-                            onChange={(e) => setSelectedDentist(e.target.value)}
-                        >
-                            <option value="">Choose dentist</option>
-                            {localDentistList.map((dentist) => (
-                                <option key={dentist._id} value={dentist._id}>
-                                    {`${dentist.FirstName} ${dentist.MiddleName ? dentist.MiddleName + ' ' : ''}${dentist.LastName}`}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm mb-1">Select Dentist</label>
+                            <select
+                                className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                value={selectedDentist}
+                                onChange={(e) => setSelectedDentist(e.target.value)}
+                            >
+                                <option value="">Choose dentist</option>
+                                {localDentistList.map((dentist) => (
+                                    <option key={dentist._id} value={dentist._id}>
+                                        {`${dentist.FirstName} ${dentist.MiddleName ? dentist.MiddleName + ' ' : ''}${dentist.LastName}`}
+                                    </option>
+                                ))}
+                            </select>
 
-                    <div>
-                        <label className="block text-sm mb-1">Select Procedures</label>
-                        <div className="border border-gray-300 rounded-lg p-2 max-h-40 overflow-auto">
-                            {procedureList.map((procedure) => (
-                                <div key={procedure._id} className="flex items-center mb-2">
-                                    <input
-                                        type="checkbox"
-                                        id={`procedure-${procedure._id}`}
-                                        onChange={(e) => handleProcedureChange(e, procedure)}
-                                        className="mr-2 focus:ring-blue-400"
-                                    />
-                                    <label htmlFor={`procedure-${procedure._id}`} className="text-sm">
-                                        {procedure.Procedure_name} - ₱{procedure.Price}
-                                    </label>
-                                </div>
-                            ))}
+                            <div>
+                                <label className="block text-sm mt-5">Total Amount</label>
+                                <input
+                                    type="number"
+                                    value={amount}
+                                    readOnly
+                                    className="w-full border border-gray-300 rounded-lg p-2 bg-gray-100"
+                                    placeholder="Auto-calculated"
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <label className="block text-sm mb-1">Select Procedures</label>
+                            <div className="border border-gray-300 rounded-lg p-2 max-h-40 overflow-auto">
+                                {procedureList.map((procedure) => (
+                                    <div key={procedure._id} className="flex items-center mb-2">
+                                        <input
+                                            type="checkbox"
+                                            id={`procedure-${procedure._id}`}
+                                            onChange={(e) => handleProcedureChange(e, procedure)}
+                                            className="mr-2 focus:ring-blue-400"
+                                        />
+                                        <label htmlFor={`procedure-${procedure._id}`} className="text-sm">
+                                            {procedure.Procedure_name} - ₱{procedure.Price}
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
 
@@ -196,30 +208,22 @@ export default function SetAppointment({ userIds }) {
                             />
                         </div>
                     </div>
-
-                    <div>
-                        <label className="block text-sm mb-1">Total Amount</label>
-                        <input
-                            type="number"
-                            value={amount}
-                            readOnly
-                            className="w-full border border-gray-300 rounded-lg p-2 bg-gray-100"
-                            placeholder="Auto-calculated"
-                        />
-                    </div>
                 </div>
                 {errorMessage && (
                     <div className="bg-red-100 text-red-600 text-sm p-2 mt-4 rounded-lg">
                         {errorMessage}
                     </div>
                 )}
-                <button
-                    className="w-full bg-blue-500 text-white py-2 rounded-lg mt-6 hover:bg-blue-600 transition duration-200"
-                    onClick={handleSubmit}
-                    disabled={loading}
-                >
-                    {loading ? <span className="loading loading-spinner loading-sm"></span> : 'Submit'}
-                </button>
+
+                <div className='flex justify-center items-center'>
+                    <button
+                        className="bg-[#4285F4] hover:bg-[#0C65F8] text-white py-2 rounded-lg mt-6 px-8 transition duration-200"
+                        onClick={handleSubmit}
+                        disabled={loading}
+                    >
+                        {loading ? <span className="loading loading-spinner loading-sm"></span> : 'Submit'}
+                    </button>
+                </div>
 
             </MediumModal>
 

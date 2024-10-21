@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import ProceduresModal from './ProceduresModal'; 
+import ProceduresModal from './ProceduresModal';
 
 const ProceduresTable = ({ appointment }) => {
-    const [userProceduresList, setUserProceduresList] = useState(appointment.procedures || []); 
+    const [userProceduresList, setUserProceduresList] = useState(appointment.procedures || []);
     const [allProcedures, setAllProcedures] = useState([]);
     const [addedProcedures, setAddedProcedures] = useState([]);
-    const [markedForRemoval, setMarkedForRemoval] = useState([]); 
+    const [markedForRemoval, setMarkedForRemoval] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isEditing, setIsEditing] = useState(false); 
+    const [isEditing, setIsEditing] = useState(false);
     const [editedAmount, setEditedAmount] = useState(appointment.Amount || 0);
     const [appointmentAmount, setappointmentAmount] = useState(appointment.Amount || 0);
 
@@ -29,7 +29,7 @@ const ProceduresTable = ({ appointment }) => {
 
     useEffect(() => {
         setUserProceduresList(appointment.procedures || []);
-        setEditedAmount(appointment.Amount || 0); 
+        setEditedAmount(appointment.Amount || 0);
     }, [appointment]);
 
     const handleMarkForRemoval = (id) => {
@@ -108,9 +108,22 @@ const ProceduresTable = ({ appointment }) => {
 
     return (
         <div>
-            <p className='text-xl font-semibold'><strong>Procedures:</strong></p>
-       
 
+            <div className='grid grid-cols-2 gap-4'>
+                <p className='text-xl'><strong>Procedures:</strong></p>
+
+                <div className='flex flex-col justify-end text-right'>
+                    <div>
+                        <button
+                            onClick={handleToggleEdit}
+                            className={`px-4 py-2 rounded ${isEditing ? 'bg-green-500' : 'bg-blue-500'
+                                } text-white`}
+                        >
+                            {isEditing ? 'Save' : 'Edit'}
+                        </button>
+                    </div>
+                </div>
+            </div>
             {userProceduresList && userProceduresList.length > 0 ? (
                 <div className="overflow-y-auto max-h-72 my-4">
                     <table className="min-w-full mb-4 table-fixed">
@@ -208,18 +221,6 @@ const ProceduresTable = ({ appointment }) => {
                 </div>
 
             )}
-
-            <div className='flex flex-col justify-end text-right'>
-                <div>
-                    <button
-                        onClick={handleToggleEdit}
-                        className={`px-4 py-2 rounded ${isEditing ? 'bg-green-500' : 'bg-blue-500'
-                            } text-white`}
-                    >
-                        {isEditing ? 'Save' : 'Edit'}
-                    </button>
-                </div>
-            </div>
 
             <div className="flex justify-between mt-4 space-x-1">
                 <p className="font-semibold ">Total of all procedures: </p>
