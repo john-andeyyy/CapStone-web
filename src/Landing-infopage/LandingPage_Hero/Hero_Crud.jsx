@@ -228,7 +228,7 @@ export default function Hero_Crud() {
                       });
                       setImagePreview(null);
                     }}
-                    className="bg-[#D9D9D9] hover:bg-[#ADAAAA] text-black px-4 py-2 rounded-lg hover:bg-red-600 transition"
+                    className="bg-[#D9D9D9] hover:bg-[#ADAAAA] text-black px-4 py-2 rounded-lgtransition"
                   >
                     Cancel
                   </button>

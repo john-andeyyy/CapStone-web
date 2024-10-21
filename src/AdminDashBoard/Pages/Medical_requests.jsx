@@ -162,7 +162,7 @@ export default function MedicalRequests() {
 
       {/* Filter by Status */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="flex flex mb-4">
+        <div className="flex  mb-4">
           <label htmlFor="status" className="block mb-2 font-semibold mt-3">Filter by Status:</label>
           <select
             id="status"

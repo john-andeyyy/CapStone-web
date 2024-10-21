@@ -171,11 +171,11 @@ const TipsList = () => {
                 <table className="min-w-full border-collapse border border-black">
                     <thead>
                         <tr className="bg-green-400 text-white">
-                            <th className="border border-black text-center px-4 py-2 text-left w-[10%] text-xs bg-[#3EB489]">ID</th>
-                            <th className="border border-black text-center px-4 py-2 text-left bg-[#3EB489]">Image</th>
-                            <th className="border border-black text-center px-4 py-2 text-left max-w-[150px] bg-[#3EB489]">Title</th>
-                            <th className="border border-black text-center px-4 py-2 text-left max-w-[250px] bg-[#3EB489]">Description</th>
-                            <th className="border border-black text-center px-4 py-2 text-left bg-[#3EB489]">Actions</th>
+                            <th className="border border-black text-center px-4 py-2  w-[10%] text-xs bg-[#3EB489]">ID</th>
+                            <th className="border border-black text-center px-4 py-2  bg-[#3EB489]">Image</th>
+                            <th className="border border-black text-center px-4 py-2  max-w-[150px] bg-[#3EB489]">Title</th>
+                            <th className="border border-black text-center px-4 py-2  max-w-[250px] bg-[#3EB489]">Description</th>
+                            <th className="border border-black text-center px-4 py-2  bg-[#3EB489]">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
