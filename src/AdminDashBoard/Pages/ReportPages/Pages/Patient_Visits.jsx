@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import BarChart from '../../../Charts/BarChart';
 import ReportMenu from '../components/ReportMenu';
+import { PDFPatientVisit } from '../../../Component_Functions/PDFReport';
 
 export default function Patient_Visits() {
     const BASEURL = import.meta.env.VITE_BASEURL;
@@ -35,7 +36,7 @@ export default function Patient_Visits() {
         fetchAppointments();
     }, [BASEURL]);
 
-    
+
     useEffect(() => {
         if (appointments.length > 0) {
             const uniqueYears = [...new Set(appointments.map(app => new Date(app.date).getFullYear()))];
@@ -78,31 +79,44 @@ export default function Patient_Visits() {
 
         setVisitCounts({ today: todayCount, week: weekCount, month: monthCount, year: yearCount });
     };
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    const [dateselected, setdateselected] = useState(null);
     const filterReportData = (appointments) => {
         const today = new Date();
         const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
         const startOfMonth = new Date(selectedYear, selectedMonth, 1);
-        const endOfMonth = new Date(selectedYear, selectedMonth + 1, 0); // Last day of the month
-        const startOfYear = new Date(selectedYear, 0, 1); // January 1st of the selected year
+        const endOfMonth = new Date(selectedYear, selectedMonth + 1, 0);
+        const startOfYear = new Date(selectedYear, 0, 1);
 
         const filteredData = appointments.filter(appointment => {
             const appointmentDate = new Date(appointment.date);
+
             if (period === 'today') {
                 return appointmentDate.toDateString() === today.toDateString();
             }
+
             if (period === 'week') {
-                return appointmentDate >= startOfWeek && appointmentDate <= today; // Visits this week
+                return appointmentDate >= startOfWeek && appointmentDate <= today;
             }
+
             if (period === 'month') {
                 return appointmentDate >= startOfMonth && appointmentDate <= endOfMonth;
             }
+
             if (period === 'year') {
-                return appointmentDate >= startOfYear && appointmentDate <= new Date(selectedYear + 1, 0, 0); // Visits this year
+                // Set dateselected to just the year.
+                setdateselected(selectedYear); // Store just the selected year.
+                return appointmentDate >= startOfYear && appointmentDate <= new Date(selectedYear + 1, 0, 0);
             }
+
+            if (period === 'selectedDate') {
+                return appointmentDate.toDateString() === dateselected?.toDateString();
+            }
+
             return false;
         });
 
+        console.log('Filtered Report Data:', filteredData); // Log filtered data
         setFilteredReportData(filteredData);
     };
 
@@ -111,27 +125,30 @@ export default function Patient_Visits() {
         const monthDays = new Date(selectedYear, selectedMonth + 1, 0).getDate();
         const startOfMonth = new Date(selectedYear, selectedMonth, 1);
         const endOfMonth = new Date(selectedYear, selectedMonth, monthDays);
+        const weekCounts = Math.ceil(monthDays / 7); // Calculate total weeks in the month
 
-        const firstWeekStart = new Date(startOfMonth);
-        const firstWeekEnd = new Date(firstWeekStart);
-        firstWeekEnd.setDate(firstWeekEnd.getDate() + (6 - firstWeekStart.getDay()));
+        for (let week = 0; week < weekCounts; week++) {
+            const weekStart = new Date(startOfMonth);
+            weekStart.setDate(weekStart.getDate() + week * 7); // Start of the week
 
-        let weekCount = 0;
+            const weekEnd = new Date(startOfMonth);
+            weekEnd.setDate(weekEnd.getDate() + (week + 1) * 7 - 1); // End of the week
 
-        while (firstWeekStart <= endOfMonth) {
+            // Ensure we don't exceed the month
+            if (weekEnd > endOfMonth) {
+                weekEnd.setDate(monthDays); // Adjust to the last day of the month
+            }
+
+            // Count appointments in the current week
             const weekVisits = appointments.filter(appointment => {
                 const appointmentDate = new Date(appointment.date);
-                return appointmentDate >= firstWeekStart && appointmentDate <= firstWeekEnd;
+                return appointmentDate >= weekStart && appointmentDate <= weekEnd;
             }).length;
-
+            console.log('visitsByWeek', visitsByWeek)
             visitsByWeek.push(weekVisits);
-            weekCount++;
-
-            firstWeekStart.setDate(firstWeekStart.getDate() + 7);
-            firstWeekEnd.setDate(firstWeekEnd.getDate() + 7);
         }
 
-        const labels = Array.from({ length: weekCount }, (_, i) => `Week ${i + 1}`);
+        const labels = Array.from({ length: weekCounts }, (_, i) => `Week ${i + 1}`);
 
         return {
             labels,
@@ -220,32 +237,56 @@ export default function Patient_Visits() {
         <div className=" rounded-lg shadow-md">
             <ReportMenu />
             <h2 className="text-2xl font-bold  p-4 text-green-500">Patient Visits Report</h2>
-            <div className="flex justify-between mb-4">
+            <div className="flex space-x-5 mb-4">
                 <button onClick={() => setPeriod('today')} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200">
                     Today Visits
                 </button>
                 <button onClick={() => setPeriod('week')} className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-200">
                     This Week Visits
                 </button>
-                <button onClick={() => setPeriod('month')} className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition duration-200">
+                {/* <button onClick={() => setPeriod('month')} className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition duration-200">
                     This Month Visits
-                </button>
+                </button> */}
+
+                <input
+                    type="month"
+                    id="month"
+                    value={`${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}`} // Set the value to the selected year and month
+                    onChange={(e) => {
+                        const [year, month] = e.target.value.split('-');
+                        setSelectedYear(Number(year));
+                        setSelectedMonth(Number(month) - 1); // Convert month back to 0-indexed
+                    }}
+                    className="w-full sm:w-auto p-2 border rounded shadow-sm"
+                />
+
+
                 <button onClick={() => setPeriod('year')} className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition duration-200">
                     This Year Visits
                 </button>
+
+
+                <PDFPatientVisit
+                    appointments={reportData}
+                    title={
+                        dateselected
+                            ? `Patient Visits in ${dateselected}` // Directly use the year value.
+                            : `Patient Visits in ${selectedYear}` // Default to selected year if dateselected is null.
+                    }
+                />
 
             </div>
 
             {period == 'year' && (
 
-                <div className=" py-3 ">
-                    <div>
+                <div className="py-3">
+                    <div className="w-1/2"> {/* Set width to 50% or adjust as needed */}
                         <label htmlFor="year-selector" className="block text-sm font-medium text-gray-700">Select Year:</label>
                         <select
                             id="year-selector"
                             value={selectedYear}
                             onChange={(e) => setSelectedYear(Number(e.target.value))}
-                            className="mt-1 p-2 w-full block border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"
+                            className="mt-1 p-2 block border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"
                         >
                             {years.map((year) => (
                                 <option key={year} value={year}>{year}</option>
@@ -253,6 +294,7 @@ export default function Patient_Visits() {
                         </select>
                     </div>
                 </div>
+
             )}
 
             <p className="text-xl font-bold mb-4 ">{reportTitle}</p>
@@ -300,10 +342,10 @@ export default function Patient_Visits() {
                     <div className=''>
                         {period === 'month' && (
                             <>
-                                <h3 className="text-xl font-bold mb-4 text-green-500">Visits per Week in {new Date(selectedYear, selectedMonth).toLocaleString('default', { month: 'long' })}</h3>
-                                <div className="mb-6  ">
-                                    <BarChart chartData={getMonthChartData()} />
-                                </div>
+                                {/* <h3 className="text-xl font-bold mb-4 text-green-500">Visits per Week in {new Date(selectedYear, selectedMonth).toLocaleString('default', { month: 'long' })}</h3>
+                                    <div className="mb-6">
+                                        <BarChart chartData={getMonthChartData()} />
+                                    </div> */}
                             </>
                         )}
                         {period === 'year' && (

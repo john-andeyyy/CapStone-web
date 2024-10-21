@@ -255,7 +255,7 @@ export default function TotalProcedures() {
                             </button>
                         )}
                         <button onClick={saveAsPDF} className="mt-2 sm:mt-0 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-200">
-                            Save as PDF
+                            Generate PDF
                         </button>
                     </div>
                 </div>

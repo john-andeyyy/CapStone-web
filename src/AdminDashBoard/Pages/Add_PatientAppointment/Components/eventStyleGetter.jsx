@@ -20,12 +20,14 @@ const eventStyleGetter = (event) => {
         case 'rejected':
             backgroundColor = '#6C757D'; // Secondary
             break;
+
         case 'clinic closed':
             backgroundColor = '#FF6347'; // Custom color for "Clinic Closed"
             break;
         case 'dentist not available':
             backgroundColor = '#FF6347'; // Custom color for "Dentist Not Available"
             break;
+
         default:
             backgroundColor = '#6C757D'; // Default
     }

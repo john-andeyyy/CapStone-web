@@ -3,13 +3,20 @@ import axios from 'axios';
 
 const Baseurl = import.meta.env.VITE_BASEURL;
 
-const PatientSelector = ({ onSelectPatient }) => {
-    const [patients, setPatients] = useState([]); // Store the list of patients
-    const [loading, setLoading] = useState(true); // Loading state
-    const [selectedPatient, setSelectedPatient] = useState(''); // Currently selected patient
-    const [searchTerm, setSearchTerm] = useState(''); // Search term for filtering patients
+const PatientSelector = ({ onSelectPatient, isSubmited }) => {
+    const [patients, setPatients] = useState([]); 
+    const [loading, setLoading] = useState(true); 
+    const [selectedPatient, setSelectedPatient] = useState(''); 
+    const [searchTerm, setSearchTerm] = useState('');
 
-    // Fetch the list of patients
+
+    useEffect(() => {
+        if (isSubmited) {
+            setSelectedPatient(''); 
+            onSelectPatient(null);
+        }
+    }, [isSubmited, selectedPatient]);
+
     const fetchPatients = async () => {
         try {
             const response = await axios.get(`${Baseurl}/Patient/patientnameOnly`, { withCredentials: true });
@@ -22,24 +29,23 @@ const PatientSelector = ({ onSelectPatient }) => {
     };
 
     useEffect(() => {
-        fetchPatients(); // Fetch patients when component mounts
+        fetchPatients(); 
     }, []);
 
     const handlePatientChange = (e) => {
-        const selectedId = e.target.value; // Get the selected patient ID
-        const patientData = patients.find(patient => patient._id === selectedId); // Find the patient data
+        const selectedId = e.target.value; 
+        const patientData = patients.find(patient => patient._id === selectedId); 
 
-        setSelectedPatient(selectedId); // Set the selected patient
+        setSelectedPatient(selectedId); 
 
-        // Call the parent's function to handle patient selection
-        onSelectPatient(patientData); // Pass the whole patient object
+        
+        onSelectPatient(patientData);
     };
 
     const handleSearchChange = (e) => {
-        setSearchTerm(e.target.value); // Update search term state
+        setSearchTerm(e.target.value); 
     };
 
-    // Filter patients based on the search term
     const filteredPatients = patients.filter(patient =>
         `${patient.FirstName} ${patient.LastName}`.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -67,7 +73,7 @@ const PatientSelector = ({ onSelectPatient }) => {
                         value={selectedPatient}
                         onChange={handlePatientChange}
                         className="p-2 border border-gray-300 rounded-md"
-                        aria-label="Choose a Patient" // Accessibility label
+                        aria-label="Choose a Patient" 
                     >
                         <option value="" disabled>-- Choose a Patient --</option> {/* Disabled default option */}
                         {filteredPatients.length > 0 ? (

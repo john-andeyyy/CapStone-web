@@ -17,6 +17,7 @@ export const DentistList = (ref) => {
                     cachedData_Dentist = response.data;
                     // console.log('cachedData_Dentist', cachedData_Dentist);
                     setData(response.data);
+
                 })
                 .catch((err) => {
                     setError(err);

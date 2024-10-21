@@ -3,12 +3,20 @@ import axios from 'axios';
 
 const Baseurl = import.meta.env.VITE_BASEURL;
 
-const DentistSelector = ({ onSelectDentist }) => {
+const DentistSelector = ({ onSelectDentist, isSubmited }) => {
     const [dentists, setDentists] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedDentist, setSelectedDentist] = useState('');
 
-    // Fetch the list of dentists
+    useEffect(() => {
+        if (isSubmited) {
+            setSelectedDentist(''); 
+            if (onSelectDentist) {
+                onSelectDentist(null); 
+            }
+        }
+    }, [isSubmited]); 
+
     const fetchDentists = async () => {
         try {
             const response = await axios.get(`${Baseurl}/dentist/dentistnames`);
@@ -22,16 +30,17 @@ const DentistSelector = ({ onSelectDentist }) => {
 
     useEffect(() => {
         fetchDentists();
-    }, []);
+    }, []); 
 
     const handleDentistChange = (e) => {
         const selectedId = e.target.value;
-        const dentistData = dentists.find(dentist => dentist._id === selectedId); // Find the selected dentist by ID
+        const dentistData = dentists.find(dentist => dentist._id === selectedId); 
 
         setSelectedDentist(selectedId);
 
-        // Call the parent's function to handle dentist selection
-        onSelectDentist(dentistData); // Pass the whole dentist object
+        if (onSelectDentist) {
+            onSelectDentist(dentistData); 
+        }
     };
 
     return (

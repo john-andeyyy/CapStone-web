@@ -148,6 +148,10 @@ export default function Sidebar() {
                                             <span className="material-symbols-outlined mr-2">calendar_month</span>
                                             Calendar
                                         </li>
+                                        <li className={`p-2 rounded cursor-pointer flex items-center ${activeItem === 'calendar' ? 'bg-secondary text-gray-800' : 'hover:bg-secondary'}`} onClick={() => handleNavigate('/Create-appointment', 'calendar')}>
+                                            <span className="material-symbols-outlined mr-2">calendar_month</span>
+                                            Create appointment
+                                        </li>
                                     </ul>
                                 )}
                             </li>
@@ -166,10 +170,10 @@ export default function Sidebar() {
                                 </div>
 
                                 {isMedicalRequestsDropdownOpen && (
-                                    <ul className="ml-8 mt-2 space-y-1">
+                                    <ul className="ml-3 mt-2 space-y-1">
                                         <li className={`flex items-center p-2 rounded cursor-pointer ${activeItem === 'medical-requests' ? 'bg-secondary text-gray-800' : 'hover:bg-secondary'}`} onClick={() => handleNavigate('/Medical_requests', 'medical-requests')}>
-                                            <FaFileAlt className="mr-3" />
-                                            <span>Medical Requests</span>
+                                            <FaFileAlt className="pr-1" />
+                                            <span>Dental Certificate Requests</span>
                                         </li>
                                         {/* <li className={`p-2 rounded cursor-pointer flex items-center ${activeItem === 'completedRequests' ? 'bg-secondary text-gray-800' : 'hover:bg-secondary'}`} onClick={() => handleNavigate('/Medical_requests/completed', 'completedRequests')}>
                                             <span className="material-symbols-outlined mr-2">done</span>

@@ -16,7 +16,7 @@ const localizer = dateFnsLocalizer({
     locales,
 });
 
-const CalendarView = ({ events, view, date, handleDateChange, handleViewChange, handleSelectSlot, handleSelectEvent, eventStyleGetter }) => {
+const CalendarView = ({ events, view, date, handleDateChange, handleViewChange, handleSelectSlot, handleSelectEvent, eventStyleGetter, dayPropGetter }) => {
     return (
         <Calendar
             localizer={localizer}
@@ -37,7 +37,8 @@ const CalendarView = ({ events, view, date, handleDateChange, handleViewChange, 
             onSelectSlot={handleSelectSlot}
             onSelectEvent={handleSelectEvent}
             selectable
-            views={['month', 'week', 'day', 'agenda']}
+            views={['month', 'week', 'day']}
+            // views={['month', 'week', 'day', 'agenda']}
             min={new Date(0, 0, 0, 8, 0, 0)} // 8 AM
             max={new Date(0, 0, 0, 17, 0, 0)} // 5 PM
             components={{
@@ -45,8 +46,8 @@ const CalendarView = ({ events, view, date, handleDateChange, handleViewChange, 
                     date: CustomDayCell,
                 },
             }}
-            // maxEvents={6}
             eventPropGetter={eventStyleGetter}
+            dayPropGetter={dayPropGetter}
         />
     );
 };

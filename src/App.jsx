@@ -51,6 +51,7 @@ import ContactusPage from './Guest/GuestPages/ContactusPage';
 import MedicalHistoryCreate from './AdminDashBoard/Components/MedicalHistory/MedicalHistoryCreate';
 import MedicalHistoryUpdate from './AdminDashBoard/Components/MedicalHistory/MedicalHistoryUpdate';
 import CalendarComponentsss from './AdminDashBoard/Pages/Add_PatientAppointment/CalendarComponent';
+import MyCalendar from './try/MyCalendar';
 
 function AdminRoutes() {
   const location = useLocation();
@@ -108,7 +109,8 @@ function AdminRoutes() {
         <Route path="/CalendarComponent" element={<CalendarComponent />} />
         <Route path="/DentistSchedule/:id" element={<DentistSchedule />} />
         <Route path="/UnavailableClinic" element={<UnavailableClinic />} />
-        <Route path="/CalendarComponentsss" element={<CalendarComponentsss />} />
+        <Route path="/Create-appointment" element={<CalendarComponentsss />} />
+        <Route path="/MyCalendar" element={<MyCalendar />} />
 
         {/* //! REPORTS */}
         <Route path="/Total_procedures" element={< Total_procedures />} />
@@ -129,7 +131,7 @@ function AdminRoutes() {
         <Route path="/Hero_edit" element={<Hero_Crud />} />
         <Route path="/TipsList" element={<TipsList />} />
 
-{/* //! CHART */}
+        {/* //! CHART */}
         <Route path="/Chart" element={<ShowChart />} />
         {/* //! palyground */}
 
@@ -148,8 +150,8 @@ function App() {
   const [isExpired, setIsExpired] = useState(false);
   const isLogin = localStorage.getItem('Islogin');
   const Baseurl = import.meta.env.VITE_BASEURL
+  console.log('App', Baseurl)
 
-  console.log(Baseurl)
   useEffect(() => {
     const timeout = parseInt(localStorage.getItem('expiresin'), 10);
     const lastActiveTime = parseInt(localStorage.getItem('lastActiveTime'), 10);

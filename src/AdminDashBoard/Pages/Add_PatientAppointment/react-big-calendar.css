@@ -911,12 +911,13 @@ button.rbc-input::-moz-focus-inner {
     pointer-events: none;
 }
 
-.rbc-off-range-bg {
-    /* background: #dc0303; */
-    @apply bg-accent;
-}
 
-.rbc-today {
-    /* background-color: #072339; */
-        @apply bg-primary;
+
+.close {
+    background: #dc0303;
+    color: white;
+    padding: 5px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
 }

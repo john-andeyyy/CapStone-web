@@ -137,7 +137,7 @@ export default function AppointmentDetails() {
             { headers: { 'Content-Type': 'multipart/form-data' }, withCredentials: true }
         )
             .then(response => {
-                setAppointment(response.data); // Assuming response contains the updated appointment data
+                // setAppointment(response.data); // Assuming response contains the updated appointment data
                 seteditStatus(false)
                 setIsEditing(false);
                 // setIsEditingNotes(false);
@@ -209,47 +209,59 @@ export default function AppointmentDetails() {
             >
                 Go Back
             </button>
+            <div className='flex justify-between items-end mb-6 p-4 bg-gray-100 rounded-lg shadow-md'>
+                <h1 className="text-3xl font-semibold text-gray-800">Appointment Details</h1>
 
-            <div className='flex justify-between items-end '>
-                <div>
-                    <div className='flex flex-col pt-4'>
-                        <h1 className="text-3xl font-semibold ">Appointment Details </h1>
+            </div>
 
-                        <div className="grid grid-cols-2">
-                            <div className="flex items-center space-x-4">
-                                <p className="space-x-2">
-                                    <strong>Status:</strong>
-                                    {!editStatus ? (
-                                        <span
-                                            className={`${appointment.Status === 'Cancelled' ? 'text-red-500' : 'text-green-500'
-                                                }`}
-                                        >
-                                            {appointment.Status}
-                                        </span>
-                                    ) : (
-                                        <select
-                                            className="p-2 border border-gray-300 rounded-lg"
-                                            value={statusUpdate}
-                                            onChange={handleStatusChange}
-                                        >
-                                            <option value="Pending">Pending</option>
-                                            <option value="Rejected">Rejected</option>
-                                            <option value="Approved">Approved</option>
-                                            <option value="Completed">Completed</option>
-                                            <option value="Missed">Missed</option>
-                                            <option value="Cancelled">Cancelled</option>
-                                        </select>
-                                    )}
-                                </p>
-                                <div className='py-3'>
-                                    <button
-                                        // px-5 py-2
-                                        className={` ${editStatus ? 'bg-red-500 p-3' : 'bg-yellow-600  p-1'} text-white rounded-lg transition-colors duration-300 hover:${editStatus ? 'bg-gray-600' : 'bg-yellow-500'}`}
-                                        onClick={() => (editStatus ? handleCancelEdit() : seteditStatus(true))}
+            <div>
+                <div className="shadow-lg rounded-xl p-8 mb-8 space-y-6 bg-[#F5F5F5] ">
+                    <div className="grid grid-cols-3 gap-6">
+                        <div className="flex flex-col">
+                            <p className="font-bold uppercase text-gray-700">Patient Name</p>
+                            <div className="bg-gray-200 p-3 rounded-lg shadow-md">
+                                {appointment.patient?.FirstName || 'N/A'} {appointment.patient?.LastName || 'N/A'}
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col">
+                            <p className="font-bold uppercase text-gray-700">Date</p>
+                            <div className="bg-gray-200 p-3 rounded-lg shadow-md">
+                                {new Date(appointment.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col">
+                            <p className="font-bold uppercase text-gray-700">Status</p>
+                            <div className="flex  items-center space-x-4 bg-gray-200 p-3 rounded-lg shadow-md">
+                                {!editStatus ? (
+                                    <span className={`${appointment.Status === 'Cancelled' ? 'text-red-500' : 'text-green-500'} font-bold`}>
+                                        {appointment.Status}
+                                    </span>
+                                ) : (
+                                    <select
+                                        className="p-2 border border-gray-300 rounded-lg"
+                                        value={statusUpdate}
+                                        onChange={handleStatusChange}
                                     >
-                                        {editStatus ? 'Cancel Edit' : 'Update'}
-                                    </button>
-                                </div>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Rejected">Rejected</option>
+                                        <option value="Approved">Approved</option>
+                                        <option value="Completed">Completed</option>
+                                        <option value="Missed">Missed</option>
+                                        <option value="Cancelled">Cancelled</option>
+                                    </select>
+                                )}
+                            </div>
+
+                            <div className="flex items-center space-x-4 mt-4">
+                                <button
+                                    className={`p-3 rounded-lg text-white transition-colors duration-300 ${editStatus ? 'bg-red-500 hover:bg-gray-600' : 'bg-yellow-500 hover:bg-yellow-600'}`}
+                                    onClick={() => (editStatus ? handleCancelEdit() : seteditStatus(true))}
+                                >
+                                    {editStatus ? 'Cancel Edit' : 'Edit Status'}
+                                </button>
+
                                 {editStatus && (
                                     <button
                                         className="p-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
@@ -259,53 +271,12 @@ export default function AppointmentDetails() {
                                 )}
                             </div>
 
-                            <div className="flex flex-col pt-2 text-xl font-semibold ml-20">
-                                <div className='space-x-2'>
-                                    <span>Payment Status: </span>
-                                    <span className={`${appointment.isfullypaid ? 'text-green-600' : 'text-red-600'}`}>
-                                        {appointment.isfullypaid ? 'Paid' : 'Not Paid'}
-                                    </span>
 
-                                    <button
-                                        className={`text-md p-1 text-white rounded bg-[#3EB489] hover:bg-[#62A78E] ${appointment.isfullypaid ? 'bg-green-500' : 'bg-red-500'}`}
-                                        onClick={handleOpenPaymentModal}
-                                    >
-                                        {appointment.isfullypaid ? 'Mark as Not Paid' : 'Mark as Paid'}
-                                    </button>
-                                </div>
-
-                            </div>
                         </div>
+
+                        
                     </div>
 
-                </div>
-            </div>
-
-            <div>
-                <div className="shadow-lg rounded-xl p-8 mb-8 space-y-6 bg-[#F5F5F5] ">
-                    <div className="grid grid-cols-3 gap-4">
-                        <div className="flex flex-col">
-                            <p className="font-bold uppercase">Patient Name</p>
-                            <div className="bg-[#D3CDCD] p-2 rounded">
-                                {appointment.patient?.FirstName || 'N/A'} {appointment.patient?.LastName || 'N/A'}
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col ml-10 ">
-                            <p className="font-bold uppercase">Date</p>
-                            <div className="bg-[#D3CDCD] p-2 rounded">
-                                {new Date(appointment.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-                            </div>
-                        </div>
-                        <div className="flex justify-start mt-4 ml-20 p-1 rounded">
-                            <button
-                                className="bg-[#3EB489] hover:bg-[#62A78E] text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
-                                onClick={appointment.medcertiStatus}>
-                                Send Request
-                            </button>
-
-                        </div>
-                    </div>
 
                     <div className="grid grid-cols-3 gap-4">
                         <div className="flex flex-col">
@@ -344,13 +315,6 @@ export default function AppointmentDetails() {
                     </div>
                 </div>
                 <ProceduresTable appointment={appointment} />
-
-
-
-
-
-
-
                 <div className="flex justify-center">
                     <button className='btn bg-[#3EB489] hover:bg-[#62A78E] text-black'
                         onClick={() => toggleImages()}>
@@ -474,7 +438,6 @@ export default function AppointmentDetails() {
 
                 }
             </div>
-
             {/* Fullscreen Image View */}
             {fullScreenImage && (
                 <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-80 z-50 flex justify-center items-center" onClick={closeFullScreen}>

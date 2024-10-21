@@ -166,9 +166,9 @@ const PatientProfile = () => {
                                     {/* <th className="px-2 py-3 text-xs font-medium  uppercase tracking-wider text-center">Action</th> */}
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-200">
+                            <tbody className="divide-y divide-gray-200 ">
                                 {dentalHistory.map((record) => (
-                                    <tr key={record._id} onClick={() => handleRowClick(record._id)} className="cursor-pointer">
+                                    <tr key={record._id} onClick={() => handleRowClick(record._id)} className="cursor-pointer  hover:bg-neutral" >
                                         <td className="px-2 py-4 whitespace-nowrap">
                                             {new Date(record.date).toLocaleDateString('en-US', {
                                                 year: 'numeric',

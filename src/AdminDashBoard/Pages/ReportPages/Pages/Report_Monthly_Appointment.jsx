@@ -4,6 +4,7 @@ import axios from 'axios';
 import BarChart from '../../../Charts/BarChart';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import {PDFReport} from '../../../Component_Functions/PDFReport';
 export default function Report_Monthly_Appointment() {
     const BASEURL = import.meta.env.VITE_BASEURL;
 
@@ -176,35 +177,7 @@ export default function Report_Monthly_Appointment() {
     }, [month, week, selectedYear, viewingYearly, isToday]);
 
 
-    // const chartData = getChartData(); // Get chart data based on the current view
-    const printPDF = () => {
-        const doc = new jsPDF();
 
-        // Add title
-        doc.text('Patient Report', 20, 10);
-
-        // Table setup (replace with the relevant data from your component)
-        const tableColumns = ['Patient Name', 'Status', 'Date'];
-        const tableRows = filteredAppointments.map(appointment => [
-            `${appointment.patient.LastName} ${appointment.patient.FirstName}`,
-            appointment.status,
-            new Date(appointment.date).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-            }),
-        ]);
-
-        // Auto-generate table
-        doc.autoTable({
-            head: [tableColumns],
-            body: tableRows,
-            startY: 20,
-        });
-
-        // Save the PDF
-        doc.save('patient_report.pdf');
-    };
     return (
         <div className="">
             <ReportMenu />
@@ -213,6 +186,7 @@ export default function Report_Monthly_Appointment() {
                 <h1 className="text-1xl mt-4 sm:mt-0 pb-7">
                     {new Date().toLocaleString('default', { month: 'long' })} {new Date().getDate()}, {new Date().getFullYear()}
                 </h1>
+
 
                 <div className="pb-7 flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-3">
                     {!viewingYearly ? (
@@ -314,7 +288,18 @@ export default function Report_Monthly_Appointment() {
                     >
                         {viewingYearly ? 'View Monthly' : 'View Yearly'}
                     </button>
+
+                    <PDFReport
+                        appointments={filteredAppointments}
+                        month={
+                            isToday
+                                ? new Date().toLocaleString('default', { month: 'long', year: 'numeric' }) // Today's month and year
+                                : new Date(`${selectedYear}-${month.split('-')[1]}-01`).toLocaleString('default', { month: 'long', year: 'numeric' }) // Selected month and year
+                        }
+                        title="Monthly Appointments Report"
+                    />
                 </div>
+                
 
 
                 <div className=''>

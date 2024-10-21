@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ReportMenu from '../components/ReportMenu';
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
 
 const PatientProceduresDone = () => {
     const [patients, setPatients] = useState([]);
@@ -8,7 +10,7 @@ const PatientProceduresDone = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedPatient, setSelectedPatient] = useState(null);
     const [proceduresCount, setProceduresCount] = useState([]);
-    const [suggestions, setSuggestions] = useState([]); // State for suggestions
+    const [suggestions, setSuggestions] = useState([]);
 
     useEffect(() => {
         const fetchPatients = async () => {
@@ -35,7 +37,6 @@ const PatientProceduresDone = () => {
             const completedProcedures = response.data.filter(appointment => appointment.Status === 'Completed');
             const procedureCounts = {};
 
-            // Count the completed procedures
             completedProcedures.forEach(appointment => {
                 appointment.procedures.forEach(proc => {
                     procedureCounts[proc.Procedure_name] = (procedureCounts[proc.Procedure_name] || 0) + 1;
@@ -45,7 +46,7 @@ const PatientProceduresDone = () => {
             return procedureCounts;
         } catch (error) {
             console.error('Error fetching procedures:', error);
-            return {}; // Return empty object in case of an error
+            return {};
         }
     };
 
@@ -71,7 +72,6 @@ const PatientProceduresDone = () => {
         const value = e.target.value;
         setSearchTerm(value);
 
-        // Filter suggestions based on the search term
         if (value) {
             const filtered = patients.filter(patient =>
                 `${patient.FirstName} ${patient.LastName}`.toLowerCase().includes(value.toLowerCase())
@@ -84,9 +84,34 @@ const PatientProceduresDone = () => {
 
     const handleSuggestionClick = (patient) => {
         setSelectedPatient(patient);
-        setSearchTerm(`${patient.FirstName} ${patient.LastName}`); // Update search term
-        setSuggestions([]); // Clear suggestions
-        fetchProceduresCounts(patient.id); // Fetch procedures count for the selected patient
+        setSearchTerm(`${patient.FirstName} ${patient.LastName}`);
+        setSuggestions([]);
+        fetchProceduresCounts(patient.id);
+    };
+
+    const generatePDF = () => {
+        const doc = new jsPDF();
+        doc.setFontSize(20);
+        doc.text('Patient Procedures Report', 14, 20); // Title
+
+        if (selectedPatient) {
+            doc.setFontSize(16);
+            doc.text(`Procedures for ${selectedPatient.FirstName} ${selectedPatient.LastName}`, 14, 30);
+
+            const rows = Object.entries(proceduresCount).map(([procedureName, count]) => (
+                [procedureName, count]
+            ));
+
+            doc.autoTable({
+                head: [['Procedure Name', 'Count']],
+                body: rows,
+                startY: 40,
+            });
+
+            doc.save(`${selectedPatient.FirstName}_${selectedPatient.LastName}_Procedures_Report.pdf`);
+        } else {
+            doc.text('No patient selected', 14, 40);
+        }
     };
 
     if (error) {
@@ -94,13 +119,12 @@ const PatientProceduresDone = () => {
     }
 
     return (
-        <div className="">
+        <div>
             <ReportMenu />
-            <div className=" rounded-lg shadow-md">
+            <div className="rounded-lg shadow-md">
                 <div className='flex flex-col lg:flex-row justify-between items-center mb-4'>
                     <h1 className="text-2xl font-bold text-green-400 p-4">Patient Procedures Done</h1>
                     <div className="relative mr-5 mt-3">
-                        {/* Search Input */}
                         <input
                             type="text"
                             placeholder="Search Patients..."
@@ -111,7 +135,6 @@ const PatientProceduresDone = () => {
                     </div>
                 </div>
 
-                {/* Suggestions List */}
                 {suggestions.length > 0 && (
                     <ul className="border rounded shadow-lg bg-white max-h-40 overflow-auto z-10 absolute">
                         {suggestions.map(patient => (
@@ -126,7 +149,6 @@ const PatientProceduresDone = () => {
                     </ul>
                 )}
 
-                {/* Patient Dropdown */}
                 <div className='grid grid-cols-2 gap-4'>
                     <div className="flex flex-col">
                         <label className="block mb-2 mt-2">
@@ -168,6 +190,17 @@ const PatientProceduresDone = () => {
                         </table>
                     </div>
                 )}
+
+                {/* Button to Generate PDF */}
+                <div className="mt-4">
+                    <button
+                        onClick={generatePDF}
+                        className="bg-blue-500 text-white rounded px-4 py-2"
+                        disabled={!selectedPatient} // Disable if no patient is selected
+                    >
+                        Generate PDF
+                    </button>
+                </div>
             </div>
         </div>
     );

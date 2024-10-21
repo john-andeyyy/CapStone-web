@@ -200,7 +200,7 @@ export default function Add_Procedure() {
   return (
     <div className='container mx-auto text-sm lg:text-md'>
       <div className='flex justify-between items-center pb-5'>
-        <h1 className='text-2xl font-semibold l:text-sm'>Procedure List...</h1>
+        <h1 className='text-2xl font-semibold l:text-sm'>Procedure List</h1>
         <div className='relative'>
           <input
             type='text'
@@ -240,46 +240,70 @@ export default function Add_Procedure() {
 
 
 
-      <div className='flex w-full font-semibold lg:text-xl sm:text-xl border-b p-3 bg-primary rounded-lg text-white '>
-        <div className='flex-1'>Procedure Name <button onClick={handleSort} className='ml-2 text-white text-xl'>{sortOrder === 'asc' ? '↑' : '↓'}</button></div>
-        <div className='flex-1 hidden lg:block'>Duration</div>
-        <div className='flex-1 hidden lg:block'>Price</div>
-        <div className='flex-1 hidden lg:block'>Status</div>
-        <div className='flex-1 text-center'>Actions</div>
+      <div className="flex w-full font-semibold lg:text-xl sm:text-xl border-b p-3 bg-primary rounded-lg text-white">
+        <div className="flex-1 flex items-center">
+          Procedure Name
+          <button onClick={handleSort} className="ml-2 text-white text-xl">
+            {sortOrder === 'asc' ? '↑' : '↓'}
+          </button>
+        </div>
+        <div className="flex-1 hidden lg:flex justify-center">Duration</div>
+        <div className="flex-1 hidden lg:flex justify-center">Price</div>
+        <div className="flex-1 hidden lg:flex justify-center">Status</div>
+        <div className="flex-1 text-center">Actions</div>
       </div>
-      <div className='mt-4 text-lg overflow-auto max-h-[25rem]'>
 
+      <div className="mt-4 text-lg overflow-auto max-h-[25rem]">
         {filteredAndAvailableProcedures.map((procedure) => (
-          <div key={procedure._id} className='flex w-full items-center border-b py-2'>
-            <div className='flex-1'>{procedure.Procedure_name}</div>
-            <div className='flex-1 hidden lg:block'>{formatDuration(procedure.Duration)}</div>
-            <div className='flex-1 hidden lg:block'>{procedure.Price}</div>
-            <div className='flex-1 hidden lg:block'>
-              {/* {procedure.available ? 'yes' : 'no'} */}
+          <div key={procedure._id} className="flex w-full items-center border-b py-2 hover:bg-neutral transition duration-200">
+            <div className="flex-1">{procedure.Procedure_name}</div>
+            <div className="flex-1 hidden lg:flex justify-center">{formatDuration(procedure.Duration)}</div>
+            <div className="flex-1 hidden lg:flex justify-center">{procedure.Price}</div>
+            <div className="flex-1 hidden lg:flex justify-center">
+            
+              <div
+                className={`text-${procedure.available ? 'green' : 'red'}-500`}
+              >
+                {procedure.available ? 'In Service' : 'Out of Service'}
+              </div>
+            </div>
+
+            <div className="flex-1 flex gap-2 justify-center">
               <button
-                className={`text-${procedure.available ? 'red' : 'green'}-500`}
+                className="flex flex-col items-center justify-center w-20 bg-blue-100 text-green-500 hover:text-green-600 transition rounded-lg shadow-sm "
+                onClick={() => openEditProcedureModal(procedure, 'View')}
+              >
+                <span className="material-symbols-outlined">visibility</span>
+                <span className="text-sm">view</span>
+              </button>
+
+
+              <button
+                className="flex flex-col items-center justify-center w-20 bg-blue-100 text-blue-500 hover:text-blue-600 transition rounded-lg shadow-sm"
+                onClick={() => openEditProcedureModal(procedure, 'Edit')}
+                title="Edit Procedure"
+              >
+                <span className="material-symbols-outlined text-lg" aria-hidden="true">edit</span>
+                <span className="text-sm">Edit</span>
+
+              </button>
+
+              <button
+                className={`w-28 p-0.5 flex flex-col items-center  rounded-lg shadow-md transition duration-300 ${procedure.available ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'bg-green-100 text-green-600 hover:bg-green-200'}`}
                 onClick={() => openDeleteConfirmationModal(procedure)}
               >
-                {/* <span className="material-symbols-outlined">
-                  {procedure.available ? 'cancel' : 'check_circle '}
-                </span> */}
-                  {procedure.available ? 'Mark Unavailable' : 'Mark Available '}
+                <p className="material-symbols-outlined text-lg">
+                  {procedure.available ? 'cancel' : 'check_circle'}
+                </p>
+                <span className="text-xs">
+                  {procedure.available ? 'Set Out of Service' : 'Set In Service'}
+                </span>
               </button>
-
-            </div>
-            <div className='flex-1 flex gap-2 justify-center'>
-              <button className='text-green-500' onClick={() => openEditProcedureModal(procedure, 'View')}>
-                <span className="material-symbols-outlined">visibility</span>
-              </button>
-              <button className='text-blue-500' onClick={() => openEditProcedureModal(procedure, 'Edit')}>
-                <span className="material-symbols-outlined">edit</span>
-              </button>
-
-
             </div>
           </div>
         ))}
       </div>
+
 
 
       <div className=' '>
@@ -446,7 +470,7 @@ export default function Add_Procedure() {
             <div className="label">
               <span className="label-text">Duration</span>
             </div>
-            
+
 
             <div className="flex items-center gap-2">
               {/* Hours Input */}
