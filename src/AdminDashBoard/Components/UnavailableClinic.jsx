@@ -13,20 +13,20 @@ const Modal = ({ isOpen, onClose, onSubmit, editMessage, editFrom, editTo, setEd
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 ">
             <div className="bg-accent p-4 rounded shadow-lg max-w-96">
-                <h2 className="text-xl font-bold mb-4">Edit Unavailable Time</h2>
-                <p className="text-sm text-gray-600">Currently selected: From </p>
-                <p ><span className='font-bold'>{formatDateTime(editFrom)}</span> to <span className='font-bold'> {formatDateTime(editTo)}</span></p>
+                <h2 className="text-xl font-bold mb-4 text-[#266D53] text-center">Edit Unavailable Time</h2>
+                <p className="text-sm text-gray-600">Currently selected: </p>
+                <p >From <span className='font-bold'>{formatDateTime(editFrom)}</span> to <span className='font-bold'> {formatDateTime(editTo)}</span></p>
 
                 <form onSubmit={onSubmit}>
                     <div className="flex flex-col space-y-4">
                         <div>
-                            <label htmlFor="editMessage" className="block mb-1">Message:</label>
+                            <label htmlFor="editMessage" className="block mb-1 mt-2">Message:</label>
                             <input
                                 id="editMessage"
                                 type="text"
                                 value={editMessage}
                                 onChange={(e) => setEditMessage(e.target.value)}
-                                className="border rounded px-2 py-1"
+                                className="border rounded px-2 py-1 w-full"
                                 required
                             />
                         </div>
@@ -48,15 +48,15 @@ const Modal = ({ isOpen, onClose, onSubmit, editMessage, editFrom, editTo, setEd
                                 type="datetime-local"
                                 value={editTo}
                                 onChange={(e) => setEditTo(e.target.value)}
-                                className="border rounded px-2 py-1"
+                                className="border rounded px-2 py-1 mb-2"
                                 required
                             />
                         </div>
                         <div className="flex justify-between">
-                            <button type="submit" className="bg-blue-500 text-white px-4 py-1 rounded">
+                            <button type="submit" className="bg-[#4285F4] hover:bg-[#0C65F8] text-black px-4 py-1 rounded">
                                 Update Unavailable Time
                             </button>
-                            <button type="button" onClick={onClose} className="text-red-500 px-4 py-1 rounded">
+                            <button type="button" onClick={onClose} className="bg-[#D9D9D9] hover:bg-[#ADAAAA] text-black px-4 py-1 rounded">
                                 Cancel
                             </button>
                         </div>
@@ -103,7 +103,7 @@ const UnavailableClinic = () => {
     const addUnavailableTime = async (e) => {
         e.preventDefault();
         const newUnavailable = {
-            Message: message ||"Untitled" ,
+            Message: message || "Untitled",
             from: fromDate,
             to: toDate,
         };
@@ -260,7 +260,7 @@ const UnavailableClinic = () => {
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
                                 className="border rounded px-2 py-1 w-full"
-                                
+
                             />
                         </div>
                         <div className="flex-1 mb-4">
@@ -299,22 +299,27 @@ const UnavailableClinic = () => {
                     <table className="w-full border-collapse border border-gray-300 ">
                         <thead>
                             <tr>
-                                <th className="border border-gray-300 px-4 py-2 sticky top-0 bg-accent">Message</th>
-                                <th className="border border-gray-300 px-4 py-2 sticky top-0 bg-accent">From</th>
-                                <th className="border border-gray-300 px-4 py-2 sticky top-0 bg-accent">To</th>
-                                <th className="border border-gray-300 px-4 py-2 sticky top-0 bg-accent">Actions</th>
+                                <th className="text-white border border-black px-4 py-2 sticky top-0 bg-[#3EB489]">Message</th>
+                                <th className="text-white border border-black px-4 py-2 sticky top-0 bg-[#3EB489]">From</th>
+                                <th className="text-white border border-black px-4 py-2 sticky top-0 bg-[#3EB489]">To</th>
+                                <th className="text-white border border-black px-4 py-2 sticky top-0 bg-[#3EB489]">Actions</th>
                             </tr>
 
                         </thead>
                         <tbody>
                             {filteredUnavailableList.map((item) => (
                                 <tr key={item._id}>
-                                    <td className="border border-gray-300 px-4 py-2">{item.Message}</td>
-                                    <td className="border border-gray-300 px-4 py-2">{formatDateTime(item.from)}</td>
-                                    <td className="border border-gray-300 px-4 py-2">{formatDateTime(item.to)}</td>
-                                    <td className="border border-gray-300 px-4 py-2 flex justify-center ">
-                                        <button onClick={() => initiateEdit(item)} className="text-blue-500 hover:underline">Edit</button>
-                                        <button onClick={() => deleteUnavailableTime(item._id)} className="text-red-500 hover:underline ml-2">Delete</button>
+                                    <td className="border border-black bg-gray-100  px-4 py-2">{item.Message}</td>
+                                    <td className="border border-black bg-gray-100 px-4 py-2">{formatDateTime(item.from)}</td>
+                                    <td className="border border-black bg-gray-100 px-4 py-2">{formatDateTime(item.to)}</td>
+                                    <td className="border border-gray-600 bg-gray-100 px-4 py-2 flex justify-center gap-2 ">
+                                        <button onClick={() => initiateEdit(item)} className=" flex flex-col items-center justify-center w-10 bg-gray-200 text-gray-500 hover:text-gray-600 transition rounded-lg shadow-sm" title='edit'>
+                                            <span className="material-symbols-outlined text-lg" aria-hidden="true">edit</span></button>
+                                        <button onClick={() => deleteUnavailableTime(item._id)} className="flex flex-col items-center justify-center w-10 bg-red-100 text-red-500 hover:text-red-600 transition rounded-lg shadow-sm" title='delete'>
+                                            <span class="material-symbols-outlined">
+                                                delete
+                                            </span>
+                                        </button>
                                     </td>
                                 </tr>
                             ))}

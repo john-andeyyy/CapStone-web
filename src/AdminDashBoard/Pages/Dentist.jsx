@@ -239,7 +239,7 @@ export default function Dentist() {
             {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
             <div className="flex justify-between mb-4 ">
-                <button className="bg-primary py-2 px-4 rounded-lg hover:bg-secondary text-white" onClick={handleAddDentist}>
+                <button className="bg-[#3EB489] hover:bg-[#62A78E] py-2 px-4 rounded-lg text-white" onClick={handleAddDentist}>
                     Add Dentist
                 </button>
 
@@ -267,13 +267,13 @@ export default function Dentist() {
             </div>
 
 
-            <div className="w-full overflow-auto  rounded-3xl">
+            <div className="w-full overflow-auto">
                 <table className="min-w-full text-left ">
                     <thead>
                         <tr className="text-sm text-white bg-primary ">
-                            <th className="py-3 px-5">Name</th>
-                            <th className="py-3 px-5">Available</th>
-                            <th className="py-3 px-5 text-center">Actions</th>
+                            <th className="py-3 px-5 bg-[#3EB489] text-center border border-black">Name</th>
+                            <th className="py-3 px-5 bg-[#3EB489] text-center border border-black">Available</th>
+                            <th className="py-3 px-5 bg-[#3EB489] text-center border border-black">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -286,11 +286,60 @@ export default function Dentist() {
                         ) : filteredDentists.length > 0 ? (
                             filteredDentists.map((dentist) => (
                                 <tr key={dentist._id} className="hover:bg-secondary border-b">
-                                    <td className="py-3 px-5">{`${dentist.FirstName} ${dentist.LastName}`}</td>
-                                    <td className="py-3 px-5">{dentist.isAvailable ? 'Yes' : 'No'}</td>
-                                    <td className="py-3 px-5 space-x-3 text-center">
-                                        <button onClick={() => handleRowClick(dentist)} className="text-green-500">View</button>
-                                        <button
+                                    <td className="py-3 px-5 bg-gray-100 border border-black">{`${dentist.FirstName} ${dentist.LastName}`}</td>
+                                    <td className="py-3 px-5 bg-gray-100 border border-black">{dentist.isAvailable ? 'Yes' : 'No'}</td>
+                                    <td className="py-3 px-5 space-x-3 text-center bg-gray-100 border border-black">
+                                        {/* <button onClick={() => handleRowClick(dentist)} className="text-green-500">View</button> */}
+
+                                        <div className="flex-1 flex gap-2 justify-center">
+                                            <button
+                                                className="flex flex-col items-center justify-center w-10 bg-blue-100 text-blue-500 hover:text-blue-600 transition rounded-lg shadow-sm "
+                                                onClick={() => handleRowClick(dentist)}
+                                                title='view'
+                                            >
+                                                <span className="material-symbols-outlined">visibility</span>
+                                            </button>
+
+                                            <button
+                                                className={`flex items-center ${dentist.isAvailable ? 'text-green-500 flex flex-col items-center justify-center w-10 bg-green-100 transition rounded-lg shadow-sm' : 'text-red-500 flex flex-col items-center justify-center w-10 bg-red-100 transition rounded-lg shadow-sm'}`}
+                                                onClick={() => {
+                                                    handle_availability(dentist);
+                                                }}
+                                                title={dentist.isAvailable ? 'to unavailable' : 'to available'} // Tooltip text
+                                            >
+                                                <span className="material-symbols-outlined">
+                                                    {dentist.isAvailable ? 'check_circle' : 'do_not_disturb_on'}
+                                                </span>
+                                            </button>
+
+
+
+
+                                            <button
+                                                className="text-yellow-500 flex flex-col items-center justify-center w-10 bg-yellow-100 hover:text-yellow-600 transition rounded-lg shadow-sm"
+                                                onClick={() => {
+                                                    navigate(`/DentistSchedule/${dentist._id}`);
+                                                }}
+                                                title="Schedule"
+                                            >
+                                                <span className="material-symbols-outlined">
+                                                    calendar_month
+                                                </span>
+                                            </button>
+
+                                            <button
+                                                className="text-gray-500 flex flex-col items-center justify-center w-10 bg-gray-200 hover:text-gray-600 transition rounded-lg shadow-sm"
+                                                onClick={() => openModal(dentist._id)}
+                                                title='manage availability'
+                                            >
+                                                <span className="material-symbols-outlined">
+                                                    manage_accounts
+                                                </span>
+                                            </button>
+
+
+                                        </div>
+                                        {/* <button
                                             className="text-blue-500"
                                             onClick={() => {
                                                 setisEditmodal(true);
@@ -299,30 +348,9 @@ export default function Dentist() {
                                             }}
                                         >
                                             Edit
-                                        </button>
-                                        
-                                        <button
-                                            className="text-red-500"
-                                            onClick={() => {
-                                                handle_availability(dentist);
-                                            }}
-                                        >
-                                            {dentist.isAvailable ? 'To unavailable' : 'To available'}
-                                        </button>
-                                        <button
-                                            className="text-green-500"
-                                            onClick={() => {
-                                                navigate(`/DentistSchedule/${dentist._id}`);
-                                            }}
-                                        >
-                                            Schedule
-                                        </button>
-                                        <button
-                                            className="text-green-500"
-                                            onClick={() => openModal(dentist._id)} // Open the modal here
-                                        >
-                                            Manage Unavailable
-                                        </button>
+                                        </button> */}
+
+
                                     </td>
                                 </tr>
                             ))
@@ -335,12 +363,23 @@ export default function Dentist() {
                 </table>
                 {isModalOpen && (
                     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
-                        <div className="bg-accent p-6 rounded shadow-md">
+                        <div className="bg-accent p-6 rounded shadow-md relative">
+                            {/* Close Button positioned in the top-right corner */}
+                            <button
+                                onClick={closeModal}
+                                className="absolute top-4 right-4 text-white"
+                            >
+                                <span className="material-symbols-outlined text-gray-500">
+                                    close
+                                </span>
+                            </button>
+
+                            {/* UnavailableDentist Component */}
                             <UnavailableDentist dentistId={selectedDentistId} />
-                            <button onClick={closeModal} className="mt-4 px-4 py-2 bg-red-500 text-white rounded">Close</button>
                         </div>
                     </div>
                 )}
+
             </div>
 
 
@@ -355,8 +394,8 @@ export default function Dentist() {
 
             {showModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-secondary rounded-lg p-6 w-11/12 max-w-lg">
-                        <h2 className="text-2xl mb-4">Dentist Details</h2>
+                    <div className="bg-[#C6E4DA] rounded-lg p-6 w-11/12 max-w-lg">
+                        <h2 className="text-2xl mb-4 text-[#266D53] text-center">Dentist Details</h2>
                         {selectedDentist && (
                             <div className="flex">
                                 {/* Column 1: Image */}
@@ -379,9 +418,23 @@ export default function Dentist() {
                                 </div>
                             </div>
                         )}
-                        <button onClick={handleCloseModal} className="mt-4 bg-red-500 text-white py-2 px-4 rounded">
-                            Close
-                        </button>
+
+                        <div className='grid grid-cols-2 gap-4'>
+                            <button
+                                className="bg-[#4285F4] hover:bg-[#0C65F8] text-black"
+                                onClick={() => {
+                                    setisEditmodal(true);
+                                    setShowModal(false);
+                                    setSelectedDentist(dentist)
+                                }}
+                            >
+                                Edit
+                            </button>
+
+                            <button onClick={handleCloseModal} className=" bg-[#D9D9D9] hover:bg-[#ADAAAA] text-black py-2 px-4 rounded">
+                                Close
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
@@ -389,61 +442,71 @@ export default function Dentist() {
 
             {showAddModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <form className="bg-white rounded-lg p-6 w-11/12 max-w-lg" onSubmit={handleCreateDentist}>
-                        <h2 className="text-2xl mb-4">Add Dentist</h2>
-                        <input
-                            type="text"
-                            name="FirstName"
-                            placeholder="First Name"
-                            value={newDentist.FirstName}
-                            onChange={handleChange}
-                            required
-                            className="w-full mb-4 p-2 border border-gray-300 rounded"
-                        />
-                        <input
-                            type="text"
-                            name="LastName"
-                            placeholder="Last Name"
-                            value={newDentist.LastName}
-                            onChange={handleChange}
-                            required
-                            className="w-full mb-4 p-2 border border-gray-300 rounded"
-                        />
-                        <input
-                            type="text"
-                            name="MiddleName"
-                            placeholder="Middle Name"
-                            value={newDentist.MiddleName}
-                            onChange={handleChange}
-                            className="w-full mb-4 p-2 border border-gray-300 rounded"
-                        />
-                        <input
-                            type="text"
-                            name="ContactNumber"
-                            placeholder="Contact Number"
-                            value={newDentist.ContactNumber}
-                            onChange={handleChange}
-                            required
-                            className="w-full mb-4 p-2 border border-gray-300 rounded"
-                        />
-                        <input
-                            type="text"
-                            name="Address"
-                            placeholder="Address"
-                            value={newDentist.Address}
-                            onChange={handleChange}
-                            className="w-full mb-4 p-2 border border-gray-300 rounded"
-                        />
-                        <select
-                            name="Gender"
-                            value={newDentist.Gender}
-                            onChange={handleChange}
-                            className="w-full mb-4 p-2 border border-gray-300 rounded"
-                        >
-                            <option value="">Select Gender</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                        </select>
+                    <form className="bg-[#C6E4DA] rounded-lg p-6 w-11/12 max-w-lg" onSubmit={handleCreateDentist}>
+                        <h2 className="text-2xl mb-4 text-[#266D53] text-center">Add Dentist</h2>
+
+                        <div className='grid grid-cols-2 gap-4 mt-5'>
+                            <input
+                                type="text"
+                                name="FirstName"
+                                placeholder="First Name"
+                                value={newDentist.FirstName}
+                                onChange={handleChange}
+                                required
+                                className="w-full mb-4 p-2 border border-gray-300 rounded"
+                            />
+                            <input
+                                type="text"
+                                name="LastName"
+                                placeholder="Last Name"
+                                value={newDentist.LastName}
+                                onChange={handleChange}
+                                required
+                                className="w-full mb-4 p-2 border border-gray-300 rounded"
+                            />
+                        </div>
+
+                        <div className='grid grid-cols-2 gap-4'>
+                            <input
+                                type="text"
+                                name="MiddleName"
+                                placeholder="Middle Name"
+                                value={newDentist.MiddleName}
+                                onChange={handleChange}
+                                className="w-full mb-4 p-2 border border-gray-300 rounded"
+                            />
+                            <input
+                                type="text"
+                                name="ContactNumber"
+                                placeholder="Contact Number"
+                                value={newDentist.ContactNumber}
+                                onChange={handleChange}
+                                required
+                                className="w-full mb-4 p-2 border border-gray-300 rounded"
+                            />
+                        </div>
+
+                        <div className='grid grid-cols-2 gap-4'>
+                            <input
+                                type="text"
+                                name="Address"
+                                placeholder="Address"
+                                value={newDentist.Address}
+                                onChange={handleChange}
+                                className="w-full mb-4 p-2 border border-gray-300 rounded"
+                            />
+                            <select
+                                name="Gender"
+                                value={newDentist.Gender}
+                                onChange={handleChange}
+                                className="w-full mb-4 p-2 border border-gray-300 rounded"
+                            >
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
+
                         <input
                             type="text"
                             name="LicenseNo"
@@ -453,6 +516,11 @@ export default function Dentist() {
                             required
                             className="w-full mb-4 p-2 border border-gray-300 rounded"
                         />
+
+                        <div className='text-black mb-3'>
+                            <p>Upload Picture</p>
+                        </div>
+
                         <input
                             type="file"
                             name="ProfilePicture"
@@ -461,15 +529,18 @@ export default function Dentist() {
                             className="mb-4"
                         />
                         {previewImage && (
-                            <img src={previewImage} alt="Profile Preview" className="w-32 h-32 rounded mb-4" />
+                            <img src={previewImage} alt="Profile Preview" className="w-32 h-32 rounded mb-4 flex" />
                         )}
-                        <button
-                            type="submit"
-                            className="w-full bg-primary text-white py-2 rounded hover:bg-blue-700"
-                        >
-                            Add Dentist
-                        </button>
-                        <button onClick={handleCloseAddModal} className="mt-4 w-full bg-red-500 text-white py-2 rounded">Close</button>
+
+                        <div className='grid grid-cols-2 gap-4'>
+                            <button
+                                type="submit"
+                                className="bg-[#4285F4] hover:bg-[#0C65F8] text-black py-2 rounded"
+                            >
+                                Add
+                            </button>
+                            <button onClick={handleCloseAddModal} className=" bg-[#D9D9D9] hover:bg-[#ADAAAA] text-black py-2 rounded">Close</button>
+                        </div>
                     </form>
                 </div>
             )}

@@ -96,57 +96,62 @@ const PatientProfile = () => {
             >
                 Go Back
             </button>
-            <h1 className="text-2xl font-semibold py-4 lg:py-0">Patient Profile</h1>
-            <div className="flex flex-col lg:flex-row justify-between items-center mb-4">
-                <img
-                    src={patient.ProfilePicture || profilePic}
-                    alt="Profile Preview"
-                    className="mt-4 w-40 h-40 mx-auto"
-                />
-            </div>
+            <h1 className="mt-5 mb-5 text-2xl font-semibold py-4 lg:py-0">Patient Profile</h1>
 
-            <div className="shadow-md rounded-lg p-6 bg-primary">
+            <div className="shadow-md rounded-lg p-6 bg-[#F5F5F5]">
+                <div className="flex justify-end">
+                    <button onClick={() => setIsModalOpen(true)} className="btn text-white bg-[#3EB489] hover:bg-[#62A78E]">
+                        Full Details
+                    </button>
+                </div>
+
+                <div className="flex flex-col lg:flex-row justify-between items-center mb-4 ">
+                    <img
+                        src={patient.ProfilePicture || profilePic}
+                        alt="Profile Preview"
+                        className="mt-4 w-40 h-40 mx-auto"
+                    />
+
+                </div>
+
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="field">
-                        <label className="block text-sm font-medium text-white">First Name</label>
+                        <label className="block text-sm font-bold uppercase text-black">First Name</label>
                         <input
                             type="text"
                             value={patient.FirstName || ""}
                             readOnly
-                            className="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                            className="bg-[#D3CDCD] p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                         />
                     </div>
                     <div className="field">
-                        <label className="block text-sm font-medium text-white">Last Name</label>
+                        <label className="block text-sm font-bold uppercase text-black">Last Name</label>
                         <input
                             type="text"
                             value={patient.LastName || ""}
                             readOnly
-                            className="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                            className="bg-[#D3CDCD] p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                         />
                     </div>
                     <div className="field">
-                        <label className="block text-sm font-medium text-white">Middle Name</label>
+                        <label className="block text-sm font-bold uppercase text-black">Middle Name</label>
                         <input
                             type="text"
                             value={patient.MiddleName || ""}
                             readOnly
-                            className="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                            className="bg-[#D3CDCD] p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                         />
                     </div>
 
                 </div>
 
-                <div className="flex justify-end pt-5">
-                    <button onClick={() => setIsModalOpen(true)} className="btn text-white bg-secondary">
-                        Full Details
-                    </button>
-                </div>
+
             </div>
 
             <Tooth2d userIds={userIds} />
 
-            <div className="w-auto mt-6">
+            <div className="w-auto mt-5">
                 <div className='flex justify-between items-center py-5'>
                     <h3 className="text-xl font-semibold">Procedure History</h3>
                     <Add_RecordbyAdmin userIds={userIds} />
@@ -166,9 +171,9 @@ const PatientProfile = () => {
                                     {/* <th className="px-2 py-3 text-xs font-medium  uppercase tracking-wider text-center">Action</th> */}
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-200 ">
+                            <tbody className="divide-y divide-gray-200">
                                 {dentalHistory.map((record) => (
-                                    <tr key={record._id} onClick={() => handleRowClick(record._id)} className="cursor-pointer  hover:bg-neutral" >
+                                    <tr key={record._id} onClick={() => handleRowClick(record._id)} className="cursor-pointer">
                                         <td className="px-2 py-4 whitespace-nowrap">
                                             {new Date(record.date).toLocaleDateString('en-US', {
                                                 year: 'numeric',
@@ -216,9 +221,11 @@ const PatientProfile = () => {
                                 </div>
                             ))}
                         </div>
-                        <button onClick={() => setIsModalOpen(false)} className="btn btn-primary mt-4">
-                            Close
-                        </button>
+                        <div className='flex justify-center'>
+                            <button onClick={() => setIsModalOpen(false)} className="bg-[#D9D9D9] hover:bg-[#ADAAAA] btn mt-4">
+                                Close
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

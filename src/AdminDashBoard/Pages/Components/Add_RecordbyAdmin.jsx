@@ -95,7 +95,7 @@ export default function SetAppointment({ userIds }) {
                 className="btn text-xl font-semibold bg-green-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-green-500 transition duration-300"
                 onClick={() => setOpenFullModal(true)}
             >
-                Set Appointment
+                Add Record
             </button>
 
             <MediumModal isOpen={openFullModal} onClose={() => {

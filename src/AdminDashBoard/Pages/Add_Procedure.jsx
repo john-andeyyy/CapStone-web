@@ -198,7 +198,7 @@ export default function Add_Procedure() {
 
 
   return (
-    <div className='container mx-auto text-sm lg:text-md'>
+    <div className='container mx-auto text-sm lg:text-md mt-5'>
       <div className='flex justify-between items-center pb-5'>
         <h1 className='text-2xl font-semibold l:text-sm'>Procedure List</h1>
         <div className='relative'>
@@ -216,15 +216,15 @@ export default function Add_Procedure() {
         </div>
 
       </div>
-      <div className="flex gap-4 mb-4 ">
+      <div className="flex gap-4 mb-4 mt-5">
         <button
-          className={`btn ${availabilityFilter === true ? 'btn-success' : 'btn-outline'}`}
+          className={`btn ${availabilityFilter === true ? 'bg-[#3EB489] hover:bg-[#62A78E]' : 'btn-outline'}`}
           onClick={() => setAvailabilityFilter(true)}
         >
           Show Available
         </button>
         <button
-          className={`btn ${availabilityFilter === false ? 'btn-error' : 'btn-outline'}`}
+          className={`btn ${availabilityFilter === false ? 'bg-[#3EB489] hover:bg-[#62A78E]' : 'btn-outline'}`}
           onClick={() => setAvailabilityFilter(false)}
         >
           Show Not Available
@@ -235,150 +235,178 @@ export default function Add_Procedure() {
         >
           Show All
         </button>
+
+        {/* Push the Create Procedure button to the right */}
+        <button className='btn bg-[#4285F4] hover:bg-[#0C65F8] text-white ml-auto' onClick={openAddPatientModal}>
+          Create Procedure
+        </button>
       </div>
 
 
 
 
-      <div className="flex w-full font-semibold lg:text-xl sm:text-xl border-b p-3 bg-primary rounded-lg text-white">
-        <div className="flex-1 flex items-center">
-          Procedure Name
-          <button onClick={handleSort} className="ml-2 text-white text-xl">
-            {sortOrder === 'asc' ? '↑' : '↓'}
-          </button>
-        </div>
-        <div className="flex-1 hidden lg:flex justify-center">Duration</div>
-        <div className="flex-1 hidden lg:flex justify-center">Price</div>
-        <div className="flex-1 hidden lg:flex justify-center">Status</div>
-        <div className="flex-1 text-center">Actions</div>
+
+      <div className="text-sm overflow-auto max-h-[25rem] bg-gray-100">
+        <table className="w-full border border-gray-500">
+          <thead className="bg-[#3EB489] text-sm">
+            <tr>
+              <th className="border border-gray-500 p-2 text-white ">Procedure Name</th>
+              <th className="border border-gray-500 p-2 text-white hidden lg:table-cell">Duration</th>
+              <th className="border border-gray-500 p-2 text-white hidden lg:table-cell">Price</th>
+              <th className="border border-gray-500 p-2 text-white hidden lg:table-cell">Status</th>
+              <th className="border border-gray-500 text-white p-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredAndAvailableProcedures.map((procedure) => (
+              <tr key={procedure._id} className="hover:bg-neutral transition duration-200">
+                <td className="border border-black p-2">{procedure.Procedure_name}</td>
+                <td className="border border-black p-2 hidden lg:table-cell">
+                  {formatDuration(procedure.Duration)}
+                </td>
+                <td className="border border-black p-2 hidden lg:table-cell">
+                  {procedure.Price}
+                </td>
+                <td className="border border-black p-2 hidden lg:table-cell">
+                  <div className={`text-${procedure.available ? 'green' : 'red'}-500`}>
+                    {procedure.available ? 'In Service' : 'Out of Service'}
+                  </div>
+                </td>
+                <td className="border border-gray-400 p-2 flex gap-2 justify-center">
+                  <button
+                    className="flex flex-col items-center justify-center w-10 bg-blue-100 text-blue-500 hover:text-blue-600 transition rounded-lg shadow-sm"
+                    onClick={() => openEditProcedureModal(procedure, 'View')}
+                    title='view'
+                  >
+                    <span className="material-symbols-outlined">visibility</span>
+                  </button>
+
+                  <button
+                    className="flex flex-col items-center justify-center w-10 bg-gray-200 text-gray-500 hover:text-gray-600 transition rounded-lg shadow-sm"
+                    onClick={() => openEditProcedureModal(procedure, 'Edit')}
+                    title="edit"
+                  >
+                    <span className="material-symbols-outlined text-lg" aria-hidden="true">edit</span>
+                  </button>
+
+                  {/* <button
+              className={`w-28 p-0.5 flex flex-col items-center rounded-lg shadow-md transition duration-300 ${procedure.available ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'bg-green-100 text-green-600 hover:bg-green-200'}`}
+              onClick={() => openDeleteConfirmationModal(procedure)}
+              title='out of service'
+            >
+              <p className="material-symbols-outlined text-lg">
+                {procedure.available ? 'cancel' : 'check_circle'}
+              </p>
+              <span className="text-xs">
+                {procedure.available ? 'Set Out of Service' : 'Set In Service'}
+              </span>
+            </button> */}
+
+                  <button
+                    className={`flex flex-col items-center justify-center w-10 transition rounded-lg shadow-sm 
+                ${procedure.available ? 'bg-red-100 text-red-500' : 'bg-red-100 text-red-600'}`}
+                    onClick={() => openDeleteConfirmationModal(procedure)}
+                    title={procedure.available ? 'Set Out of Service' : 'Set In Service'} // Tooltip text
+                  >
+                    <span className="material-symbols-outlined">
+                      {procedure.available ? 'cancel' : 'check_circle'}
+                    </span>
+                  </button>
+
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
-      <div className="mt-4 text-lg overflow-auto max-h-[25rem]">
-        {filteredAndAvailableProcedures.map((procedure) => (
-          <div key={procedure._id} className="flex w-full items-center border-b py-2 hover:bg-neutral transition duration-200">
-            <div className="flex-1">{procedure.Procedure_name}</div>
-            <div className="flex-1 hidden lg:flex justify-center">{formatDuration(procedure.Duration)}</div>
-            <div className="flex-1 hidden lg:flex justify-center">{procedure.Price}</div>
-            <div className="flex-1 hidden lg:flex justify-center">
-            
-              <div
-                className={`text-${procedure.available ? 'green' : 'red'}-500`}
-              >
-                {procedure.available ? 'In Service' : 'Out of Service'}
-              </div>
-            </div>
-
-            <div className="flex-1 flex gap-2 justify-center">
-              <button
-                className="flex flex-col items-center justify-center w-20 bg-blue-100 text-green-500 hover:text-green-600 transition rounded-lg shadow-sm "
-                onClick={() => openEditProcedureModal(procedure, 'View')}
-              >
-                <span className="material-symbols-outlined">visibility</span>
-                <span className="text-sm">view</span>
-              </button>
-
-
-              <button
-                className="flex flex-col items-center justify-center w-20 bg-blue-100 text-blue-500 hover:text-blue-600 transition rounded-lg shadow-sm"
-                onClick={() => openEditProcedureModal(procedure, 'Edit')}
-                title="Edit Procedure"
-              >
-                <span className="material-symbols-outlined text-lg" aria-hidden="true">edit</span>
-                <span className="text-sm">Edit</span>
-
-              </button>
-
-              <button
-                className={`w-28 p-0.5 flex flex-col items-center  rounded-lg shadow-md transition duration-300 ${procedure.available ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'bg-green-100 text-green-600 hover:bg-green-200'}`}
-                onClick={() => openDeleteConfirmationModal(procedure)}
-              >
-                <p className="material-symbols-outlined text-lg">
-                  {procedure.available ? 'cancel' : 'check_circle'}
-                </p>
-                <span className="text-xs">
-                  {procedure.available ? 'Set Out of Service' : 'Set In Service'}
-                </span>
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
 
 
 
-      <div className=' '>
-        <div className='absolute bottom-3 right-3'>
-          <button className='btn bg-primary hover:bg-secondary text-white' onClick={openAddPatientModal}>
-            Create Procedure
-          </button>
-        </div>
-      </div>
+
 
       {/* Add Modal */}
       <Modal isOpen={addPatientModalOpen} close={() => setAddPatientModalOpen(false)}>
-        <h3 className="font-bold text-lg">Add New Procedure</h3>
+        <h3 className="font-bold text-lg text-[#266D53] text-center">Add New Procedure</h3>
         <form onSubmit={handleAddSubmit} className="flex flex-col">
           <div className="label">
-            <span className="label-text">Procedure Name</span>
+            <span className="label-text mt-5">Procedure Name</span>
           </div>
           <input
             type="text"
             placeholder="Procedure Name"
             value={newProcedure.Procedure_name}
             onChange={(e) => setNewProcedure({ ...newProcedure, Procedure_name: e.target.value })}
-            className="border p-2 mb-2 bg-white"
+            className="border p-2 bg-white"
             required
           />
-          <div className="label">
-            <span className="label-text">Duration</span>
-          </div>
-          <div className="flex items-center gap-2">
-            {/* Hours Input */}
-            <input
-              type="number"
-              placeholder="Hours"
-              value={newProcedure.Duration ? Math.floor(newProcedure.Duration / 60) : ''}  // Display hours or empty if no value
-              onChange={(e) => {
-                const hours = e.target.value === '' ? '' : parseInt(e.target.value);
-                const totalMinutes = hours === '' ? (newProcedure.Duration % 60) : (hours * 60 + (newProcedure.Duration % 60));
-                setNewProcedure({ ...newProcedure, Duration: totalMinutes });
-              }}
-              className="border p-2 mb-2 bg-white w-20"
-              min="0"
-              required
-            />
-            <span>Hrs</span>
+          <div className="grid grid-cols-2 gap-4">
+            {/* Duration Section */}
+            <div className="flex flex-col">
+              <label className="label">
+                <span className="label-text">Duration</span>
+              </label>
+              <div className="flex items-center gap-2">
+                {/* Hours Input */}
+                <input
+                  type="number"
+                  placeholder="Hours"
+                  value={newProcedure.Duration ? Math.floor(newProcedure.Duration / 60) : ''}
+                  onChange={(e) => {
+                    const hours = e.target.value === '' ? '' : parseInt(e.target.value);
+                    const totalMinutes = hours === ''
+                      ? newProcedure.Duration % 60
+                      : hours * 60 + (newProcedure.Duration % 60);
+                    setNewProcedure({ ...newProcedure, Duration: totalMinutes });
+                  }}
+                  className="border p-2 bg-white w-20"
+                  min="0"
+                  required
+                />
+                <span>Hrs</span>
 
-            {/* Minutes Input */}
-            <input
-              type="number"
-              placeholder="Minutes"
-              value={newProcedure.Duration ? newProcedure.Duration % 60 : ''}  // Display minutes or empty if no value
-              onChange={(e) => {
-                const minutes = e.target.value === '' ? '' : parseInt(e.target.value);
-                const totalMinutes = (Math.floor(newProcedure.Duration / 60) * 60) + (minutes === '' ? 0 : minutes);
-                setNewProcedure({ ...newProcedure, Duration: totalMinutes });
-              }}
-              className="border p-2 mb-2 bg-white w-20"
-              min="0"
-              max="59"
-              required
-            />
-            <span>Mins</span>
+                {/* Minutes Input */}
+                <input
+                  type="number"
+                  placeholder="Minutes"
+                  value={newProcedure.Duration ? newProcedure.Duration % 60 : ''}
+                  onChange={(e) => {
+                    const minutes = e.target.value === '' ? '' : parseInt(e.target.value);
+                    const totalMinutes =
+                      (Math.floor(newProcedure.Duration / 60) * 60) +
+                      (minutes === '' ? 0 : minutes);
+                    setNewProcedure({ ...newProcedure, Duration: totalMinutes });
+                  }}
+                  className="border p-2 bg-white w-20"
+                  min="0"
+                  max="59"
+                  required
+                />
+                <span>Mins</span>
+              </div>
+            </div>
+
+            {/* Price Section */}
+            <div className="flex flex-col">
+              <label className="label ml-5">
+                <span className="label-text">Price</span>
+              </label>
+              <input
+                type="number"
+                placeholder="Price"
+                value={newProcedure.Price}
+                onChange={(e) =>
+                  setNewProcedure({ ...newProcedure, Price: e.target.value })
+                }
+                className="border p-2 bg-white ml-5"
+                required
+              />
+            </div>
           </div>
 
 
-          <div className="label">
-            <span className="label-text">Price</span>
-          </div>
-          <input
-            type="number"
-            placeholder="Price"
-            value={newProcedure.Price}
-            onChange={(e) => setNewProcedure({ ...newProcedure, Price: e.target.value })}
-            className="border p-2 mb-2 bg-white"
-            required
-          />
+
+
           <div className="label">
             <span className="label-text">Description</span>
           </div>
@@ -391,23 +419,28 @@ export default function Add_Procedure() {
             required
           />
 
-          <input
-            type="file"
-            onChange={(e) => {
-              const file = e.target.files[0];
-              setNewProcedure({ ...newProcedure, Image: file });
-              if (file) {
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                  setImagePreview(reader.result);
-                };
-                reader.readAsDataURL(file);
-              } else {
-                setImagePreview(null); // Clear the preview if no file is selected
-              }
-            }}
-            className="border p-2 mb-2 bg-white"
-          />
+          <div className="flex flex-col">
+            <label className="label">
+              <span className="label-text">Upload Picture</span>
+            </label>
+            <input
+              type="file"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                setNewProcedure({ ...newProcedure, Image: file });
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    setImagePreview(reader.result);
+                  };
+                  reader.readAsDataURL(file);
+                } else {
+                  setImagePreview(null); // Clear the preview if no file is selected
+                }
+              }}
+              className="border p-2 mb-2 bg-white"
+            />
+          </div>
 
           {imagePreview && (
             <img src={imagePreview} alt="Image Preview" className="mt-2 border rounded" style={{ width: '100%', maxHeight: '200px', objectFit: 'contain' }} />
@@ -415,10 +448,10 @@ export default function Add_Procedure() {
 
 
           <div className="modal-action">
-            <button className="btn btn-primary bg-green-400 hover:bg-green-400 text-white">Add Procedure</button>
+            <button className="btn bg-[#4285F4] hover:bg-[#0C65F8] text-black">Add Procedure</button>
             <button
               type="button"
-              className="btn btn-ghost"
+              className="btn bg-[#D9D9D9] hover:bg-[#ADAAAA]"
               onClick={() => {
                 setAddPatientModalOpen(false)
                 setImagePreview(null)
@@ -432,30 +465,56 @@ export default function Add_Procedure() {
 
       {/* Edit Modal */}
       <Modal isOpen={editProcedureModalOpen} close={() => setEditProcedureModalOpen(false)}>
+        <div className="absolute top-2 right-2">
+          <button
+            type="button"
+            className="text-gray-500 hover:text-gray-700 transition"
+            onClick={() => {
+              setEditProcedureModalOpen(false)
+              setImagePreview(null)
+            }}
+          >
+            <span className="material-symbols-outlined text-xl">
+              close
+            </span>
+          </button>
+        </div>
+
+
+
+
+
         <div className='text-black'>
-          <h3 className="font-bold text-lg text-center ">Edit Procedure</h3>
+          <h3 className="font-bold text-lg text-center text-[#266D53] mt-5 mb-5">Edit Procedure</h3>
           <form onSubmit={handleEditSubmit} className="flex flex-col">
 
-            <input
-              type="file"
-              onChange={(e) => {
-                const file = e.target.files[0];
-                setNewProcedure({ ...newProcedure, Image: file });
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onloadend = () => {
-                    setImagePreview(reader.result);
-                  };
-                  reader.readAsDataURL(file);
-                } else {
-                  setImagePreview(null);
-                }
-              }}
-              className="border p-2 mb-2 bg-white"
-            />
-            {imagePreview && (
-              <img src={imagePreview} alt="Image Preview" className="mt-2 border rounded" style={{ width: '100%', maxHeight: '200px', objectFit: 'contain' }} />
-            )}
+            <div className="flex flex-col">
+              <label className="label">
+                <span className="label-text">Upload Picture</span>
+              </label>
+
+              <input
+                type="file"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  setNewProcedure({ ...newProcedure, Image: file });
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                      setImagePreview(reader.result);
+                    };
+                    reader.readAsDataURL(file);
+                  } else {
+                    setImagePreview(null);
+                  }
+                }}
+                className="border p-2 bg-white"
+              />
+              {imagePreview && (
+                <img src={imagePreview} alt="Image Preview" className="mt-2 border rounded" style={{ width: '100%', maxHeight: '200px', objectFit: 'contain' }} />
+              )}
+
+            </div>
             <div className="label">
               <span className="label-text">Procedure Name</span>
             </div>
@@ -464,59 +523,73 @@ export default function Add_Procedure() {
               placeholder="Procedure Name"
               value={newProcedure.Procedure_name}
               onChange={(e) => setNewProcedure({ ...newProcedure, Procedure_name: e.target.value })}
-              className="border p-2 mb-2 bg-white"
+              className="border p-2 bg-white"
               required
             />
-            <div className="label">
-              <span className="label-text">Duration</span>
+            <div className="grid grid-cols-2 gap-4 items-start">
+              {/* Duration Section */}
+              <div>
+                <label className="label">
+                  <span className="label-text">Duration</span>
+                </label>
+                <div className="flex items-center gap-2">
+                  {/* Hours Input */}
+                  <input
+                    type="number"
+                    placeholder="Hours"
+                    value={newProcedure.Duration !== null ? Math.floor(newProcedure.Duration / 60) : ''}
+                    onChange={(e) => {
+                      const hours = e.target.value === '' ? '' : parseInt(e.target.value);
+                      const totalMinutes = hours === ''
+                        ? (newProcedure.Duration % 60)
+                        : (hours * 60 + (newProcedure.Duration % 60));
+                      setNewProcedure({ ...newProcedure, Duration: totalMinutes });
+                    }}
+                    className="border p-2 bg-white w-20"
+                    min="0"
+                    required
+                  />
+                  <span>Hrs</span>
+
+                  {/* Minutes Input */}
+                  <input
+                    type="number"
+                    placeholder="Minutes"
+                    value={newProcedure.Duration !== null ? newProcedure.Duration % 60 : ''}
+                    onChange={(e) => {
+                      const minutes = e.target.value === '' ? '' : parseInt(e.target.value);
+                      const totalMinutes =
+                        (Math.floor(newProcedure.Duration / 60) * 60) + (minutes || 0);
+                      setNewProcedure({ ...newProcedure, Duration: totalMinutes });
+                    }}
+                    className="border p-2 bg-white w-20"
+                    min="0"
+                    max="59"
+                    required
+                  />
+                  <span>Mins</span>
+                </div>
+              </div>
+
+              {/* Price Section */}
+              <div>
+                <label className="label">
+                  <span className="label-text">Price</span>
+                </label>
+                <input
+                  type="number"
+                  placeholder="Price"
+                  value={newProcedure.Price}
+                  onChange={(e) =>
+                    setNewProcedure({ ...newProcedure, Price: e.target.value })
+                  }
+                  className="border p-2 bg-white w-full"
+                  required
+                />
+              </div>
             </div>
 
 
-            <div className="flex items-center gap-2">
-              {/* Hours Input */}
-              <input
-                type="number"
-                placeholder="Hours"
-                value={newProcedure.Duration !== null ? Math.floor(newProcedure.Duration / 60) : ''}  // Show empty string if duration is null
-                onChange={(e) => {
-                  const hours = e.target.value === '' ? '' : parseInt(e.target.value);
-                  const totalMinutes = hours === '' ? (newProcedure.Duration % 60) : (hours * 60 + (newProcedure.Duration % 60));
-                  setNewProcedure({ ...newProcedure, Duration: totalMinutes });
-                }}
-                className="border p-2 mb-2 bg-white w-20"
-                min="0"
-                required
-              />
-              <span>Hrs</span>
-
-              {/* Minutes Input */}
-              <input
-                type="number"
-                placeholder="Minutes"
-                value={newProcedure.Duration !== null ? newProcedure.Duration % 60 : ''}  // Show empty string if duration is null
-                onChange={(e) => {
-                  const minutes = e.target.value === '' ? '' : parseInt(e.target.value);
-                  const totalMinutes = (Math.floor(newProcedure.Duration / 60) * 60) + (minutes === '' ? 0 : minutes);
-                  setNewProcedure({ ...newProcedure, Duration: totalMinutes });
-                }}
-                className="border p-2 mb-2 bg-white w-20"
-                min="0"
-                max="59"
-                required
-              />
-              <span>Mins</span>
-            </div>
-            <div className="label">
-              <span className="label-text">Price</span>
-            </div>
-            <input
-              type="number"
-              placeholder="Price"
-              value={newProcedure.Price}
-              onChange={(e) => setNewProcedure({ ...newProcedure, Price: e.target.value })}
-              className="border p-2 mb-2 bg-white"
-              required
-            />
             <div className="label">
               <span className="label-text">Description</span>
             </div>
@@ -528,20 +601,9 @@ export default function Add_Procedure() {
               className="border p-2 mb-2 bg-white"
               required
             />
-            <div className="modal-action">
+            <div className="modal-action justify-center items-center">
               <button className="btn btn-success bg-blue-500 hover:bg-blue-500 text-white">
                 Save Changes
-              </button>
-
-              <button
-                type="button"
-                className="btn btn-error text-white"
-                onClick={() => {
-                  setEditProcedureModalOpen(false)
-                  setImagePreview(null)
-                }}
-              >
-                Cancel
               </button>
             </div>
           </form>
@@ -553,8 +615,20 @@ export default function Add_Procedure() {
       {/* View Modal */}
       <Modal isOpen={viewProcedureModalOpen} close={() => setViewProcedureModalOpen(false)}>
 
-        <h3 className="font-bold text-lg text-center">View Procedure</h3>
-        <div className='flex justify-center'>
+        <div className="absolute top-2 right-2 text-xlg">
+          <button
+            type="button"
+            className="text-gray-500 hover:text-gray-700 transition"
+            onClick={() => setViewProcedureModalOpen(false)}
+          >
+            <span className="material-symbols-outlined text-xl">
+              close
+            </span>
+          </button>
+        </div>
+
+        <h3 className="font-bold text-lg text-center text-[#266D53]">View Procedure</h3>
+        <div className='flex justify-center mt-5'>
           <figure>
             <img
               src={getProfileImage(newProcedure.Image)}
@@ -562,8 +636,9 @@ export default function Add_Procedure() {
             />
           </figure>
         </div>
+
         <div className="flex flex-col ">
-          <div className="label">
+          <div className="label justfity-center items-center">
             <span className="label-text">Procedure Name</span>
           </div>
           <input
@@ -572,24 +647,36 @@ export default function Add_Procedure() {
             readOnly
             className="border p-2 mb-2 bg-white"
           />
-          <div className="label">
-            <span className="label-text">Duration</span>
+
+          <div className="grid grid-cols-2 gap-4">
+            {/* Duration Field */}
+            <div className="flex flex-col">
+              <label className="label">
+                <span className="label-text">Duration</span>
+              </label>
+              <input
+                type="text"
+                value={formatDuration(newProcedure.Duration)}
+                readOnly
+                className="border p-2 bg-white"
+              />
+            </div>
+
+            {/* Price Field */}
+            <div className="flex flex-col">
+              <label className="label">
+                <span className="label-text">Price</span>
+              </label>
+              <input
+                type="number"
+                value={newProcedure.Price}
+                readOnly
+                className="border p-2 bg-white"
+              />
+            </div>
           </div>
-          <input
-            type="text"
-            value={formatDuration(newProcedure.Duration)}
-            readOnly
-            className="border p-2 mb-2 bg-white"
-          />
-          <div className="label">
-            <span className="label-text">Price</span>
-          </div>
-          <input
-            type="number"
-            value={newProcedure.Price}
-            readOnly
-            className="border p-2 mb-2 bg-white"
-          />
+
+
           <div className="label">
             <span className="label-text">Description</span>
           </div>
@@ -599,31 +686,23 @@ export default function Add_Procedure() {
             readOnly
             className="border p-2 mb-2 bg-white"
           />
-          <div className="modal-action">
-            <button
-              type="button"
-              className="btn btn-error text-white"
-              onClick={() => setViewProcedureModalOpen(false)}
-            >
-              Close
-            </button>
-          </div>
         </div>
 
       </Modal>
 
       {/* Delete Confirmation Modal */}
       <Modal isOpen={deleteConfirmationModalOpen} close={() => setDeleteConfirmationModalOpen(false)}>
-        <h3 className="font-bold text-lg text-center text-white">
+        <h3 className="font-bold text-lg text-center text-[#266D53] mb-5">Confirmation</h3>
+        <p className=" text-center">
           Are you sure you want to make this procedure {procedureToDelete?.available ? 'unavailable' : 'available'}?
-        </h3>
-        <p className="text-center text-white">{procedureToDelete?.Procedure_name}</p>
+        </p>
+        <p className="text-center text-lg mt-5">{procedureToDelete?.Procedure_name}</p>
         <div className="modal-action">
 
           {procedureToDelete && procedureToDelete.available ? (
             <button
               type="button"
-              className="btn btn-error text-white"
+              className="btn bg-[#4285F4] hover:bg-[#0C65F8]"
               onClick={() => confirmtongleStatus(false)}
             >
               Mark as Not Available
@@ -631,20 +710,15 @@ export default function Add_Procedure() {
           ) : (
             <button
               type="button"
-              className="btn btn-success text-white"
+              className="btn bg-[#4285F4] hover:bg-[#0C65F8]"
               onClick={() => confirmtongleStatus(true)}
             >
               Mark as Available
             </button>
           )}
-
-
-
-
-
           <button
             type="button"
-            className="btn btn-accent"
+            className="btn bg-[#D9D9D9] hover:bg-[#ADAAAA]"
             onClick={() => setDeleteConfirmationModalOpen(false)}
           >
             Cancel

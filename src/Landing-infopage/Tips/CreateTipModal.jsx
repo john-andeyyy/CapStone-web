@@ -32,8 +32,8 @@ const CreateTipModal = ({ onClose, onCreate }) => {
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-            <div className="bg-accent p-6 rounded shadow-lg w-1/3">
-                <h2 className="font-bold text-lg mb-4">Create New Tip</h2>
+            <div className="bg-[#C6E4DA] p-6 rounded shadow-lg w-1/3">
+                <h2 className="font-bold text-lg mb-4 text-[#266D53] text-center">Create New Tip</h2>
                 <input
                     type="text"
                     placeholder="Title"
@@ -47,6 +47,10 @@ const CreateTipModal = ({ onClose, onCreate }) => {
                     onChange={(e) => setDescription(e.target.value)}
                     className="border p-2 w-full mb-4"
                 />
+
+                <div className='mb-2'>
+                    <span className=''>Upload Picture</span>
+                </div>
                 <input
                     type="file"
                     accept="image/*"
@@ -56,17 +60,19 @@ const CreateTipModal = ({ onClose, onCreate }) => {
 
                 <div className="flex justify-between">
                     <button
-                        className="bg-red-500 text-white p-2 rounded"
-                        onClick={onClose}
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        className="bg-green-500 text-white p-2 rounded"
+                        className="bg-[#4285F4] hover:bg-[#0C65F8] text-black p-2 rounded"
                         onClick={handleSubmit}
                     >
                         Create
                     </button>
+
+                    <button
+                        className="bg-[#D9D9D9] hover:bg-[#ADAAAA] text-black p-2 rounded"
+                        onClick={onClose}
+                    >
+                        Cancel
+                    </button>
+
                 </div>
             </div>
         </div>

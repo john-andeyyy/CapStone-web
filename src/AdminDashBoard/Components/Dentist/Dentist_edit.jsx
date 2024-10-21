@@ -87,7 +87,7 @@ export default function DentistEdit({ isOpen, onClose, selectedDentist, updateDe
                 },
                 withCredentials: true,
             });
-            
+
             updateDentistData(response.data);
 
             showToast('success', 'Edit successful!');
@@ -106,21 +106,23 @@ export default function DentistEdit({ isOpen, onClose, selectedDentist, updateDe
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div className="bg-secondary rounded-lg shadow-lg p-6">
-                <h2 className="text-lg font-semibold mb-4">Edit Dentist Information</h2>
-                <div className="mb-4 flex justify-center items-center">
+            <div className="bg-[#C6E4DA] rounded-lg shadow-lg p-6">
+                <h2 className="text-lg font-semibold mb-4 text-[#266D53] text-center">Edit Dentist Information</h2>
+                <div className="mb-4 flex justify-center items-center relative">
                     <img
                         src={profileImage}
                         alt="Profile"
-                        className="w-32 h-32 rounded-full mb-4"
+                        className="w-32 h-32 rounded-full"
                     />
                     <button
                         type="button"
                         onClick={handleEditNewClick}
-                        className="ml-4 bg-blue-500 text-white rounded-md px-4 py-2"
+                        className="absolute bottom-2 left-90 bg-gray-500 text-white rounded-full px-2 py-1"
                     >
-                        Edit New
+                        <span className="material-symbols-outlined">photo_camera_front</span>
                     </button>
+
+
                     <input
                         type="file"
                         name="ProfilePicture"
@@ -176,7 +178,7 @@ export default function DentistEdit({ isOpen, onClose, selectedDentist, updateDe
                                 onChange={handleChange}
                                 placeholder="Contact Number"
                                 required
-                                className="border border-gray-300 rounded-md p-2 mb-4 w-full"
+                                className="border border-gray-300 rounded-md p-2 w-full"
                             />
                         </div>
                         <div>
@@ -187,7 +189,7 @@ export default function DentistEdit({ isOpen, onClose, selectedDentist, updateDe
                                 value={dentistData.Address}
                                 onChange={handleChange}
                                 placeholder="Address"
-                                className="border border-gray-300 rounded-md p-2 mb-4 w-full"
+                                className="border border-gray-300 rounded-md p-2 w-full"
                             />
                         </div>
                         <div>
@@ -196,7 +198,7 @@ export default function DentistEdit({ isOpen, onClose, selectedDentist, updateDe
                                 name="Gender"
                                 value={dentistData.Gender}
                                 onChange={handleChange}
-                                className="border border-gray-300 rounded-md p-2 mb-4 w-full"
+                                className="border border-gray-300 rounded-md p-2  w-full"
                                 required
                             >
                                 <option value="">Select gender</option>
@@ -225,8 +227,8 @@ export default function DentistEdit({ isOpen, onClose, selectedDentist, updateDe
                         </div>
                     </div>
                     <div className="flex justify-between">
-                        <button type="submit" className="bg-blue-500 text-white rounded-md px-4 py-2">Update</button>
-                        <button type="button" onClick={onClose} className="bg-gray-300 text-black rounded-md px-4 py-2">Cancel</button>
+                        <button type="submit" className="bg-[#4285F4] hover:bg-[#0C65F8] text-black rounded-md px-4 py-2">Update</button>
+                        <button type="button" onClick={onClose} className="bg-[#D9D9D9] hover:bg-[#ADAAAA] text-black rounded-md px-4 py-2">Cancel</button>
                     </div>
                 </form>
             </div>

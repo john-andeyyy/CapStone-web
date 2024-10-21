@@ -7,12 +7,13 @@ const Modal = ({ isOpen, onClose, onSubmit, editFrom, editTo, setEditFrom, setEd
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-accent p-4 rounded shadow-lg">
-                <h2 className="text-xl font-bold mb-4">Edit Unavailable Time</h2>
+            <div className="bg-[#C6E4DA] p-4 rounded shadow-lg">
+                <h2 className="text-xl font-bold mb-4 text-[#266D53] text-center">Edit Unavailable Time</h2>
                 <form onSubmit={onSubmit}>
-                    <div className="flex flex-col space-y-4">
-                        <div>
-                            <label htmlFor="editFromDate" className="block mb-1">From:</label>
+                    <div className="flex flex-col space-y-4 mt-5">
+
+                        <div className='flex flex-cols'>
+                            <label htmlFor="editFromDate" className="block mb-1 mr-2 mt-1">From:</label>
                             <input
                                 id="editFromDate"
                                 type="datetime-local"
@@ -21,9 +22,11 @@ const Modal = ({ isOpen, onClose, onSubmit, editFrom, editTo, setEditFrom, setEd
                                 className="border rounded px-2 py-1"
                                 required
                             />
+
                         </div>
-                        <div>
-                            <label htmlFor="editToDate" className="block mb-1">To:</label>
+
+                        <div className='flex flex-cols'>
+                            <label htmlFor="editToDate" className="block mb-1 mr-7 mt-1">To:</label>
                             <input
                                 id="editToDate"
                                 type="datetime-local"
@@ -32,12 +35,13 @@ const Modal = ({ isOpen, onClose, onSubmit, editFrom, editTo, setEditFrom, setEd
                                 className="border rounded px-2 py-1"
                                 required
                             />
+
                         </div>
-                        <div className="flex justify-between">
-                            <button type="submit" className="bg-blue-500 text-white px-4 py-1 rounded">
+                        <div className="flex justify-between gap-4">
+                            <button type="submit" className="bg-[#4285F4] hover:bg-[#0C65F8] text-black px-4 py-1 rounded">
                                 Update Unavailable Time
                             </button>
-                            <button type="button" onClick={onClose} className="text-red-500 px-4 py-1 rounded">
+                            <button type="button" onClick={onClose} className="bg-[#D9D9D9] hover:bg-[#ADAAAA] text-black px-4 py-1 rounded">
                                 Cancel
                             </button>
                         </div>
@@ -144,7 +148,7 @@ const UnavailableDentist = ({ dentistId }) => {
 
     return (
         <div className="p-4">
-            <h2 className="text-xl font-bold mb-4">Manage Unavailable Times for Dentist</h2>
+            <h2 className="text-xl font-bold mb-4 text-[#266D53] text-center">Manage Unavailable Times for Dentist</h2>
             {error && <p className="text-red-500">{error}</p>}
 
             {/* Form for adding unavailable times */}
@@ -172,7 +176,7 @@ const UnavailableDentist = ({ dentistId }) => {
                             required
                         />
                     </div>
-                    <button type="submit" className="bg-blue-500 text-white px-4 py-1 rounded">
+                    <button type="submit" className="bg-[#4285F4] hover:bg-[#0C65F8] text-white px-4 py-1 mt-5 rounded">
                         Add Unavailable Time
                     </button>
                 </div>
@@ -181,34 +185,50 @@ const UnavailableDentist = ({ dentistId }) => {
             {/* Display Unavailable Times in a Table */}
             <h3 className="font-semibold mt-4">Unavailable Times</h3>
             {unavailableList.length > 0 ? (
-                <table className="min-w-full  border border-gray-300">
+                <table className="min-w-full  border border-gray-500">
                     <thead>
                         <tr>
-                            <th className="border px-4 py-2">ID</th>
-                            <th className="border px-4 py-2">From</th>
-                            <th className="border px-4 py-2">To</th>
-                            <th className="border px-4 py-2">Actions</th>
+                            <th className="border px-4 py-2 bg-[#3EB489] text-white text-center">ID</th>
+                            <th className="border px-4 py-2 bg-[#3EB489] text-white text-center">From</th>
+                            <th className="border px-4 py-2 bg-[#3EB489] text-white text-center">To</th>
+                            <th className="border px-4 py-2 bg-[#3EB489] text-white text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {unavailableList.map((item) => (
                             <tr key={item._id || `${item.from}-${item._to}`}>
-                                <td className="border px-4 py-2">{item._id}</td>
-                                <td className="border px-4 py-2">{formatDate(item.from)}</td>
-                                <td className="border px-4 py-2">{formatDate(item.to)}</td>
-                                <td className="border px-4 py-2">
-                                    <button
-                                        className="text-blue-500 hover:underline"
-                                        onClick={() => initiateEdit(item)}
-                                    >
-                                        Edit
-                                    </button>
-                                    <button
-                                        className="text-red-500 hover:underline ml-2"
-                                        onClick={() => deleteUnavailableTime(item._id)}
-                                    >
-                                        Delete
-                                    </button>
+                                <td className="border border-gray-500 px-4 py-2 bg-gray-100">{item._id}</td>
+                                <td className="border border-gray-500 px-4 py-2 bg-gray-100">{formatDate(item.from)}</td>
+                                <td className="border border-gray-500 px-4 py-2 bg-gray-100">{formatDate(item.to)}</td>
+                                <td className="border border-gray-500 px-4 py-2 bg-gray-100">
+
+                                    <div className="flex items-center">
+                                        {/* Edit Button with Tooltip */}
+                                        <div className="relative inline-block group">
+                                            <button
+                                                className="text-black-500 flex flex-col items-center justify-center w-10 bg-gray-200 hover:text-black-600 transition rounded-lg shadow-sm"
+                                                onClick={() => initiateEdit(item)}
+                                                title='edit'
+                                            >
+                                                <span className="material-symbols-outlined">edit</span>
+                                            </button>
+
+                                        </div>
+
+                                        {/* Delete Button with Tooltip */}
+                                        <div className="relative inline-block group ml-2">
+                                            <button
+                                                className="text-red-500 flex flex-col items-center justify-center w-10 bg-red-100 hover:text-red-600 transition rounded-lg shadow-sm"
+                                                onClick={() => deleteUnavailableTime(item._id)}
+                                                title='delete'
+                                            >
+                                                <span className="material-symbols-outlined">delete</span>
+                                            </button>
+
+                                        </div>
+                                    </div>
+
+
                                 </td>
                             </tr>
                         ))}

@@ -6,11 +6,19 @@ export default function Modal({ isOpen, close, children }) {
         <div>
             {isOpen && (
                 <>
+                    {/* Black overlay with opacity */}
                     <div className="fixed inset-0 bg-black bg-opacity-50 z-50"></div>
+
+                    {/* Modal content */}
                     <dialog open className="modal z-50">
                         <div className="modal-box bg-[#C6E4DA]">
-                            <h3 className="font-bold text-lg text-center text-[#266D53] mb-5">Confirmation</h3>
+                            {/* <h3 className="font-bold text-lg text-center text-[#266D53] mb-5">Confirmation</h3> */}
                             {children}
+                            {/* <div className="modal-action">
+                <form method="dialog">
+                  <button type="button" className="btn" onClick={close}>Close</button>
+                </form>
+              </div> */}
                         </div>
                     </dialog>
                 </>

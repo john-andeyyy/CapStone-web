@@ -23,7 +23,7 @@ const UpdateTipModal = ({ tip, onClose, onUpdate }) => {
                 onUpdate(response.data);
                 showToast('success', 'Tip Updated successful!');
 
-                onClose(); 
+                onClose();
             })
             .catch(error => {
                 console.error('There was an error updating the tip!', error);
@@ -32,8 +32,12 @@ const UpdateTipModal = ({ tip, onClose, onUpdate }) => {
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-            <div className="bg-accent p-6 rounded shadow-lg w-1/3">
-                <h2 className="font-bold text-lg mb-4">Update Tip</h2>
+            <div className="bg-[#C6E4DA] p-6 rounded shadow-lg w-1/3">
+                <h2 className="font-bold text-lg mb-4 text-[#266D53] text-center">Update Tip</h2>
+
+                <div className='uppercase font-bold'>
+                    <span className=''>Title</span>
+                </div>
                 <input
                     type="text"
                     placeholder="Title"
@@ -41,32 +45,40 @@ const UpdateTipModal = ({ tip, onClose, onUpdate }) => {
                     onChange={(e) => setTitle(e.target.value)}
                     className="border p-2 w-full mb-4"
                 />
+                <div className='uppercase font-bold'>
+                    <span className=''>Description</span>
+                </div>
                 <textarea
                     placeholder="Description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     className="border p-2 w-full mb-4"
                 />
+                <div className='mb-2'>
+                    <span className=''>Upload Picture</span>
+                </div>
                 <input
                     type="file"
                     accept="image/*"
                     onChange={handleImageChange}
-                    className="mb-4"
+                    className="mb-4 border p-2 w-full bg-white"
                 />
 
                 <div className="flex justify-between">
                     <button
-                        className="bg-red-500 text-white p-2 rounded"
-                        onClick={onClose}
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        className="bg-blue-500 text-white p-2 rounded"
+                        className="bg-[#4285F4] hover:bg-[#0C65F8] text-black p-2 rounded"
                         onClick={handleSubmit}
                     >
                         Update
                     </button>
+
+                    <button
+                        className=" bg-[#D9D9D9] hover:bg-[#ADAAAA] text-black p-2 rounded"
+                        onClick={onClose}
+                    >
+                        Cancel
+                    </button>
+
                 </div>
             </div>
         </div>

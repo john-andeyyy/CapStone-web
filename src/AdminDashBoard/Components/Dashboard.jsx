@@ -45,7 +45,7 @@ export default function Dashboard() {
                 <div className="p-4 border border-primary rounded-lg flex flex-col justify-center items-center space-y-4">
                     <button
                         onClick={() => navigate('/Total_procedures')}
-                        className='bg-secondary w-full h-12 rounded-xl text-xl font-semibold text-white transition duration-300 hover:bg-green-600 flex items-center justify-center space-x-2'
+                        className='bg-[#3EB489] w-full h-12 rounded-xl text-xl font-semibold text-white transition duration-300 hover:bg-green-600 flex items-center justify-center space-x-2'
                     >
                         <span className="material-symbols-outlined">
                             summarize
@@ -55,7 +55,7 @@ export default function Dashboard() {
 
                     <button
                         onClick={() => setIsOpen(true)}
-                        className='bg-secondary w-full h-12 rounded-xl text-xl font-semibold text-white transition duration-300 hover:bg-green-600 flex items-center justify-center space-x-2'
+                        className='bg-[#3EB489] w-full h-12 rounded-xl text-xl font-semibold text-white transition duration-300 hover:bg-green-600 flex items-center justify-center space-x-2'
                     >
                         <span className="material-symbols-outlined">
                             edit
@@ -64,7 +64,7 @@ export default function Dashboard() {
                     </button>
                     <button
                         onClick={() => navigate('/UnavailableClinic')}
-                        className='bg-secondary w-full h-12 rounded-xl text-xl font-semibold text-white transition duration-300 hover:bg-green-600 flex items-center justify-center space-x-2'
+                        className='bg-[#3EB489] w-full h-12 rounded-xl text-xl font-semibold text-white transition duration-300 hover:bg-green-600 flex items-center justify-center space-x-2'
                     >
                         <span className="material-symbols-outlined">
                             event_busy
@@ -72,6 +72,7 @@ export default function Dashboard() {
                         <span>Clinic Close</span>
                     </button>
                 </div>
+
 
 
 

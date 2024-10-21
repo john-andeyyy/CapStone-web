@@ -179,91 +179,121 @@ export default function MedicalRequests() {
         </div>
       </div>
       {/* Request List */}
-      <div className="p-2 flex text-white bg-primary">
-        <div className="flex-1 font-bold">Name</div>
-        <div className="flex-1 font-bold">Date</div>
-        <div className="flex-1 font-bold hidden md:block">Procedure</div>
-        <div className="flex-1 font-bold hidden md:block">Status</div>
-        {/* Only show actions when not in 'Approved' or 'All' filter */}
-        {statusFilter !== 'Approved' && statusFilter !== 'All' && <div className="flex-1 font-bold text-center">Actions</div>}
+      <div className="p-2">
+        <table className="w-full table-auto bg-gray-100 text-black border border-black">
+          <thead>
+            <tr className="bg-[#3EB489] border border-black">
+              <th className="p-2 font-bold border border-black text-white">Name</th>
+              <th className="p-2 font-bold border border-black text-white">Date</th>
+              <th className="p-2 font-bold hidden md:table-cell border border-black text-white">Procedure</th>
+              <th className="p-2 font-bold hidden md:table-cell border border-black text-white">Status</th>
+              {/* Only show actions when not in 'Approved' or 'All' filter */}
+              {statusFilter !== 'Approved' && statusFilter !== 'All' && (
+                <th className="p-2 font-bold text-center border border-black text-white">Actions</th>
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr className='border border-black'>
+                <td colSpan={statusFilter !== 'Approved' && statusFilter !== 'All' ? 5 : 4} className="text-center py-20 border border-black">
+                  <span className="loading loading-spinner loading-lg"></span>
+                </td>
+              </tr>
+            ) : (
+              <>
+                {filteredRequests.length === 0 ? (
+                  <tr>
+                    <td colSpan={statusFilter !== 'Approved' && statusFilter !== 'All' ? 5 : 4} className="p-4 text-center font-bold border border-black'">
+                      No requests found.
+                    </td>
+                  </tr>
+                ) : (
+                  filteredRequests.map((request) => (
+                    <tr key={request.id} className="bg-gray-100 cursor-pointer  border border-black">
+                      {/* Patient's Name */}
+                      <td className="p-2 border border-black">{request.patient.FirstName} {request.patient.LastName}</td>
+                      {/* Request Date */}
+                      <td className="p-2 border border-black">{new Date(request.date).toLocaleDateString()}</td>
+                      {/* Procedures */}
+                      <td className="p-2 border border-black">{request.procedures.map(proc => proc.name).join(', ')}</td>
+                      {/* Status */}
+                      <td className={`p-2 border border-black "${request.medcertiStatus === 'Pending' ? 'text-green-500' : ''}`}>
+                        {request.medcertiStatus}
+                      </td>
+
+
+                      {statusFilter !== 'Approved' && statusFilter !== 'All' && (
+                        <td className="text-center p-2 border border-black">
+                          <div className="flex justify-center space-x-2"> {/* Flex container for horizontal layout */}
+                            {/* Approve Button */}
+                            <button
+                              className="flex items-center justify-center w-10 bg-blue-100 text-blue-500 hover:text-blue-600 transition rounded-lg shadow-sm"
+                              onClick={() => navigate(`/appointment/${request.id}`)}
+                              title="view"
+                            >
+                              <span className="material-symbols-outlined">visibility</span>
+                            </button>
+
+                            {request.medcertiStatus !== 'Approved' && (
+                              <button
+                                className="flex items-center justify-center w-10 bg-green-100 text-green-500 hover:text-green-600 transition rounded-lg shadow-sm"
+                                onClick={() => {
+                                  setSelectedRequest(request);
+                                  setAcceptConfirmation(true);
+                                }}
+                                title="approve"
+                              >
+                                <span className="material-symbols-outlined">check_circle</span>
+                              </button>
+                            )}
+
+                            {/* Reject Button */}
+                            {request.medcertiStatus !== 'Approved' && request.medcertiStatus !== 'Rejected' && (
+                              <button
+                                className="flex items-center justify-center w-10 bg-red-100 text-red-500 hover:text-red-600 transition rounded-lg shadow-sm"
+                                onClick={() => {
+                                  setSelectedRequest(request);
+                                  setDeleteConfirmation(true);
+                                }}
+                                title="reject"
+                              >
+                                <span className="material-symbols-outlined">delete</span>
+                              </button>
+                            )}
+
+                            {/* Archive Button */}
+                            {(request.medcertiStatus !== 'Approved' && request.medcertiStatus !== 'Archive') && (
+                              <button
+                                className="flex items-center justify-center w-10 bg-gray-200 text-gray-500 hover:text-gray-600 transition rounded-lg shadow-sm"
+                                onClick={() => {
+                                  setSelectedRequest(request);
+                                  setArchiveConfirmation(true);
+                                }}
+                                title="archive"
+                              >
+                                <span className="material-symbols-outlined">archive</span>
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      )}
+
+
+                    </tr>
+                  ))
+                )}
+              </>
+            )}
+          </tbody>
+        </table>
       </div>
 
-      {loading ? (
-        <div className="text-center py-20"><span className="loading loading-spinner loading-lg"></span></div>
-      ) : (
-        <>
-          <div className="shadow-md rounded overflow-hidden">
-            {filteredRequests.length === 0 ? (
-              <div className="p-4 text-center font-bold ">No requests found.</div>
-            ) : (
-              filteredRequests.map((request) => (
-                <div
-                  key={request.id}
-                  className="flex justify-between border-b p-2 px-4 cursor-pointer hover:bg-base-300"
-
-                >
-                  {/* Patient's Name */}
-                  <div className="flex-1">{request.patient.FirstName} {request.patient.LastName}</div>
-                  {/* Request Date */}
-                  <div className="flex-1">{new Date(request.date).toLocaleDateString()}</div>
-                  {/* Procedures */}
-                  <div className="flex-1 hidden md:block">{request.procedures.map(proc => proc.name).join(', ')}</div>
-                  {/* Status */}
-                  <div className={`flex-1 hidden md:block ${request.medcertiStatus === 'Pending' ? 'text-green-500' : ''}`}>
-                    {request.medcertiStatus}
-                  </div>
-
-
-                  {/* Action Buttons */}
-
-                  {statusFilter !== 'Approved' && statusFilter !== 'All' && (
-                    <div className=" text-center">
-                      {/* Approve Button */}
-                      <button className="text-blue-500 mx-2" onClick={() => {
-                        navigate(`/appointment/${request.id}`);
-
-                      }}>
-                        <span className="material-symbols-outlined">visibility</span>
-                      </button>
-
-                      {request.medcertiStatus !== 'Approved' && (
-                        <button className="text-green-500 mx-2" onClick={() => {
-                          setSelectedRequest(request);
-                          setAcceptConfirmation(true);
-                        }}>
-                          <span className="material-symbols-outlined">check_circle</span>
-                        </button>
-                      )}
-                      {/* Reject Button */}
-                      {request.medcertiStatus !== 'Approved' && request.medcertiStatus !== 'Rejected' && (
-                        <button className="text-red-500 mx-2" onClick={() => {
-                          setSelectedRequest(request);
-                          setDeleteConfirmation(true);
-                        }}>
-                          <span className="material-symbols-outlined">delete</span>
-                        </button>
-                      )}
-                      {/* Archive Button */}
-                      {(request.medcertiStatus !== 'Approved' && request.medcertiStatus !== 'Archive') && (
-                        <button className="text-gray-500 mx-2" onClick={() => {
-                          setSelectedRequest(request);
-                          setArchiveConfirmation(true);
-                        }}>
-                          <span className="material-symbols-outlined">archive</span>
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              ))
-            )}
-          </div>
-        </>
-      )}
 
       {/* Modals */}
       {/* Accept Request Modal */}
       <Modal title="Accept Request" isOpen={acceptConfirmation} onClose={() => setAcceptConfirmation(false)}>
+        <h3 className="font-bold text-lg text-center text-[#266D53] mb-5">Confirmation</h3>
         <p className="text-center">Are you sure you want to approve request ID: {selectedRequest?.id}?</p>
         <div className="flex justify-center mt-4">
           {actionLoading ? (
@@ -294,6 +324,7 @@ export default function MedicalRequests() {
 
       {/* Delete Request Modal */}
       <Modal title="Delete Request" isOpen={deleteConfirmation} onClose={() => setDeleteConfirmation(false)}>
+        <h3 className="font-bold text-lg text-center text-[#266D53] mb-5">Confirmation</h3>
         <p className="text-center">Are you sure you want to reject request ID: {selectedRequest?.id}?</p>
         <div className="flex justify-center mt-4">
           {actionLoading ? (
@@ -324,6 +355,7 @@ export default function MedicalRequests() {
 
       {/* Archive Request Modal */}
       <Modal title="Archive Request" isOpen={archiveConfirmation} onClose={() => setArchiveConfirmation(false)}>
+        <h3 className="font-bold text-lg text-center text-[#266D53] mb-5">Confirmation</h3>
         <p className="text-center">Are you sure you want to archive request ID: {selectedRequest?.id}?</p>
         <div className="flex justify-center mt-4">
           {actionLoading ? (

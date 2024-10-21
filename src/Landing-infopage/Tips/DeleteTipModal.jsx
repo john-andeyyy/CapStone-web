@@ -9,7 +9,7 @@ const DeleteTipModal = ({ tip, onClose, onDelete }) => {
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-            <div className="bg-accent p-8 rounded-lg shadow-lg w-[400px] h-[500px] flex flex-col">
+            <div className="bg-[#C6E4DA] p-8 rounded-lg shadow-lg w-[400px] h-[500px] flex flex-col">
                 <h2 className="font-bold text-2xl mb-4 text-center text-red-500">Confirm Delete</h2>
                 <div className="flex justify-center mb-4">
                     <img
@@ -24,19 +24,21 @@ const DeleteTipModal = ({ tip, onClose, onDelete }) => {
                 <p className="text-center text-lg font-semibold mb-6">
                     <strong>"{tip.Title}"</strong>
                 </p>
-                <div className="flex justify-end">
+                <div className="flex justify-center gap-4">
                     <button
-                        className="bg-red-500 text-white py-2 px-4 rounded-lg mr-2 hover:bg-red-600 transition duration-200"
-                        onClick={onClose}
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200"
+                        className="bg-[#4285F4] hover:bg-[#0C65F8] text-black py-2 px-4 rounded-lg transition duration-200"
                         onClick={onDelete}
                     >
                         Confirm Delete
                     </button>
+
+                    <button
+                        className="bg-[#D9D9D9] hover:bg-[#ADAAAA] text-black py-2 px-4 rounded-lg mr-2 transition duration-200"
+                        onClick={onClose}
+                    >
+                        Cancel
+                    </button>
+
                 </div>
             </div>
         </div>

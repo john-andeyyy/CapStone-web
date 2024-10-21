@@ -94,17 +94,23 @@ export default function Sidebar() {
         setIsLandingPageDropdownOpen(false); // Close landing page dropdown
     };
 
-
     const handleLogout = () => {
-        axios.post(`${BASEURL}/Patient/auth/Logout`)
+        axios.post(`${BASEURL}/Admin/auth/Logout`)
             .then((res) => {
-                if (res.status == 200) {
+                if (res.status === 200) {  // Use triple equals for strict comparison
+                    // Clear local storage
                     localStorage.clear();
+
+                    // Navigate to the homepage
                     navigate('/');
+
+                    // Optionally, reload the page to clear any cached data
                     window.location.reload();
                 }
-            }).catch((error)=>{ console.log('error', error)})
-
+            })
+            .catch((error) => {
+                console.log('Logout error:', error);
+            });
     };
 
 

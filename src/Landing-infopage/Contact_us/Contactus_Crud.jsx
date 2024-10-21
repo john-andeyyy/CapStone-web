@@ -76,7 +76,7 @@ export default function ContactusDisplay() {
                 },
             });
 
-            const updatedContactInfo = response.data;  
+            const updatedContactInfo = response.data;
             setContactInfo(updatedContactInfo);
             setIsEditing(false);
             setFormData({
@@ -92,7 +92,7 @@ export default function ContactusDisplay() {
 
             const fileInput = document.getElementById('logo');
             if (fileInput) {
-                fileInput.value = ''; 
+                fileInput.value = '';
             }
             showToast('success', 'Updated successfully!');
 
@@ -144,9 +144,9 @@ export default function ContactusDisplay() {
 
     return (
         <div>
-            <h1 className="text-3xl font-bold mb-4 text-green-500">Contact Information</h1>
+            <h1 className="text-3xl font-bold mb-4 text-black">Contact Information</h1>
 
-            <div className="max-w-2xl mx-auto shadow-md rounded-lg">
+            <div className="max-w bg-[#F5F5F5] p-10 mx-auto shadow-md rounded-lg">
                 <div className="flex mb-4">
                     <div className="flex-1 pr-2">
                         <h2 className="text-lg font-semibold">Current Logo.</h2>
@@ -183,11 +183,25 @@ export default function ContactusDisplay() {
                             value={formData.DentalName}
                             onChange={handleChange}
                             disabled={!isEditing}
-                            className="w-full p-2 border border-gray-300 rounded"
+                            className="w-full p-2 border border-gray-300 rounded bg-[#D3CDCD]"
                         />
+
                     </div>
 
                     <div className="mb-4 col-span-2">
+                        <label className="text-lg font-semibold" htmlFor="Address">Address</label>
+                        <input
+                            id="Address"
+                            type="text"
+                            name="Address"
+                            value={formData.Address}
+                            onChange={handleChange}
+                            disabled={!isEditing}
+                            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-[#D3CDCD]"
+                        />
+                    </div>
+
+                    <div className="mb-4">
                         <label className="text-lg font-semibold" htmlFor="ContactNumber">Contact Number</label>
                         <input
                             id="ContactNumber"
@@ -198,21 +212,7 @@ export default function ContactusDisplay() {
                             disabled={!isEditing}
                             maxLength={11}
                             placeholder="09..."
-                            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                    </div>
-
-
-                    <div className="mb-4">
-                        <label className="text-lg font-semibold" htmlFor="Address">Address</label>
-                        <input
-                            id="Address"
-                            type="text"
-                            name="Address"
-                            value={formData.Address}
-                            onChange={handleChange}
-                            disabled={!isEditing}
-                            className="w-full p-2 border border-gray-300 rounded"
+                            className="w-full p-2 border border-gray-300 rounded bg-[#D3CDCD]"
                         />
                     </div>
 
@@ -225,7 +225,7 @@ export default function ContactusDisplay() {
                             value={formData.Facebooklink}
                             onChange={handleChange}
                             disabled={!isEditing}
-                            className="w-full p-2 border border-gray-300 rounded"
+                            className="w-full p-2 border border-gray-300 rounded bg-[#D3CDCD]"
                         />
                     </div>
 
@@ -240,7 +240,7 @@ export default function ContactusDisplay() {
                             value={formData.WeekdaysTime}
                             onChange={handleChange}
                             disabled={!isEditing}
-                            className="w-full p-2 border border-gray-300 rounded"
+                            className="w-full p-2 border border-gray-300 rounded bg-[#D3CDCD]"
                         />
                     </div>
 
@@ -253,7 +253,7 @@ export default function ContactusDisplay() {
                             value={formData.WeekendsTime}
                             onChange={handleChange}
                             disabled={!isEditing}
-                            className="w-full p-2 border border-gray-300 rounded"
+                            className="w-full p-2 border border-gray-300 rounded bg-[#D3CDCD]"
                         />
                     </div>
 
@@ -266,7 +266,7 @@ export default function ContactusDisplay() {
                             value={formData.Email}
                             onChange={handleChange}
                             disabled={!isEditing}
-                            className="w-full p-2 border border-gray-300 rounded"
+                            className="w-full p-2 border border-gray-300 rounded bg-[#D3CDCD]"
                         />
                     </div>
 
@@ -279,7 +279,7 @@ export default function ContactusDisplay() {
                             accept="image/*"
                             onChange={handleChange}
                             disabled={!isEditing}
-                            className="w-full p-2 border border-gray-300 rounded"
+                            className="w-full p-2 border border-gray-300 rounded bg-[#D3CDCD]"
                         />
 
                     </div>
@@ -289,7 +289,7 @@ export default function ContactusDisplay() {
                         <button
                             type="button"
                             onClick={() => setIsEditing(!isEditing)}
-                            className={` px-4 bg-blue-500 text-white p-2 rounded hover:bg-blue-600 ${isEditing ? 'hidden' : 'block'}`}
+                            className={` px-4 bg-[#4285F4] hover:bg-[#0C65F8] text-black p-2 rounded ${isEditing ? 'hidden' : 'block'}`}
                         >
                             Edit
                         </button>
@@ -298,7 +298,7 @@ export default function ContactusDisplay() {
                             <>
                                 <button
                                     type="submit"
-                                    className={`bg-green-500 text-white p-2 rounded hover:bg-green-600 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    className={`bg-[#4285F4] hover:bg-[#0C65F8] text-black p-2 rounded ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
                                     disabled={isSubmitting}
                                 >
                                     {isSubmitting ? 'Submitting...' : 'Submit'}
@@ -306,7 +306,7 @@ export default function ContactusDisplay() {
                                 <button
                                     type="button"
                                     onClick={handleCancel}
-                                    className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
+                                    className=" text-black p-2 rounded bg-[#D9D9D9] hover:bg-[#ADAAAA]"
                                 >
                                     Cancel
                                 </button>

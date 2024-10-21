@@ -96,7 +96,7 @@ const TipsList = () => {
                     className="border border-gray-300 rounded-lg py-2 px-4 w-full max-w-xs"
                 />
                 <button
-                    className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded shadow-lg ml-2"
+                    className="bg-[#3EB489] hover:bg-[#62A78E] text-white font-semibold py-2 px-4 rounded shadow-lg ml-2"
                     onClick={() => setShowCreateModal(true)}
                 >
                     Create New Tip
@@ -168,54 +168,63 @@ const TipsList = () => {
                 </div>
             ) : (
                 // Table View
-                <table className="min-w-full border-collapse border border-gray-200">
+                <table className="min-w-full border-collapse border border-black">
                     <thead>
-                        <tr className="bg-green-400 text-black">
-                            <th className="border border-gray-200 px-4 py-2 text-left w-[10%] text-xs">ID</th>
-                            <th className="border border-gray-200 px-4 py-2 text-left">Image</th>
-                            <th className="border border-gray-200 px-4 py-2 text-left max-w-[150px]">Title</th>
-                            <th className="border border-gray-200 px-4 py-2 text-left max-w-[250px]">Description</th>
-                            <th className="border border-gray-200 px-4 py-2 text-left">Actions</th>
+                        <tr className="bg-green-400 text-white">
+                            <th className="border border-black text-center px-4 py-2 text-left w-[10%] text-xs bg-[#3EB489]">ID</th>
+                            <th className="border border-black text-center px-4 py-2 text-left bg-[#3EB489]">Image</th>
+                            <th className="border border-black text-center px-4 py-2 text-left max-w-[150px] bg-[#3EB489]">Title</th>
+                            <th className="border border-black text-center px-4 py-2 text-left max-w-[250px] bg-[#3EB489]">Description</th>
+                            <th className="border border-black text-center px-4 py-2 text-left bg-[#3EB489]">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {filteredTips.map((tip) => (
-                            <tr key={tip._id} className="border-b">
-                                <td className="border border-gray-200 px-2 py-2 text-xs">
+                            <tr key={tip._id} className="border-b bg-gray-100">
+                                <td className="border border-black px-2 py-2 text-xs">
                                     {tip._id.slice(0, 8)}
                                 </td>
-                                <td className="border border-gray-200 px-4 py-2">
+                                <td className="border border-black px-4 py-2">
                                     <img
                                         src={getProfileImage(tip.image)}
                                         alt={tip.Title}
                                         className="w-16 h-16 object-cover rounded-full"
                                     />
                                 </td>
-                                <td className="border border-gray-200 px-4 py-2 max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
+                                <td className="border border-black px-4 py-2 max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
                                     {tip.Title}
                                 </td>
-                                <td className="border border-gray-200 px-4 py-2 max-w-[250px] overflow-hidden text-ellipsis whitespace-nowrap">
+                                <td className="border border-black px-4 py-2 max-w-[250px] overflow-hidden text-ellipsis whitespace-nowrap">
                                     {tip.Description}
                                 </td>
-                                <td className="border border-gray-200 px-4 py-2 text-center">
+                                <td className="border border-black px-4 py-2 text-center">
                                     <div className="space-x-2">
                                         <button
-                                            className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded text-sm"
+                                            className="bg-blue-100 hover:text-blue-600 text-blue-500 font-semibold py-2 px-4 rounded"
                                             onClick={() => handleViewClick(tip)}
+                                            title='view'
                                         >
-                                            View
+                                            <span class="material-symbols-outlined">
+                                                visibility
+                                            </span>
                                         </button>
                                         <button
-                                            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded text-sm"
+                                            className="bg-gray-200 hover:text-gray-600 text-gray font-semibold py-2 px-4 rounded "
                                             onClick={() => handleUpdateClick(tip)}
+                                            title='edit'
                                         >
-                                            Update
+                                            <span class="material-symbols-outlined">
+                                                edit
+                                            </span>
                                         </button>
                                         <button
-                                            className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded text-sm"
+                                            className="bg-red-100 hover:text-red-600 text-red-500 font-semibold py-2 px-4 rounded"
                                             onClick={() => handleDeleteClick(tip)}
+                                            title='delete'
                                         >
-                                            Delete
+                                            <span class="material-symbols-outlined">
+                                                delete
+                                            </span>
                                         </button>
                                     </div>
                                 </td>

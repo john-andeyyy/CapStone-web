@@ -129,11 +129,11 @@ export default function Hero_Crud() {
 
   return (
     <div className="p-4">
-      <h1 className="text-3xl font-bold mb-4 text-green-500">Hero:</h1>
+      <h1 className="text-3xl font-bold mb-4 text-black">Hero:</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
         {heroItems.slice(0, 2).map(item => (
-          <div key={item._id} className={`border rounded-lg shadow-lg p-6 flex flex-col bg-secondary transition-transform duration-200 hover:shadow-xl ${isEditing === item._id ? 'h-auto' : 'max-h-[110rem] overflow-hidden'}`}>
+          <div key={item._id} className={`border rounded-lg shadow-lg p-6 flex flex-col bg-[#C6E4DA] transition-transform duration-200 hover:shadow-xl ${isEditing === item._id ? 'h-auto' : 'max-h-[110rem] overflow-hidden'}`}>
             <div className="flex items-start mb-4">
               <div className="mr-4">
                 <img
@@ -161,7 +161,7 @@ export default function Hero_Crud() {
                       />
                       <label
                         htmlFor="file-upload"
-                        className="border p-2 rounded-lg mb-2 shadow-sm focus:outline-none text-center cursor-pointer bg-blue-500 text-white hover:bg-blue-600 transition duration-200"
+                        className="border p-2 rounded-lg mb-2 shadow-sm focus:outline-none text-center cursor-pointer bg-[#4285F4] hover:bg-[#0C65F8] text-black transition duration-200"
                       >
                         Choose file
                       </label>
@@ -214,7 +214,7 @@ export default function Hero_Crud() {
                       handleSubmit(item._id);
                       setIsEditing(null); // Reset editing state after submission
                     }}
-                    className={`bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition ${updating ? 'cursor-not-allowed opacity-50' : ''}`}
+                    className={`bg-[#4285F4] hover:bg-[#0C65F8] text-black px-4 py-2 rounded-lg transition ${updating ? 'cursor-not-allowed opacity-50' : ''}`}
                     disabled={updating} // Disable button while updating
                   >
                     {updating ? 'Updating...' : 'Update'}
@@ -228,7 +228,7 @@ export default function Hero_Crud() {
                       });
                       setImagePreview(null);
                     }}
-                    className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
+                    className="bg-[#D9D9D9] hover:bg-[#ADAAAA] text-black px-4 py-2 rounded-lg hover:bg-red-600 transition"
                   >
                     Cancel
                   </button>
@@ -236,9 +236,9 @@ export default function Hero_Crud() {
               ) : (
                 <button
                   onClick={() => handleEdit(item)}
-                  className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-200"
+                  className="bg-[#3EB489] hover:bg-[#62A78E] text-white px-4 py-2 rounded-lg transition duration-200"
                 >
-                  View/Edit
+                  Edit
                 </button>
               )}
             </div>

@@ -10,7 +10,17 @@ const ViewTipModal = ({ tip, onClose }) => {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
             <div className="bg-accent p-6 rounded shadow-lg w-1/3">
-                <h2 className="font-bold text-xl mb-4">Tip Details</h2>
+                <div className="flex justify-end">
+                    <button
+                        className=" text-gray-500 py-2"
+                        onClick={onClose}
+                    >
+                        <span class="material-symbols-outlined">
+                            close
+                        </span>
+                    </button>
+                </div>
+                <h2 className="font-bold text-xl mb-4 text-[#266D53] text-center">Tip Details</h2>
                 <div className="flex justify-center mb-4">
                     <img
                         src={getProfileImage(tip.image)}
@@ -18,18 +28,10 @@ const ViewTipModal = ({ tip, onClose }) => {
                         className="w-32 h-32 object-cover rounded-full shadow-md"
                     />
                 </div>
-                <p className="text-green-500 font-semibold">Title:</p>
-                <h2 className="font-bold text-lg mb-2">{tip.Title}</h2>
-                <p className="text-green-500 font-semibold">Description:</p>
+                <p className="text-black font-bold text-center uppercase">Title:</p>
+                <h2 className="font-bold text-lg  text-center mb-10 text-[#266D53]">{tip.Title}</h2>
+                <p className="text-black uppercase  font-bold">Description:</p>
                 <p>{tip.Description}</p>
-                <div className="flex justify-end mt-4">
-                    <button
-                        className="bg-red-500 text-white py-2 px-4 rounded"
-                        onClick={onClose}
-                    >
-                        Close
-                    </button>
-                </div>
             </div>
         </div>
     );

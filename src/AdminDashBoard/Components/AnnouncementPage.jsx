@@ -79,31 +79,34 @@ export default function AnnouncementPage() {
 
     return (
         <div className="container mx-auto p-4">
-            <button
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                onClick={() => setShowModal(true)}
-            >
-                Send New Announcement
-            </button>
+
 
             <Modal isOpen={showModal} onClose={closeAnnouncementModal}>
                 {selectedAnnouncement ? (
                     <>
-                        <h3 className="font-bold text-lg">{selectedAnnouncement.Title}</h3>
+
+                        <div className="absolute top-2 right-3">
+                            <button
+                                onClick={closeAnnouncementModal}
+                                className="mt-4  text-gray-500 px-4 py-2"
+                            >
+                                <span className="material-symbols-outlined">
+                                    close
+                                </span>
+                            </button>
+                        </div>
+
+
+                        <h3 className="font-bold text-lg text-[#266D53] text-center mt-5">{selectedAnnouncement.Title}</h3>
                         <p className="mt-2">{selectedAnnouncement.Message}</p>
                         <p className="mt-4 text-sm text-gray-500">
                             Created At: {selectedAnnouncement.createdAt}
                         </p>
-                        <button
-                            onClick={closeAnnouncementModal}
-                            className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                        >
-                            Close
-                        </button>
+
                     </>
                 ) : (
                     <>
-                        <h3 className="font-bold text-lg">Send Announcement!</h3>
+                        <h3 className="text-[#266D53] text-center mb-5 font-bold text-lg">Send Announcement!</h3>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="mb-4">
                                 <label className="block mb-2 font-semibold">Title:</label>
@@ -145,7 +148,7 @@ export default function AnnouncementPage() {
                             <div className="flex justify-end space-x-3">
                                 <button
                                     type="submit"
-                                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                                    className="bg-[#4285F4] hover:bg-[#0C65F8] text-black px-4 py-2 rounded "
                                 >
                                     Send Announcement
                                 </button>
@@ -153,7 +156,7 @@ export default function AnnouncementPage() {
                                 <button
                                     type="button"
                                     onClick={closeAnnouncementModal}
-                                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                                    className=" text-black px-4 py-2 rounded bg-[#D9D9D9] hover:bg-[#ADAAAA]"
                                 >
                                     Close
                                 </button>
@@ -163,7 +166,19 @@ export default function AnnouncementPage() {
                 )}
             </Modal>
 
-            <h2 className="text-xl font-semibold mt-8 mb-4">Announcements</h2>
+            <div className='grid grid-cols-2 gap-4 mb-5'>
+                <h2 className="text-xl font-semibold">Announcements</h2>
+                <div className='flex justify-end ml-10'>
+                    <button
+                        className="btn text-white px-2 py-1 rounded bg-[#3EB489] hover:bg-[#62A78E]"
+                        onClick={() => setShowModal(true)}
+                    >
+                        Send New Announcement
+                    </button>
+                </div>
+            </div>
+
+
             {loading ? (
                 <div className="flex justify-center items-center">
                     <p className="text-gray-500">Loading announcements...</p>
@@ -174,10 +189,10 @@ export default function AnnouncementPage() {
                         announcements.map(announcement => (
                             <div
                                 key={announcement._id}
-                                className="border p-4 rounded-lg cursor-pointer"
+                                className="border p-4 rounded-lg cursor-pointer bg-gray-100 hover:bg-[#C6E4DA]"
                                 onClick={() => openAnnouncementModal(announcement)} // Open modal with announcement details
                             >
-                                <h3 className="font-semibold">{announcement.Title}</h3>
+                                <h3 className="font-semibold text-[#266D53] ">{announcement.Title}</h3>
                                 <p
                                     className={`text-gray-600 overflow-hidden ${expandedAnnouncement === announcement._id ? 'h-auto' : 'h-16'}`}
                                 >

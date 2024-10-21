@@ -228,7 +228,7 @@ const Tooth2d = ({ userIds }) => {
             <div>
                 <button
                     onClick={() => setshow2d((prev) => !prev)} // Toggle the showcard state
-                    className="bg-blue-500 text-right text-white font-semibold rounded-lg px-4 py-2 mb-4 shadow-md hover:bg-blue-600 transition duration-300"
+                    className="bg-[#3EB489] hover:bg-[#62A78E] text-right text-white font-semibold rounded-lg px-4 py-2 mb-4 shadow-md transition duration-300"
                 >
                     {show2d ? 'Hide Medical History' : 'Show Medical History'}
                 </button>
@@ -299,7 +299,7 @@ const Tooth2d = ({ userIds }) => {
 
                             <button
                                 onClick={() => setshowcard((prev) => !prev)} // Toggle the showcard state
-                                className="bg-blue-500 text-white font-semibold rounded-lg px-4 py-2 mb-4 shadow-md hover:bg-blue-600 transition duration-300"
+                                className="bg-[#3EB489] hover:bg-[#62A78E] text-white font-semibold rounded-lg px-4 py-2 mb-4 shadow-md transition duration-300"
                             >
                                 {showcard ? 'Hide' : 'Show'}
                             </button>
@@ -321,7 +321,7 @@ const Tooth2d = ({ userIds }) => {
                             return (
                                 <div
                                     key={toothId}
-                                    className={`p-4 shadow rounded-lg border border-gray-200 ${isToothHighlighted ? 'bg-green-100' : ''}`} // Highlight background if hovered
+                                    className={`p-4 shadow rounded-lg border border-gray-200 ${isToothHighlighted ? 'bg-gray-100' : ''}`} // Highlight background if hovered
                                     onMouseEnter={() => handleMouseEnter(toothId)}
                                     onMouseLeave={handleMouseLeave}
                                 >
@@ -374,15 +374,15 @@ const Tooth2d = ({ userIds }) => {
             {/* Modal for viewing, adding, and editing notes */}
             {isModalOpen && selectedTooth && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-75">
-                    <div className="bg-base-100 p-6 rounded-lg shadow-lg w-full max-w-lg">
-                        <h3 className="text-xl font-semibold mb-4">Notes for {selectedTooth.name}</h3>
+                    <div className="bg-[#C6E4DA] p-6 rounded-lg shadow-lg w-full max-w-lg">
+                        <h3 className="text-xl font-semibold mb-4 text-[#266D53] text-center">Notes for {selectedTooth.name}</h3>
 
-                        <h2 className="text-2xl mb-4">
+                        {/* <h2 className="text-2xl mb-4">
                             {selectedTooth.name} - Notes & Status
-                        </h2>
+                        </h2> */}
 
                         {/* Status input */}
-                        <h2 className="text-2xl font-semibold mb-4">Update Status</h2>
+                        <h2 className="text-2xl mb-2">Update Status</h2>
 
                         <div className='flex py-3'>
                             <input
@@ -394,7 +394,7 @@ const Tooth2d = ({ userIds }) => {
                             />
                             <button
                                 onClick={handleSaveStatus}
-                                className="bg-blue-500 text-white rounded-r-lg shadow-md hover:bg-blue-600 transition duration-300 h-full px-4"
+                                className="bg-[#3EB489] hover:bg-[#62A78E] text-white rounded-r-lg shadow-md transition duration-300 h-full px-5"
                             >
                                 Save Status
                             </button>
@@ -403,11 +403,11 @@ const Tooth2d = ({ userIds }) => {
 
                         {/* Scrollable table for notes */}
                         <div className="mb-4 max-h-60 overflow-y-auto">
-                            <table className="table-auto w-full text-left border">
+                            <table className="table-auto w-full text-left border ">
                                 <thead>
                                     <tr>
-                                        <th className="px-4 py-2">Note</th>
-                                        <th className="px-4 py-2">Actions</th>
+                                        <th className="px-4 py-2 text-center bg-[#3EB489] text-white">Note</th>
+                                        <th className="px-4 py-2 text-center bg-[#3EB489] text-white">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -415,12 +415,15 @@ const Tooth2d = ({ userIds }) => {
                                         <tr key={`modal-note-${index}`} className="border cursor-pointer">
                                             <td className="px-4 py-2">{note}</td>
                                             <td className="px-4 py-2">
-                                                <button
-                                                    className="text-blue-500 hover:underline mr-2"
-                                                    onClick={() => handleEditNote(note, index)}
-                                                >
-                                                    Edit
-                                                </button>
+                                                <div className="flex justify-center items-center">
+                                                    <button
+                                                        className="text-black hover:text-gray-500 flex items-center space-x-1"
+                                                        onClick={() => handleEditNote(note, index)}
+                                                    >
+                                                        <span className="material-symbols-outlined">edit</span>
+                                                        <span>Edit</span>
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     ))}
@@ -447,13 +450,13 @@ const Tooth2d = ({ userIds }) => {
 
                         <div className="flex justify-between">
                             <button
-                                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+                                className="bg-[#4285F4] hover:bg-[#0C65F8] text-white py-2 px-4 rounded"
                                 onClick={handleSaveNote}
                             >
                                 {editingIndex !== null ? 'Update Note' : 'Add Note'}
                             </button>
                             <button
-                                className="bg-red-500 py-2 px-4 rounded hover:bg-red-400"
+                                className="bg-[#D9D9D9] hover:bg-[#ADAAAA] btn py-2 px-4 rounded"
                                 onClick={handleCloseModal}
                             >
                                 Cancel
