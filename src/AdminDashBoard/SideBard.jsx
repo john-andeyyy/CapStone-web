@@ -10,6 +10,8 @@ import ThemeController from '../Guest/GuestComponents/ThemeController';
 import Daisyui_modal from './Components/Daisyui_modal';
 import axios from 'axios';
 export default function Sidebar() {
+    const BASEURL = import.meta.env.VITE_BASEURL;
+
     const [isOpen, setIsOpen] = useState(false);
     const [activeItem, setActiveItem] = useState('general');
     const [profilePic, setProfilePic] = useState('../../public/default-avatar.jpg');
@@ -21,13 +23,22 @@ export default function Sidebar() {
     const navigate = useNavigate();
 
     const fetchProfile = async () => {
+
+
         try {
-            const res = await get_profile();
-            setProfilePic(res.ProfilePicture || profilePic);
-            setName(res.FirstName || 'name');
+            const temp_response = await axios.get(`${BASEURL}/Admin/auth/Admin`,
+                {
+                    withCredentials: true
+                }
+            )
+            const response = temp_response.data
+            setProfilePic(response.ProfilePicture || profilePic);
+            setName(response.FirstName || 'Default name');
+
         } catch (error) {
             console.error('Error fetching profile:', error);
         }
+
     };
     const [dentalname, setdentalname] = useState([]);
 
@@ -83,10 +94,17 @@ export default function Sidebar() {
         setIsLandingPageDropdownOpen(false); // Close landing page dropdown
     };
 
+
     const handleLogout = () => {
-        localStorage.clear();
-        navigate('/');
-        window.location.reload();
+        axios.post(`${BASEURL}/Patient/auth/Logout`)
+            .then((res) => {
+                if (res.status == 200) {
+                    localStorage.clear();
+                    navigate('/');
+                    window.location.reload();
+                }
+            }).catch((error)=>{ console.log('error', error)})
+
     };
 
 
