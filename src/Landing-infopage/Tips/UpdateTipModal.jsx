@@ -20,7 +20,13 @@ const UpdateTipModal = ({ tip, onClose, onUpdate }) => {
 
         axios.put(`${BASEURL}/Tips/updatetip/${tip._id}`, formData)
             .then(response => {
-                onUpdate(response.data);
+                onUpdate({
+                    ...response.data.updatedTip,
+                    image: response.data.updatedTip.image ? response.data.updatedTip.image.toString('base64') : null
+                });
+
+
+                
                 showToast('success', 'Tip Updated successful!');
 
                 onClose();

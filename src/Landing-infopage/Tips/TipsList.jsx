@@ -54,7 +54,8 @@ const TipsList = () => {
                 setShowDeleteModal(false);
                 showToast('success', 'Delete successful!');
 
-                fetchTips();
+                // fetchTips();
+                setTips(prevTips => prevTips.filter(tip => tip._id !== selectedTip._id));
             })
             .catch(error => {
                 console.error('There was an error deleting the tip!', error);
@@ -71,11 +72,14 @@ const TipsList = () => {
     };
 
     const addTip = (newTip) => {
-        fetchTips();
+        // fetchTips();
+        setTips(prevTips => [...prevTips, newTip]);
+
     };
 
     const updateTipInList = (updatedTip) => {
-        fetchTips();
+        //fetchTips();
+        setTips(prevTips => prevTips.map(tip => (tip._id === updatedTip._id ? updatedTip : tip)));
     };
 
     // Filter and sort tips based on the search query
@@ -204,7 +208,7 @@ const TipsList = () => {
                                             onClick={() => handleViewClick(tip)}
                                             title='view'
                                         >
-                                            <span class="material-symbols-outlined">
+                                            <span className="material-symbols-outlined">
                                                 visibility
                                             </span>
                                         </button>
@@ -213,7 +217,7 @@ const TipsList = () => {
                                             onClick={() => handleUpdateClick(tip)}
                                             title='edit'
                                         >
-                                            <span class="material-symbols-outlined">
+                                            <span className="material-symbols-outlined">
                                                 edit
                                             </span>
                                         </button>
@@ -222,7 +226,7 @@ const TipsList = () => {
                                             onClick={() => handleDeleteClick(tip)}
                                             title='delete'
                                         >
-                                            <span class="material-symbols-outlined">
+                                            <span className="material-symbols-outlined">
                                                 delete
                                             </span>
                                         </button>

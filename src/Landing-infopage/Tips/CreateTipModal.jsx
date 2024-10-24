@@ -22,7 +22,11 @@ const CreateTipModal = ({ onClose, onCreate }) => {
             .then(response => {
                 showToast('success', 'Tip Create successful!');
 
-                onCreate(response.data);
+                onCreate({
+                    ...response.data,
+                    image: response.data.image ? response.data.image.toString('base64') : null 
+                });
+
                 onClose();
             })
             .catch(error => {
