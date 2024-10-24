@@ -102,7 +102,7 @@ const AppointmentsReport = () => {
         doc.text('Appointments Report', 14, 20); // Title
 
         let totalAmount = 0; // Initialize total amount
-        const pesoSign = '₱'; // Correct peso sign
+        const pesoSign = 'Php'+''; // Correct peso sign
 
         let formattedTotal = `${pesoSign}0.00`; // Initialize formatted total for all reports
 
@@ -113,7 +113,7 @@ const AppointmentsReport = () => {
             const rows = Object.entries(reportData.daily).map(([date, amount]) => {
                 if (date === selectedDate) {
                     totalAmount += amount; // Sum the amounts
-                    return [format(new Date(date), 'MMM dd yyyy'), `${pesoSign}${amount.toFixed(2)}`]; // Format with peso sign
+                    return [format(new Date(date), 'MMM dd yyyy'), `${pesoSign} ${amount.toFixed(2)}`]; // Format with peso sign
                 }
                 return null;
             }).filter(row => row !== null);
@@ -153,8 +153,7 @@ const AppointmentsReport = () => {
             doc.text(`Yearly Report for ${selectedYear}`, 14, 30);
 
             totalAmount = reportData.yearly[selectedYear] || 0; // Get total for the year
-            formattedTotal = `${pesoSign}${totalAmount.toFixed(2)}`; // Format total with peso sign
-
+            formattedTotal = `${pesoSign} ${totalAmount.toFixed(2)}`; 
             const rows = [[selectedYear, formattedTotal]];
 
             autoTable(doc, {

@@ -14,7 +14,7 @@ export default function ReportMenu() {
     return (
         <div className="grid grid-cols-2 gap-4">
             <div className="flex items-center mb-4">
-                <h1 className='bg-error'> need to fix</h1>
+                {/* <h1 className='bg-error'> need to fix</h1> */}
                 <label htmlFor="report-selector" className="block font-semibold mr-4">
                     Select Reports:
                 </label>

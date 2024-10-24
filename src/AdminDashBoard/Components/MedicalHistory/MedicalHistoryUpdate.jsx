@@ -107,6 +107,7 @@ const MedicalHistoryUpdate = ({ userid, fetchMedicalHistory }) => {
 
     return (
         <div className="container mx-auto p-4">
+            
             <button
                 className="bg-[#3EB489] hover:bg-[#62A78E] text-white px-4 py-2 mb-4 rounded shadow transition"
                 onClick={openModal}

@@ -95,17 +95,18 @@ export default function Sidebar() {
     };
 
     const handleLogout = () => {
-        axios.post(`${BASEURL}/Admin/auth/Logout`)
+        axios.post(`${BASEURL}/Admin/auth/Logout`, {}, { withCredentials: true })
             .then((res) => {
-                if (res.status === 200) {  // Use triple equals for strict comparison
-                    // Clear local storage
+                if (res.status === 200) {
                     localStorage.clear();
 
-                    // Navigate to the homepage
-                    navigate('/');
 
-                    // Optionally, reload the page to clear any cached data
-                    window.location.reload();
+                    setInterval(() => {
+                        navigate('/');
+                        window.location.reload();
+
+                    }, 1000);
+
                 }
             })
             .catch((error) => {
