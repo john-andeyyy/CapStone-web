@@ -126,7 +126,7 @@ const DentistSchedule = () => {
             </button>
             <div className='mb-4 space-y-3'>
                 <h2 className="text-2xl font-bold text-green-600 ">Appointment Schedule</h2>
-                <h3 className=' text-xl font-bold'>Dr. {DentistName}</h3>
+                <h3 className=' text-xl font-bold'>Dr. {dentistName}</h3>
             </div>
 
             <div className="mb-4">

@@ -185,12 +185,13 @@ export default function Dentist() {
     };
 
     const updateDentistData = (updatedDentist) => {
+        fetchDentistList()
 
-        setDentists((prevDentists) =>
-            prevDentists.map((dentist) =>
-                dentist._id === updatedDentist._id ? updatedDentist : dentist
-            )
-        );
+        // setDentists((prevDentists) =>
+        //     prevDentists.map((dentist) =>
+        //         dentist._id === updatedDentist._id ? updatedDentist : dentist
+        //     )
+        // );
     };
     const filteredDentists = dentists
         .filter((dentist) => {
@@ -425,7 +426,7 @@ export default function Dentist() {
                                 onClick={() => {
                                     setisEditmodal(true);
                                     setShowModal(false);
-                                    setSelectedDentist(dentist)
+                                    setSelectedDentist(selectedDentist)
                                 }}
                             >
                                 Edit

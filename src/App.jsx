@@ -52,6 +52,7 @@ import MedicalHistoryCreate from './AdminDashBoard/Components/MedicalHistory/Med
 import MedicalHistoryUpdate from './AdminDashBoard/Components/MedicalHistory/MedicalHistoryUpdate';
 import CalendarComponentsss from './AdminDashBoard/Pages/Add_PatientAppointment/CalendarComponent';
 import MyCalendar from './try/MyCalendar';
+import ParentModel2d from './AdminDashBoard/Components/TheNew2d/ParentModel2d';
 
 function AdminRoutes() {
   const location = useLocation();
@@ -134,6 +135,7 @@ function AdminRoutes() {
         {/* //! CHART */}
         <Route path="/Chart" element={<ShowChart />} />
         {/* //! palyground */}
+        <Route path="/ParentModel2d" element={<ParentModel2d />} />
 
 
 
@@ -148,11 +150,12 @@ function AdminRoutes() {
 
 function App() {
   const [isExpired, setIsExpired] = useState(false);
-  const isLogin = localStorage.getItem('Islogin');
-  const Baseurl = import.meta.env.VITE_BASEURL
-  console.log('App', Baseurl)
+  const [isLogin, setisLogin] = useState(localStorage.getItem('Islogin'));
 
-  useEffect(() => {
+  const Baseurl = import.meta.env.VITE_BASEURL
+  console.log('the base url', Baseurl)
+
+  const cheker = () => {
     const timeout = parseInt(localStorage.getItem('expiresin'), 10);
     const lastActiveTime = parseInt(localStorage.getItem('lastActiveTime'), 10);
     const expirationTime = lastActiveTime + timeout * 1000;
@@ -161,7 +164,14 @@ function App() {
       setIsExpired(true);
       localStorage.clear()
     }
+  }
+  useEffect(() => {
+    cheker()
   }, []);
+
+  const login = () => {
+    setisLogin(localStorage.getItem('Islogin'))
+  }
 
 
   return (
@@ -191,7 +201,7 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/CreateAccount" element={<CreateAccount />} />
-            <Route path="/AdminLogin" element={<AdminLogin />} />
+              <Route path="/AdminLogin" element={<AdminLogin login={login} />} />
             <Route path="/admindashboard" element={<Dashboard />} />
             <Route path="/AllServices" element={<AllServices />} />
             <Route path="/The_DeanTeam" element={<The_DeanTeam />} />

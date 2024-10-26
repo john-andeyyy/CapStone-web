@@ -5,11 +5,10 @@ const AvailableTimeSlots = ({ selectedDate, unavailableDates, appointments, onSe
     const endOfDay = new Date(selectedDate);
     endOfDay.setHours(17, 0, 0); // End time at 5:00 PM
 
-    const currentDate = new Date(); // Get the current date and time
 
     // Generate time slots in 30-minute increments
     for (let time = new Date(startOfDay); time <= endOfDay; time.setMinutes(time.getMinutes() + 30)) {
-        timeSlots.push(new Date(time)); 
+        timeSlots.push(new Date(time));
     }
     return (
         <div className="flex flex-col items-center p-4 w-full max-w-3xl mx-auto sm:p-6">
@@ -29,6 +28,7 @@ const AvailableTimeSlots = ({ selectedDate, unavailableDates, appointments, onSe
             <div className="w-full">
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
                     {timeSlots.map((slot, index) => {
+                        //isUnavailable is for the clinic close time and date
                         const isUnavailable = unavailableDates.some(unavailable =>
                             slot >= new Date(unavailable.start) && slot < new Date(unavailable.end)
                         );
@@ -42,10 +42,13 @@ const AvailableTimeSlots = ({ selectedDate, unavailableDates, appointments, onSe
 
                         const isBooked = appointments.some(appointment => {
                             const appointmentStart = new Date(appointment.start);
-                            // Disable only the button that matches the exact start time of the appointment
-                            return slot.getTime() === appointmentStart.getTime();
+                            const appointmentEnd = new Date(appointment.end);
+                            // Disable all time slots within the range from appointment start to appointment end
+                            return slot >= appointmentStart && slot < appointmentEnd;
                         });
-                        const isDisabled = allButtonsDisabled || isUnavailable || isBooked || slot < currentDate; // Disable if in the past
+
+                        const isDisabled = allButtonsDisabled || isUnavailable || isBooked
+                        //  || slot < currentDate; // Disable if in the past
 
                         return (
                             <button

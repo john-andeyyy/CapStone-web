@@ -87,7 +87,7 @@ export default function Announcement() {
                                     View
                                 </button>
                             </div>
-                            <p className="mb-1 text-sm">
+                            <div className="mb-1 text-sm">
                                 {expandedAnnouncements[announcement._id] ? (
                                     <>
                                         {announcement.Message}
@@ -107,7 +107,7 @@ export default function Announcement() {
                                         )}
                                     </>
                                 )}
-                            </p>
+                            </div>
                             <p className="text-gray-500 text-xs">
                                 Date Created: {new Date(announcement.createdAt).toLocaleDateString('en-US', {
                                     year: 'numeric',

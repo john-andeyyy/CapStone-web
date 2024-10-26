@@ -4,7 +4,7 @@ import axios from 'axios';
 import { showToast } from '../../AdminDashBoard/Components/ToastNotification';
 // showToast('success', 'Login successful!');
 
-export default function AdminLogin() {
+export default function AdminLogin({ login }) {
     const [Username, setUsername] = useState('admin');
     const [Password, setPassword] = useState('admin');
     const [error, setError] = useState('');
@@ -36,10 +36,9 @@ export default function AdminLogin() {
 
                 showToast('success', 'Login successful!');
 
-                setTimeout(() => {
-                    navigate('/dashboard');
-                    window.location.reload();
-                }, 1000);
+
+                navigate('/dashboard');
+                login()
             } else {
                 setError(response.data.message || 'Login failed');
             }
@@ -68,7 +67,7 @@ export default function AdminLogin() {
                             onChange={(e) => setUsername(e.target.value)}
                             required
                             disabled={loading}
-                            
+
                         />
                     </label>
                     <label className="form-control w-full mb-4">

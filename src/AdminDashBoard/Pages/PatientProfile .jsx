@@ -222,7 +222,7 @@ const PatientProfile = () => {
                                 </span>
                             </button>
                         </div>
-                        <h2 className="text-xl font-semibold mb-4 text-[#266D53] text-center mb-5">Full Patient Details</h2>
+                        <h2 className="text-xl font-semibold mb-4 text-[#266D53] text-center">Full Patient Details</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {fullPatient && requiredFields.map((field) => (
                                 <div key={field} className="field">

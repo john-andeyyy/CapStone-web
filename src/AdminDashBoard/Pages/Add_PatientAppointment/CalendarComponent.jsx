@@ -50,7 +50,9 @@ const formatEventDate = (start, end) => {
 const CalendarComponent = () => {
     const [view, setView] = useState('month');
     const [currentDate, setCurrentDate] = useState(new Date());
-    const [date, setDate] = useState(new Date());
+    // const [date, setDate] = useState(new Date());
+    const [date, setDate] = useState(new Date(new Date().getFullYear(), 11, 1)); // December 1st of the current year
+
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [events, setEvents] = useState([]);
@@ -59,6 +61,7 @@ const CalendarComponent = () => {
     const [selectedDentist, setSelectedDentist] = useState(null);
     const [selectedPatient, setselectedPatient] = useState(null);
     const [unavailableDates, setUnavailableDates] = useState([]);
+    const [UnavailableDentist, setUnavailableDentist] = useState([]);
     const [procedures, setProcedures] = useState([]);
     const [allButtonsDisabled, setAllButtonsDisabled] = useState(false);
 
@@ -68,45 +71,47 @@ const CalendarComponent = () => {
     const [isSubmited, setisSubmited] = useState(false);
 
 
+ 
 
     const handleSelectDentist = (selecteddentistData) => {
-
-
         if (selecteddentistData) {
             setSelectedDentist(selecteddentistData);
 
-            const unavailableEvents = selecteddentistData.NotAvailable_on.map((unavailable) => ({
-                id: unavailable._id,
-                title: 'Dentist Not Available',
-                start: new Date(unavailable.from),
-                end: new Date(unavailable.to),
-                allDay: true,
-                notes: `Unavailable from ${new Date(unavailable.from).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                })} to ${new Date(unavailable.to).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                })}`,
+            const unavailableEvents = selecteddentistData.NotAvailable_on.map((unavailable) => {
+                const startDate = new Date(unavailable.from);
+                const endDate = new Date(unavailable.to);
 
-                status: 'Dentist Not Available',
-            }));
+                return {
+                    id: unavailable._id,
+                    title: 'Dentist Not Available',
+                    start: startDate,
+                    end: endDate,
+                    allDay: true,
+                    notes: `Unavailable from ${startDate.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    })} to ${endDate.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    })}`,
+                    status: 'Dentist Not Available',
+                };
+            });
 
+            setUnavailableDentist(unavailableEvents);
+            console.log('unavailableEvents', unavailableEvents)
             setEvents((prevEvents) => {
                 const filteredEvents = prevEvents.filter(event => event.status !== 'Dentist Not Available');
-
                 return [...filteredEvents, ...unavailableEvents];
             });
         } else {
             setEvents((prevEvents) => {
                 const filteredEvents = prevEvents.filter(event => event.status !== 'Dentist Not Available');
-
-                return [...filteredEvents];
+                return filteredEvents;
             });
         }
-
     };
 
 
@@ -138,6 +143,9 @@ const CalendarComponent = () => {
                 const startDate = new Date(unavailable.from);
                 const endDate = new Date(unavailable.to);
 
+
+                // FOR WHOLEDAY
+                startDate.setHours(0, 0, 0, 0);
                 endDate.setHours(23, 59, 59, 999);
 
                 return {
@@ -193,15 +201,15 @@ const CalendarComponent = () => {
         }
     };
 
-
+    const fetchEvents = async () => {
+        const unavailableDates = await fetchUnavailableDates();
+        const fetchedAppointments = await fetchAppointments();
+        setAppointments(fetchedAppointments);
+        setEvents([...fetchedAppointments, ...unavailableDates]);
+        setLoading(false);
+    };
     useEffect(() => {
-        const fetchEvents = async () => {
-            const unavailableDates = await fetchUnavailableDates();
-            const fetchedAppointments = await fetchAppointments();
-            setAppointments(fetchedAppointments);
-            setEvents([...fetchedAppointments, ...unavailableDates]);
-            setLoading(false);
-        };
+
 
         fetchEvents();
     }, []);
@@ -209,38 +217,33 @@ const CalendarComponent = () => {
     const handleDateChange = (newDate) => {
         setDate(newDate);
     };
+
+
     const handleSelectSlot = (slotInfo) => {
         handleDateChange(slotInfo.start);
         setSelectedDate(slotInfo.start);
-        const selectedDate = slotInfo.start.toISOString().split('T')[0]; // Get the date part
+        console.log('slotInfo START', slotInfo.start);
 
-        const isClinicClosed = events.some((event) => {
-            const eventStartDate = event.start.toISOString().split('T')[0]; // Get the date part of the event
-            const eventEndDate = event.end.toISOString().split('T')[0]; // Get the date part of the event
-
-            // Check if the selected date falls on a day when the clinic is closed
-            return (
-                event.status === 'Clinic Closed' &&
-                selectedDate >= eventStartDate &&
-                selectedDate <= eventEndDate
-            );
-        });
+        const selectedDate = slotInfo.start.toLocaleDateString('en-CA'); // YYYY-MM-DD format in local timezone
+        console.log('selectedDate', selectedDate);
 
         const isDentistUnavailable = events.some((event) => {
-            const eventStartDate = event.start.toISOString().split('T')[0]; // Get the date part of the event
-            const eventEndDate = event.end.toISOString().split('T')[0]; // Get the date part of the event
+            const eventStartDate = event.start.toLocaleDateString('en-CA');
+            const eventEndDate = event.end.toLocaleDateString('en-CA');
 
-            // Check if the selected date falls on a day when the dentist is not available
             return (
                 event.status === 'Dentist Not Available' &&
-                selectedDate >= eventStartDate &&
-                selectedDate <= eventEndDate
+                selectedDate <= eventStartDate &&
+                selectedDate >= eventEndDate
             );
         });
 
-        // Set all buttons disabled if either condition is true
-        setAllButtonsDisabled(isClinicClosed || isDentistUnavailable);
+
+        setAllButtonsDisabled(isDentistUnavailable);
+
+        console.log('isDentistUnavailable', isDentistUnavailable);
     };
+
 
 
     const handleSelectEvent = (event) => {
@@ -261,10 +264,10 @@ const CalendarComponent = () => {
             setEvents([...fetchedAppointments, ...unavailableDates]);
             setLoading(false);
 
-            const isClosed = unavailableDates.some(unavailable =>
-                date >= new Date(unavailable.start) && date <= new Date(unavailable.end)
-            );
-            setAllButtonsDisabled(isClosed);
+            // const isClosed = unavailableDates.some(unavailable =>
+            //     date >= new Date(unavailable.start) && date <= new Date(unavailable.end)
+            // );
+            // setAllButtonsDisabled(isClosed);
 
         };
 
@@ -315,19 +318,16 @@ const CalendarComponent = () => {
 
         const localDate = new Date(selectedDate);
         const selectedTime = new Date(selectedTimeSlot);
-
         localDate.setHours(selectedTime.getHours(), selectedTime.getMinutes(), 0, 0);
 
         const endDate = new Date(localDate);
-        // + 2-hour appointment duration
-        // endDate.setHours(endDate.getMinutes() + 30);
         endDate.setMinutes(endDate.getMinutes() + 30);
 
         const appointmentData = {
             procedureIds: procedures.map(p => p._id),
-            date: localDate.toISOString().split('T')[0], // Get date in YYYY-MM-DD format
-            Start: localDate.toISOString(), // The start date in ISO format
-            End: endDate.toISOString(), // The end date in ISO format
+            date: localDate.toISOString().split('T')[0],
+            Start: localDate.toISOString(),
+            End: endDate.toISOString(),
             DentistID: selectedDentist._id,
             Amount: 100,
             status: "Approved",
@@ -336,15 +336,19 @@ const CalendarComponent = () => {
         try {
             const response = await axios.post(`${Baseurl}/Appointments/add/history/${selectedPatient._id}`, appointmentData, { withCredentials: true });
             console.log('Appointment added to history:', response.data);
-
             setisSubmited(true);
             setConfirmModalOpen(false);
+
+            // Refetch events after a short delay to allow backend to save data
+            setTimeout(() => fetchEvents(), 200);
+
         } catch (error) {
             console.error('Error adding appointment to history:', error);
         }
 
         setTimeout(() => setisSubmited(false), 1000);
     };
+
 
     return (
         <div className="p-4 mx-auto">
@@ -385,6 +389,7 @@ const CalendarComponent = () => {
                                 onSelectTimeSlot={handleSelectTimeSlot}
                                 // isDisabled={availableSlotsDisabled}
                                 allButtonsDisabled={allButtonsDisabled}
+                                UnavailableDentist={UnavailableDentist}
                             />
                         </div>
                     </div>
